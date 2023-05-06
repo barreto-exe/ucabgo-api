@@ -1,6 +1,12 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using UcabGo.Application.Interfaces;
+using UcabGo.Application.Services;
+using UcabGo.Core.Interfaces;
+using UcabGo.Core.Repositories;
+using UcabGo.Infrastructure.Data;
 
 [assembly: FunctionsStartup(typeof(UcabGo.Api.Startup))]
 
@@ -10,18 +16,13 @@ namespace UcabGo.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            //Database Connection
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
+            builder.Services.AddDbContext<UcabgoContext>(options => options.UseMySQL(connectionString));
 
-            //builder.Services.Add(
-            //    new ServiceDescriptor(
-            //        typeof(IBaseDatabaseService), 
-            //        (serviceProvider) => new CentralDatabaseService(connectionString),
-            //        ServiceLifetime.Scoped
-            //));
-
-            ////Dependency injection
-            //builder.Services.AddScoped(typeof(IRepositoryBase<>), typeof(RepositoryBase<>));
-            //builder.Services.AddTransient<ICallDetailService, CallDetailService>();
+            //Dependency injection
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IAuthService, AuthService>();
         }
     }
 }
