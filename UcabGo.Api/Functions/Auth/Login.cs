@@ -26,7 +26,7 @@ namespace UcabGo.Api.Functions.Auth
 
         [FunctionName("Login")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "auth/login")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "auth/login")] HttpRequest req,
             ILogger log)
         {
             async Task<IActionResult> Action(LoginInput input)
