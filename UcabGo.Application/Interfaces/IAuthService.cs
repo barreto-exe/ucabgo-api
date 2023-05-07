@@ -7,12 +7,5 @@ namespace UcabGo.Application.Interfaces
     {
         Task<LoginDto> Register(RegisterInput input);
         Task<LoginDto> Login(LoginInput input);
-        public static ErrorDto ErrorCodeBuilder(string errorCode)
-        {
-            return new ErrorDto()
-            {
-                Code = errorCode,
-            };
-        }
     }
 }

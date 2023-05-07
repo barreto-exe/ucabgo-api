@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using UcabGo.Api.Utils;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
 
@@ -15,9 +14,11 @@ namespace UcabGo.Api.Functions.Auth
     public class Register
     {
         private readonly IAuthService authService;
-        public Register(IAuthService authService)
+        private ApiResponse apiResponse;
+        public Register(IAuthService authService, ApiResponse apiResponse)
         {
             this.authService = authService;
+            this.apiResponse = apiResponse;
         }
 
         [FunctionName("Register")]
@@ -26,21 +27,20 @@ namespace UcabGo.Api.Functions.Auth
         {
             async Task<IActionResult> Action(RegisterInput input)
             {
-                LoginDto data = null;
-
                 try
                 {
-                    data = await authService.Register(input);
+                    apiResponse.Message = "USER_REGISTERED";
+                    apiResponse.Data = await authService.Register(input);
+                    return new OkObjectResult(apiResponse);
                 }
                 catch (UserExistsException)
                 {
-                    return new BadRequestObjectResult(IAuthService.ErrorCodeBuilder("USER_ALREADY_EXISTS"));
+                    apiResponse.Message = "USER_ALREADY_EXISTS";
+                    return new BadRequestObjectResult(apiResponse);
                 }
-
-                return new OkObjectResult(data);
             }
 
-            return await RequestHandler.Handle<RegisterInput>(req, log, Action, isAnonymous: true);
+            return await RequestHandler.Handle<RegisterInput>(req, log, apiResponse, Action, isAnonymous: true);
         }
     }
 }

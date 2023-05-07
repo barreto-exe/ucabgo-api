@@ -13,7 +13,7 @@ namespace UcabGo.Api.Utils
 {
     public static class RequestHandler
     {
-        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false)
+        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, ApiResponse response, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false)
             where TInput : BaseRequest, new()
         {
             //Validating jwt
@@ -45,14 +45,19 @@ namespace UcabGo.Api.Utils
 
                 if (!input.IsValid(out List<ValidationResult> validationResults))
                 {
-                    return new BadRequestObjectResult(validationResults);
+                    response.Message = "INVALID_INPUT";
+                    response.Data = validationResults;
+                    return new BadRequestObjectResult(response);
                 }
 
                 return await function.Invoke(input);
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult("An error has occurred: " + ex.Message);
+                log.LogError(ex, ex.Message);
+                response.Message = "INTERNAL_SERVER_ERROR";
+                response.Data = "An error has ocurred internally: " + ex.Message;
+                return new BadRequestObjectResult(response);
             }
         }
     }

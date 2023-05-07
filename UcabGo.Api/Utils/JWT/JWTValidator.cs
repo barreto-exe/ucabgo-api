@@ -1,16 +1,21 @@
-﻿using JWT.Algorithms;
-using JWT.Builder;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using UcabGo.Core.Data.User.Dto;
+using UcabGo.Application.Utils;
 
 namespace UcabGo.Api.Utils.JWT
 {
     public class JWTValidator
     {
-        public IDictionary<string, object> Claims { get; set; }
+        public IEnumerable<Claim> Claims { get; set; }
         public bool IsValid { get; set; } = false;
 
         public JWTValidator(HttpRequest request)
@@ -28,7 +33,7 @@ namespace UcabGo.Api.Utils.JWT
                 return;
             }
 
-            //Check signature
+            //Check token and signature
             try
             {
                 if (authorizationHeader.StartsWith("Bearer"))
@@ -36,13 +41,8 @@ namespace UcabGo.Api.Utils.JWT
                     authorizationHeader = authorizationHeader.Substring(7);
                 }
 
-                string jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET");
-                Claims =
-                    new JwtBuilder()
-                    .WithAlgorithm(new HMACSHA256Algorithm())
-                    .WithSecret(jwtSecret)
-                    .MustVerifySignature()
-                    .Decode<IDictionary<string, object>>(authorizationHeader);
+                authorizationHeader.ValidateToken(out List<Claim> claims);
+                Claims = claims;
             }
             catch
             {
@@ -51,26 +51,6 @@ namespace UcabGo.Api.Utils.JWT
 
             //Everything OK
             IsValid = true;
-        }
-
-        public object GetValueOrDefault(string key)
-        {
-            var exists = Claims.TryGetValue(key, out object value);
-            if (exists)
-            {
-                var converted = value as JArray ?? value as JToken;
-                if (converted is JArray)
-                {
-                    return converted.ToObject<List<string>>();
-                }
-                else if (converted is JToken)
-                {
-                    return converted.ToObject<string>().FirstOrDefault();
-                }
-
-                return Claims.FirstOrDefault(x => x.Key == key).Value;
-            }
-            return null;
         }
     }
 }
