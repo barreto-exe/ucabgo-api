@@ -25,7 +25,11 @@ namespace UcabGo.Application.Services
             this.userService = userService;
         }
 
-
+        /// <summary>
+        /// Register a user and returns a LoginDto with the user and a token.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         /// <exception cref="UserExistsException"></exception>
         public async Task<LoginDto> Register(RegisterInput input)
         {
@@ -45,13 +49,18 @@ namespace UcabGo.Application.Services
             });
         }
 
+        /// <summary>
+        /// Login a user and returns a LoginDto with the user and a token.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        /// <exception cref="UserNotFoundException"></exception>
         public async Task<LoginDto> Login(LoginInput input)
         {
             var user = await userService.GetByEmailAndPass(input);
             if (user == null)
             {
-                //Doesn't exist or wrong pass
-                return null;
+                throw new UserNotFoundException();
             }
 
             return new LoginDto()

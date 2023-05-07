@@ -22,9 +22,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Functions\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\UcabGo.Application\UcabGo.Application.csproj" />
     <ProjectReference Include="..\UcabGo.Core\UcabGo.Core.csproj" />
     <ProjectReference Include="..\UcabGo.Infrastructure\UcabGo.Infrastructure.csproj" />

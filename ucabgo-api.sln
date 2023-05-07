@@ -3,26 +3,26 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcabGo.Api", "UcabGo.Api\UcabGo.Api.csproj", "{3EA77F90-D6F0-404B-96B6-4171E03E175A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UcabGo.Api", "UcabGo.Api\UcabGo.Api.csproj", "{3EA77F90-D6F0-404B-96B6-4171E03E175A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{58A91BC6-A018-48E3-839F-B7E20B47962D} = {58A91BC6-A018-48E3-839F-B7E20B47962D}
 		{7C287521-9C3D-4A01-B250-6A236BD254FD} = {7C287521-9C3D-4A01-B250-6A236BD254FD}
 		{BFD415EB-848B-4381-B7FE-38CD1584066A} = {BFD415EB-848B-4381-B7FE-38CD1584066A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcabGo.Core", "UcabGo.Core\UcabGo.Core.csproj", "{31F3A9FA-184C-4E78-909B-90EAC6FC3136}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UcabGo.Core", "UcabGo.Core\UcabGo.Core.csproj", "{31F3A9FA-184C-4E78-909B-90EAC6FC3136}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcabGo.Infrastructure", "UcabGo.Infrastructure\UcabGo.Infrastructure.csproj", "{7C287521-9C3D-4A01-B250-6A236BD254FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UcabGo.Infrastructure", "UcabGo.Infrastructure\UcabGo.Infrastructure.csproj", "{7C287521-9C3D-4A01-B250-6A236BD254FD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{31F3A9FA-184C-4E78-909B-90EAC6FC3136} = {31F3A9FA-184C-4E78-909B-90EAC6FC3136}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcabGo.Integration", "UcabGo.Integration\UcabGo.Integration.csproj", "{BFD415EB-848B-4381-B7FE-38CD1584066A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UcabGo.Integration", "UcabGo.Integration\UcabGo.Integration.csproj", "{BFD415EB-848B-4381-B7FE-38CD1584066A}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7C287521-9C3D-4A01-B250-6A236BD254FD} = {7C287521-9C3D-4A01-B250-6A236BD254FD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UcabGo.Application", "UcabGo.Application\UcabGo.Application.csproj", "{58A91BC6-A018-48E3-839F-B7E20B47962D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UcabGo.Application", "UcabGo.Application\UcabGo.Application.csproj", "{58A91BC6-A018-48E3-839F-B7E20B47962D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{31F3A9FA-184C-4E78-909B-90EAC6FC3136} = {31F3A9FA-184C-4E78-909B-90EAC6FC3136}
 		{7C287521-9C3D-4A01-B250-6A236BD254FD} = {7C287521-9C3D-4A01-B250-6A236BD254FD}
