@@ -1,14 +1,13 @@
-using System;
-using System.IO;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using UcabGo.Api.Utils;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
 
@@ -25,6 +24,9 @@ namespace UcabGo.Api.Functions.Auth
         }
 
         [FunctionName("Login")]
+        [OpenApiOperation(operationId: "Run", tags: new[] { "Login" })]
+        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(LoginInput), Required = true, Description = "The user login details")]
+        [OpenApiResponseWithBody(statusCode: System.Net.HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(LoginDto), Description = "The login details of the registered user")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "auth/login")] HttpRequest req,
             ILogger log)
