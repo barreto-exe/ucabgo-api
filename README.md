@@ -1,7 +1,7 @@
-# Welcome to the UCAB GO API!
+# Welcome to the UCAB GO API! 🚗🎓
 This API is designed to support the UCAB GO app, a ride-sharing platform for the UCAB community. With UCAB GO, students, faculty, and staff can easily request rides to and from campus, making transportation more convenient and accessible.
 
-# Technologies Used
+# Technologies Used 💻
 - **.NET 6** - The UCAB GO API is built using .NET 6, a cross-platform framework for building modern applications.
 
 - **Entity Framework Core** - Entity Framework Core is used as the Object-Relational Mapping (ORM) framework for the UCAB GO API. It provides a simple way to interact with the database and map database entities to C# objects.
@@ -16,7 +16,7 @@ This API is designed to support the UCAB GO app, a ride-sharing platform for the
 
 These technologies were chosen for their reliability, performance, and ease of use. They provide a solid foundation for building a robust and scalable API that can meet the needs of the UCAB university community.
 
-# Quick start
+# Quick start 🚀
 1. **Install .NET 6 and Visual Studio**
 
 Make sure you have .NET 6 and Visual Studio installed your machine. You can download .NET 6 from the [official .NET website, and Visual Studio from the Visual Studio website](https://visualstudio.microsoft.com/).
@@ -31,21 +31,22 @@ Create a MariaDB database that matches the Entity Framework models of the projec
 
 4. **Update the connection string**
 
-Update the connection string in the local.settings.json file to point to your MariaDB database.
+Update the connection string in the `local.settings.json` file to point to your MariaDB database.
 
-5. **Add the required keys to local.settings.json**
+5. **Add the required keys to `local.settings.json`**
 
-Add the following keys to the local.settings.json file: SqlConnectionString, JWT_SECRET, JWT_ISS, JWT_AUD. These keys are required for the API to function properly.
+Add the following keys to the `local.settings.json` file: `SqlConnectionString`, `JWT_SECRET`, `JWT_ISS`, `JWT_AUD`. These keys are required for the API to function properly.
 
 6. **Open the project in Visual Studio**
 
-Open the UCAB GO API project in Visual Studio by navigating to the project folder and double-clicking on the .sln file.
+Open the UCAB GO API project in Visual Studio by navigating to the project folder and double-clicking on the `.sln` file.
 
 7. **Run the project**
 
 Run the project by clicking on the "Run" button in Visual Studio. This will launch the API and allow you to start making requests.
 
 8. **Start making requests**
-Once you have obtained an API key, you can start making requests to the UCAB GO API. Refer to our documentation for more information on how to use the API.
 
-That's it! You are now ready to start using the UCAB GO API. If you have any questions or issues, please refer to our documentation or contact our support team.
+You can go to `/api/swagger/ui` to start making requests to the UCAB GO API. Refer to our documentation for more information on how to use the API.
+
+That's it! You are now ready to start using the UCAB GO API. If you have any questions or issues, please refer to our documentation or contact our support team. 📚📞
