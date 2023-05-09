@@ -24,7 +24,7 @@ namespace UcabGo.Api.Functions.Auth
         }
 
         [FunctionName("Login")]
-        [OpenApiOperation(operationId: "Run", tags: new[] { "Login" })]
+        [OpenApiOperation(tags: new[] { "Login" })]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(LoginInput), Required = true, Description = "The user login details")]
         [OpenApiResponseWithBody(statusCode: System.Net.HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(LoginDto), Description = "The login details of the registered user")]
         public async Task<IActionResult> Run(
