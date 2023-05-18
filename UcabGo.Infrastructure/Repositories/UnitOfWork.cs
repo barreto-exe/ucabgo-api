@@ -15,6 +15,8 @@ namespace UcabGo.Infrastructure.Repositories
 
 
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(ucabgoContext);
+        public IRepository<Vehicle> VehicleRepository => throw new System.NotImplementedException();
+        public IRepository<Soscontact> SoscontactRepository => throw new System.NotImplementedException();
 
 
         public void Dispose()
