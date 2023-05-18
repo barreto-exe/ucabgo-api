@@ -47,7 +47,8 @@ namespace UcabGo.Api.Functions.Auth
                 try
                 {
                     await authService.ChangePassword(input);
-                    return new OkResult();
+                    apiResponse.Message = "PASSWORD_CHANGED";
+                    return new OkObjectResult(apiResponse);
                 }
                 catch (UserNotFoundException)
                 {

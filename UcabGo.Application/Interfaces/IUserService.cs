@@ -1,5 +1,6 @@
 ﻿using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.User.Dto;
+using UcabGo.Core.Data.User.Inputs;
 using UcabGo.Core.Entities;
 
 namespace UcabGo.Application.Interfaces
@@ -12,5 +13,7 @@ namespace UcabGo.Application.Interfaces
         Task<UserDto> Create(User user);
         Task<UserDto> Update(User user);
         Task Delete(int id);
+
+        Task UpdatePhone(PhoneInput input);
     }
 }

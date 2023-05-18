@@ -2,6 +2,7 @@
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.User.Dto;
+using UcabGo.Core.Data.User.Inputs;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -60,6 +61,14 @@ namespace UcabGo.Application.Services
         public async Task Delete(int id)
         {
             await unitOfWork.UserRepository.Delete(id);
+            await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task UpdatePhone(PhoneInput input)
+        {
+            var user = await GetByEmail(input.Email);
+            user.Phone = input.Phone;
+            unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
         }
     }
