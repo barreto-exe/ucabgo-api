@@ -6,12 +6,11 @@ namespace UcabGo.Application.Interfaces
 {
     public interface IUserService
     {
-        Task<UserDto> GetById(int id);
-        Task<UserDto> GetByEmail(string email);
-        Task<UserDto> GetByEmailAndPass(LoginInput login);
+        Task<User> GetById(int id);
+        Task<User> GetByEmail(string email);
+        Task<User> GetByEmailAndPass(LoginInput login);
         Task<UserDto> Create(User user);
         Task<UserDto> Update(User user);
         Task Delete(int id);
-
     }
 }

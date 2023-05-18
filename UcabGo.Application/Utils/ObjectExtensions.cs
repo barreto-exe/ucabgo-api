@@ -188,7 +188,7 @@ namespace UcabGo.Application.Utils
 
             // Validate signature
             var signatureBytes = Convert.FromBase64String(tokenPartsArray[2].Replace('-', '+').Replace('_', '/'));
-            var signatureComputedBytes = key.ComputeHash(Encoding.UTF8.GetBytes($"{tokenPartsArray[0]}.{tokenPartsArray[1]}"));
+            var signatureComputedBytes = key.ComputeHash(Encoding.UTF8.GetBytes($"{tokenPartsArray[0].Replace("=","")}.{tokenPartsArray[1].Replace("=","")}"));
             if (!signatureBytes.SequenceEqual(signatureComputedBytes))
             {
                 throw new SecurityTokenException("Invalid signature");

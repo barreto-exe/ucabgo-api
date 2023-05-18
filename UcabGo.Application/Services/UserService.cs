@@ -17,42 +17,50 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<UserDto> GetById(int id)
+        public async Task<User> GetById(int id)
         {
             var users = unitOfWork.UserRepository.GetAll().Result;
             var user = users.Where(x => x.Id == id).FirstOrDefault();
-            var userDto = mapper.Map<UserDto>(user);
-            return userDto;
+            return user;
         }
-        public async Task<UserDto> GetByEmail(string email)
+        public async Task<User> GetByEmail(string email)
         {
             var user = (await unitOfWork.UserRepository
                 .GetAll())
                 .FirstOrDefault(x => x.Email == email);
-            var userDto = mapper.Map<UserDto>(user);
-            return userDto;
+            return user;
         }
-        public async Task<UserDto> GetByEmailAndPass(LoginInput login)
+        public async Task<User> GetByEmailAndPass(LoginInput login)
         {
             var user = (await unitOfWork.UserRepository
                 .GetAll())
                 .FirstOrDefault(x => x.Email == login.Email && x.Password == login.Password);
-            var userDto = mapper.Map<UserDto>(user);
-            return userDto;
+            return user;
         }
         public async Task<UserDto> Create(User user)
         {
             await unitOfWork.UserRepository.Add(user);
             await unitOfWork.SaveChangesAsync();
-            return await GetByEmail(user.Email);
+
+            var userDb = await GetByEmail(user.Email);
+
+            var userDto = mapper.Map<UserDto>(userDb);
+            return userDto;
         }
-        public Task<UserDto> Update(User user)
+        public async Task<UserDto> Update(User user)
         {
-            throw new NotImplementedException();
+            unitOfWork.UserRepository.Update(user);
+            await unitOfWork.SaveChangesAsync();
+
+            var userDb = await GetByEmail(user.Email);
+
+            var userDto = mapper.Map<UserDto>(userDb);
+            return userDto;
         }
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            await unitOfWork.UserRepository.Delete(id);
+            await unitOfWork.SaveChangesAsync();
         }
     }
 }

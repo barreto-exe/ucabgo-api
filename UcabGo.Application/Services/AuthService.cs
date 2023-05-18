@@ -51,29 +51,29 @@ namespace UcabGo.Application.Services
                 throw new UserNotFoundException();
             }
 
+            var userDto = mapper.Map<UserDto>(user);
+
             return new LoginDto()
             {
-                User = user,
-                Token = user.ObtainToken(),
+                User = userDto,
+                Token = userDto.ObtainToken(),
             };
         }
 
         public async Task ChangePassword(ChangePasswordInput input)
         {
-            var userDto = await userService.GetByEmailAndPass(new LoginInput()
+            var user = await userService.GetByEmailAndPass(new LoginInput()
             {
                 Email = input.Email,
                 Password = input.OldPassword
             });
 
-            if (userDto == null)
+            if (user == null)
             {
                 throw new UserNotFoundException();
             }
 
-            var user = mapper.Map<User>(userDto);
             user.Password = input.NewPassword;
-
             await userService.Update(user); 
         }
     }
