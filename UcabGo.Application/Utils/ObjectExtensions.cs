@@ -165,7 +165,7 @@ namespace UcabGo.Application.Utils
                 throw new SecurityTokenException("Invalid token format");
             }
 
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
             {
                 int mod4 = tokenPartsArray[i].Length % 4;
                 if (mod4 > 0)
@@ -188,7 +188,7 @@ namespace UcabGo.Application.Utils
 
             // Validate signature
             var signatureBytes = Convert.FromBase64String(tokenPartsArray[2].Replace('-', '+').Replace('_', '/'));
-            var signatureComputedBytes = key.ComputeHash(Encoding.UTF8.GetBytes($"{tokenPartsArray[0].Replace("=","")}.{tokenPartsArray[1].Replace("=","")}"));
+            var signatureComputedBytes = key.ComputeHash(Encoding.UTF8.GetBytes($"{tokenPartsArray[0].Replace("=", "")}.{tokenPartsArray[1].Replace("=", "")}"));
             if (!signatureBytes.SequenceEqual(signatureComputedBytes))
             {
                 throw new SecurityTokenException("Invalid signature");

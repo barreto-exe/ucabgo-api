@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using UcabGo.Api.Utils.JWT;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data;
-using System.Linq;
 
 namespace UcabGo.Api.Utils
 {

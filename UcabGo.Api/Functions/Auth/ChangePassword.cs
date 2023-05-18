@@ -1,25 +1,17 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.OpenApi.Models;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Api.Utils;
-using UcabGo.Application.Services;
-using UcabGo.Core.Data.Auth.Dto;
+using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
-using UcabGo.Application.Interfaces;
-using Microsoft.OpenApi.Models;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 
 namespace UcabGo.Api.Functions.Auth
 {

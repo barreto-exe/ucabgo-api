@@ -1,7 +1,4 @@
 ﻿using AutoMapper;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
@@ -74,7 +71,7 @@ namespace UcabGo.Application.Services
             }
 
             user.Password = input.NewPassword;
-            await userService.Update(user); 
+            await userService.Update(user);
         }
     }
 }

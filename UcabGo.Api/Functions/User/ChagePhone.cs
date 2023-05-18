@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.OpenApi.Models;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Api.Utils;
 using UcabGo.Application.Interfaces;
@@ -30,6 +28,7 @@ namespace UcabGo.Api.Functions.User
         [OpenApiOperation(tags: new[] { "ChangePhone" })]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(PhoneInput), Required = true, Description = "Change users phone.")]
         [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/phone")] HttpRequest req, ILogger log)
         {
@@ -40,7 +39,7 @@ namespace UcabGo.Api.Functions.User
                 return new OkObjectResult(apiResponse);
             }
 
-            return await RequestHandler.Handle<PhoneInput>(req, log, apiResponse, Action, isAnonymous: true);
+            return await RequestHandler.Handle<PhoneInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
     }
 
