@@ -28,11 +28,6 @@ namespace UcabGo.Api.Utils.JWT
             //Check token and signature
             try
             {
-                if (authorizationHeader.StartsWith("Bearer"))
-                {
-                    authorizationHeader = authorizationHeader.Substring(7);
-                }
-
                 authorizationHeader.ValidateToken(out List<Claim> claims);
                 Claims = claims;
             }

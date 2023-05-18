@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UcabGo.Api.Utils.JWT;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data;
+using System.Linq;
 
 namespace UcabGo.Api.Utils
 {
@@ -41,7 +42,7 @@ namespace UcabGo.Api.Utils
                     if (input == null) throw new Exception("Request body is empty");
                 }
 
-                //input.Username = jwt.GetUsername();
+                input.Email = jwt.Claims?.FirstOrDefault(x => x.Type == "email")?.Value;
 
                 if (!input.IsValid(out List<ValidationResult> validationResults))
                 {

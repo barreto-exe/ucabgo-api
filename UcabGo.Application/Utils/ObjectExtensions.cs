@@ -64,6 +64,7 @@ namespace UcabGo.Application.Utils
             return Validator.TryValidateObject(model, new ValidationContext(model), validationResults = new(), true);
         }
 
+
         public static string GetDescription(this Enum e)
         {
             var attribute =
@@ -162,6 +163,15 @@ namespace UcabGo.Application.Utils
             if (tokenPartsArray.Length != 3)
             {
                 throw new SecurityTokenException("Invalid token format");
+            }
+
+            for(int i = 0; i < 3; i++)
+            {
+                int mod4 = tokenPartsArray[i].Length % 4;
+                if (mod4 > 0)
+                {
+                    tokenPartsArray[i] += new string('=', 4 - mod4);
+                }
             }
 
             // Validate header and payload

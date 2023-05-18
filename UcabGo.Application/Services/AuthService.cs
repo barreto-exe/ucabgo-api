@@ -25,12 +25,6 @@ namespace UcabGo.Application.Services
             this.userService = userService;
         }
 
-        /// <summary>
-        /// Register a user and returns a LoginDto with the user and a token.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        /// <exception cref="UserExistsException"></exception>
         public async Task<LoginDto> Register(RegisterInput input)
         {
             var userInput = mapper.Map<User>(input);
@@ -49,12 +43,6 @@ namespace UcabGo.Application.Services
             });
         }
 
-        /// <summary>
-        /// Login a user and returns a LoginDto with the user and a token.
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        /// <exception cref="UserNotFoundException"></exception>
         public async Task<LoginDto> Login(LoginInput input)
         {
             var user = await userService.GetByEmailAndPass(input);
@@ -68,6 +56,25 @@ namespace UcabGo.Application.Services
                 User = user,
                 Token = user.ObtainToken(),
             };
+        }
+
+        public async Task ChangePassword(ChangePasswordInput input)
+        {
+            var userDto = await userService.GetByEmailAndPass(new LoginInput()
+            {
+                Email = input.Email,
+                Password = input.OldPassword
+            });
+
+            if (userDto == null)
+            {
+                throw new UserNotFoundException();
+            }
+
+            var user = mapper.Map<User>(userDto);
+            user.Password = input.NewPassword;
+
+            await userService.Update(user); 
         }
     }
 }
