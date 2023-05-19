@@ -21,7 +21,7 @@ namespace UcabGo.Infrastructure.Data
 
             modelBuilder.Entity<Soscontact>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.User })
+                entity.HasKey(e => new { e.Id })
                     .HasName("PRIMARY")
                     .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 
@@ -69,7 +69,7 @@ namespace UcabGo.Infrastructure.Data
 
             modelBuilder.Entity<Vehicle>(entity =>
             {
-                entity.HasKey(e => new { e.Id, e.User })
+                entity.HasKey(e => new { e.Id })
                     .HasName("PRIMARY")
                     .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
 

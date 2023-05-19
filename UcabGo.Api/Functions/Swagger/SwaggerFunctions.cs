@@ -1,9 +1,6 @@
 using AzureFunctions.Extensions.Swashbuckle;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace UcabGo.Api.Functions.Swagger
 {

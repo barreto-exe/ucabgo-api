@@ -8,16 +8,17 @@ namespace UcabGo.Infrastructure.Repositories
     {
         private readonly UcabgoContext ucabgoContext;
         private readonly IRepository<User> userRepository;
+        private readonly IRepository<Vehicle> vehicleRepository;
+        private readonly IRepository<Soscontact> soscontactRepository;
+
         public UnitOfWork(UcabgoContext ucabgoContext)
         {
             this.ucabgoContext = ucabgoContext;
         }
 
-
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(ucabgoContext);
-        public IRepository<Vehicle> VehicleRepository => throw new System.NotImplementedException();
-        public IRepository<Soscontact> SoscontactRepository => throw new System.NotImplementedException();
-
+        public IRepository<Vehicle> VehicleRepository => vehicleRepository ?? new BaseRepository<Vehicle>(ucabgoContext);
+        public IRepository<Soscontact> SoscontactRepository => soscontactRepository ?? new BaseRepository<Soscontact>(ucabgoContext);
 
         public void Dispose()
         {

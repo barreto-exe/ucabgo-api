@@ -4,7 +4,7 @@ namespace UcabGo.Core.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        Task<IEnumerable<T>> GetAll();
+        IQueryable<T> GetAll();
         Task<T> GetById(object id);
         Task Add(T item);
         void Update(T item);

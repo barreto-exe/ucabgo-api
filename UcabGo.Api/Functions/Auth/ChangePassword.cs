@@ -1,15 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
-using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System.Net;
-using System.Threading.Tasks;
-using UcabGo.Api.Utils;
-using UcabGo.Application.Interfaces;
+﻿using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
 
@@ -26,7 +15,7 @@ namespace UcabGo.Api.Functions.Auth
         }
 
         [FunctionName("ChangePassword")]
-        [OpenApiOperation(tags: new[] { "ChangePassword" })]
+        [OpenApiOperation(tags: new[] { "Auth" })]
         [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(ChangePasswordInput), Required = true, Description = "Change the password of a user.")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK)]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest)]

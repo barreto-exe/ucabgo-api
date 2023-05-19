@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
@@ -13,10 +15,9 @@ namespace UcabGo.Infrastructure.Repositories
             this.entities = ucabgoContext.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public IQueryable<T> GetAll()
         {
-            var foo = await entities.ToListAsync();
-            return foo;
+            return entities;
         }
 
         public async Task<T> GetById(object id)
@@ -39,5 +40,6 @@ namespace UcabGo.Infrastructure.Repositories
             var currentEntity = await GetById(id);
             entities.Remove(currentEntity);
         }
+
     }
 }

@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Reflection;
-using UcabGo.Api.Utils;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Services;
 using UcabGo.Core.Interfaces;
@@ -37,6 +36,7 @@ namespace UcabGo.Api
             builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IAuthService, AuthService>();
+            builder.Services.AddTransient<IVehicleService, VehicleService>();
 
             //Swagger
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly(), opts =>

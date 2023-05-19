@@ -20,22 +20,20 @@ namespace UcabGo.Application.Services
 
         public async Task<User> GetById(int id)
         {
-            var users = unitOfWork.UserRepository.GetAll().Result;
+            var users = unitOfWork.UserRepository.GetAll();
             var user = users.Where(x => x.Id == id).FirstOrDefault();
             return user;
         }
         public async Task<User> GetByEmail(string email)
         {
-            var user = (await unitOfWork.UserRepository
-                .GetAll())
-                .FirstOrDefault(x => x.Email == email);
+            var users = unitOfWork.UserRepository.GetAll();
+            var user = users.Where(x => x.Email == email).FirstOrDefault();
             return user;
         }
         public async Task<User> GetByEmailAndPass(LoginInput login)
         {
-            var user = (await unitOfWork.UserRepository
-                .GetAll())
-                .FirstOrDefault(x => x.Email == login.Email && x.Password == login.Password);
+            var users = unitOfWork.UserRepository.GetAll();
+            var user = users.Where(x => x.Email == login.Email && x.Password == login.Password).FirstOrDefault();
             return user;
         }
         public async Task<UserDto> Create(User user)
