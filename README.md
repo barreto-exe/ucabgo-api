@@ -28,7 +28,7 @@ Clone the UCAB GO API repository to your local machine using Git.
 
 ### 3. **Create a MariaDB database**
 
-Create an empty MariaDB database and save the connection string for later in the step 7.
+Create an empty MariaDB database and save the connection string and use it when necessary in the text steps.
 
 ### 4. **Update the connection string**
 
