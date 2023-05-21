@@ -38,6 +38,7 @@ namespace UcabGo.Application.Services
                 Detail = x.Detail,
                 Latitude = x.Latitude,
                 Longitude = x.Longitude,
+                IsActive = Convert.ToBoolean(x.IsActive)
             });
 
             return itemsDtos;
