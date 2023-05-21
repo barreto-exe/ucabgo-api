@@ -115,7 +115,7 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new OkObjectResult(apiResponse);
+                    return new BadRequestObjectResult(apiResponse);
                 }
             }
 
@@ -154,7 +154,7 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new OkObjectResult(apiResponse);
+                    return new BadRequestObjectResult(apiResponse);
                 }
             }
 

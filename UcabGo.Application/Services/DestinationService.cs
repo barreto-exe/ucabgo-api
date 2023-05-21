@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
@@ -48,13 +50,30 @@ namespace UcabGo.Application.Services
             var list = unitOfWork.DestinationRepository.GetAllIncluding(x => x.UserNavigation);
             var users = unitOfWork.UserRepository.GetAll();
 
-            var result =
+            var resultDb =
                 from item in list
                 join u in users on item.User equals u.Id
                 where item.UserNavigation.Email == userEmail
                 select item;
 
-            return result.ToList();
+            var userDb = await userService.GetByEmail(userEmail);
+
+            var ucabItem = new List<Destination>()
+            {
+                new Destination()
+                {
+                    Id = 0,
+                    User = userDb.Id,
+                    Alias = "UCAB Guayana",
+                    Zone = "UCAB Guayana",
+                    Latitude = 8.2970305f,
+                    Longitude = -62.7179975f,
+                    IsActive = 0,
+                }
+            };
+
+            var result = ucabItem.Concat(resultDb.ToList());
+            return result;
         }
         public async Task<Destination> GetById(int id)
         {
@@ -75,8 +94,12 @@ namespace UcabGo.Application.Services
         }
         public async Task<DestinationDto> Update(DestinationUpdateInput input)
         {
-            var itemDb = await GetById(input.Id);
+            if(input.Id == 0)
+            {
+                throw new Exception("UCAB_DESTINATION_IS_READONLY");
+            }
 
+            var itemDb = await GetById(input.Id);
             if (itemDb == null)
             {
                 throw new Exception("DESTINATION_NOT_FOUND");
@@ -97,6 +120,11 @@ namespace UcabGo.Application.Services
         }
         public async Task<DestinationDto> Delete(string userEmail, int id)
         {
+            if (id == 0)
+            {
+                throw new Exception("UCAB_DESTINATION_IS_READONLY");
+            }
+
             var items = await GetAll(userEmail);
             var itemDb = items.FirstOrDefault(x => x.Id == id);
 
