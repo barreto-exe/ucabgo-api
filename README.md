@@ -28,7 +28,7 @@ Clone the UCAB GO API repository to your local machine using Git.
 
 ### 3. **Create a MariaDB database**
 
-Create a MariaDB database that matches the Entity Framework models of the project. You can use the Entity Framework Core tools to generate the database schema from the models.
+Create an empty MariaDB database and save the connection string for later in the step 7.
 
 ### 4. **Update the connection string**
 
@@ -42,7 +42,7 @@ Add the following keys to the `local.settings.json` file: `SqlConnectionString`,
 
 Open the UCAB GO API project in Visual Studio by navigating to the project folder and double-clicking on the `.sln` file.
 
-### 6.1 **Run Database Migrations**
+### 7. **Run Database Migrations**
 
 Before running database migrations, it's important to understand why they are necessary. Database migrations are used to keep the database schema in sync with the application's codebase.
 To sync your database with the tables that the project needs, follow these steps:
@@ -61,11 +61,11 @@ Update-Database
 
 **Note: You'll need to follow this process every time a database update is made.**
 
-### 7. **Run the project**
+### 8. **Run the project**
 
 Run the project by clicking on the "Run" button in Visual Studio. This will launch the API and allow you to start making requests.
 
-### 8. **Start making requests**
+### 9. **Start making requests**
 
 You can go to `/api/swagger/ui` to start making requests to the UCAB GO API. Refer to our documentation for more information on how to use the API.
 
