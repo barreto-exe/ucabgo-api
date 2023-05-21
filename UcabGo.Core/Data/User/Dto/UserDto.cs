@@ -13,5 +13,7 @@
         public string LastName { get; set; } = null!;
 
         public string? SecondLastName { get; set; }
+
+        public string? Phone { get; set; }
     }
 }

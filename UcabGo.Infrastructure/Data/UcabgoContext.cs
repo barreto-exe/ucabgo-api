@@ -18,6 +18,7 @@ namespace UcabGo.Infrastructure.Data
         {
         }
 
+        public virtual DbSet<Destination> Destinations { get; set; } = null!;
         public virtual DbSet<Soscontact> Soscontacts { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Vehicle> Vehicles { get; set; } = null!;
@@ -35,6 +36,31 @@ namespace UcabGo.Infrastructure.Data
         {
             modelBuilder.UseCollation("latin1_swedish_ci")
                 .HasCharSet("latin1");
+
+            modelBuilder.Entity<Destination>(entity =>
+            {
+                entity.ToTable("destinations");
+
+                entity.HasIndex(e => e.User, "User");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasComment(" ");
+
+                entity.Property(e => e.Alias).HasMaxLength(255);
+
+                entity.Property(e => e.Detail).HasMaxLength(255);
+
+                entity.Property(e => e.User).HasColumnType("int(11)");
+
+                entity.Property(e => e.Zone).HasMaxLength(255);
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.Destinations)
+                    .HasForeignKey(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("destinations_ibfk_1");
+            });
 
             modelBuilder.Entity<Soscontact>(entity =>
             {

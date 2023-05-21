@@ -7,6 +7,7 @@ namespace UcabGo.Core.Entities
     {
         public User()
         {
+            Destinations = new HashSet<Destination>();
             Soscontacts = new HashSet<Soscontact>();
             Vehicles = new HashSet<Vehicle>();
         }
@@ -20,6 +21,7 @@ namespace UcabGo.Core.Entities
         public string? SecondLastName { get; set; }
         public string? Phone { get; set; }
 
+        public virtual ICollection<Destination> Destinations { get; set; }
         public virtual ICollection<Soscontact> Soscontacts { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
