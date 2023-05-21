@@ -13,6 +13,7 @@ namespace UcabGo.Application.Interfaces
 {
     public interface ISoscontactServices
     {
+        Task<IEnumerable<SoscontactDto>> GetAllDtos(string userEmail);
         Task<IEnumerable<Soscontact>> GetAll(string userEmail);
         Task<Soscontact> GetById(int id);
         Task<SoscontactDto> Create(SoscontactInput sosContact);

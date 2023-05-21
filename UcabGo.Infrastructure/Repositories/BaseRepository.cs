@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
+using System.Linq.Expressions;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
@@ -18,6 +19,11 @@ namespace UcabGo.Infrastructure.Repositories
         public IQueryable<T> GetAll()
         {
             return entities;
+        }
+
+        public IQueryable<T> GetAllIncluding(Expression<Func<T, object>> includeProperty)
+        {
+            return entities.Include(includeProperty);
         }
 
         public async Task<T> GetById(object id)

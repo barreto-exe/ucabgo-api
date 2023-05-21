@@ -2,7 +2,7 @@ using AzureFunctions.Extensions.Swashbuckle;
 using AzureFunctions.Extensions.Swashbuckle.Attribute;
 using System.Net.Http;
 
-namespace UcabGo.Api.Functions.Swagger
+namespace UcabGo.Api.Functions
 {
     public static class SwaggerFunctions
     {

@@ -1,24 +1,34 @@
-﻿using UcabGo.Application.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Inputs;
 
-namespace UcabGo.Api.Functions.User
+namespace UcabGo.Api.Functions
 {
-    public class ChangePhone
+    public class User
     {
         private readonly ApiResponse apiResponse;
         private readonly IUserService userService;
-        public ChangePhone(ApiResponse apiResponse, IUserService userService)
+        public User(ApiResponse apiResponse, IUserService userService)
         {
             this.apiResponse = apiResponse;
             this.userService = userService;
         }
-
+        #region ChangePhone
         [FunctionName("ChangePhone")]
         [OpenApiOperation(tags: new[] { "User" })]
-        [OpenApiRequestBody(contentType: "application/json", bodyType: typeof(PhoneInput), Required = true, Description = "Change users phone.")]
-        [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        public async Task<IActionResult> Run(
+        [OpenApiRequestBody(
+            contentType: "application/json", 
+            bodyType: typeof(PhoneInput), 
+            Required = true, 
+            Description = "Change users phone.")]
+        [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
+        #endregion
+        public async Task<IActionResult> ChangePhone(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/phone")] HttpRequest req, ILogger log)
         {
             async Task<IActionResult> Action(PhoneInput input)
@@ -31,5 +41,4 @@ namespace UcabGo.Api.Functions.User
             return await RequestHandler.Handle<PhoneInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
     }
-
 }

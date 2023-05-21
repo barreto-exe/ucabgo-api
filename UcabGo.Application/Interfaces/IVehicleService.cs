@@ -6,6 +6,7 @@ namespace UcabGo.Application.Interfaces
 {
     public interface IVehicleService
     {
+        Task<IEnumerable<VehicleDto>> GetAllDtos(string userEmail);
         Task<IEnumerable<Vehicle>> GetAll(string userEmail);
         Task<Vehicle> GetById(int id);
         Task<VehicleDto> Create(VehicleInput vehicle);

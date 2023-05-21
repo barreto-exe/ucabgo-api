@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
+using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Data.Vehicle.Inputs;
 using UcabGo.Core.Entities;
@@ -26,9 +27,21 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
+        public async Task<IEnumerable<SoscontactDto>> GetAllDtos(string userEmail)
+        {
+            var items = await GetAll(userEmail);
+            var itemsDtos = items.Select(x => new SoscontactDto
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Phone = x.Phone,
+            });
+
+            return itemsDtos;
+        }
         public async Task<IEnumerable<Soscontact>> GetAll(string userEmail)
         {
-            var list = unitOfWork.SoscontactRepository.GetAll();
+            var list = unitOfWork.SoscontactRepository.GetAllIncluding(x => x.UserNavigation);
             var users = unitOfWork.UserRepository.GetAll();
 
             var result =
@@ -60,6 +73,11 @@ namespace UcabGo.Application.Services
         {
             var itemDb = await GetById(sosContact.Id);
 
+            if(itemDb == null)
+            {
+                throw new Exception("SOSCONTACT_NOT_FOUND");
+            }
+
             itemDb.Name = sosContact.Name;
             itemDb.Phone = sosContact.Phone;
 
@@ -85,5 +103,6 @@ namespace UcabGo.Application.Services
             var dto = mapper.Map<SoscontactDto>(itemDb);
             return dto;
         }
+
     }
 }

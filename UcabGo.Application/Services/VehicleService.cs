@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Data.Vehicle.Inputs;
 using UcabGo.Core.Entities;
@@ -26,9 +27,24 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
+        public async Task<IEnumerable<VehicleDto>> GetAllDtos(string userEmail)
+        {
+            var items = await GetAll(userEmail);
+            var itemsDtos = items.Select(v => new VehicleDto
+            {
+                Id = v.Id,
+                Brand = v.Brand,
+                Model = v.Model,
+                Plate = v.Plate,
+                Color = v.Color,
+                Owner = mapper.Map<UserDto>(v.UserNavigation),
+            });
+
+            return itemsDtos;
+        }
         public async Task<IEnumerable<Vehicle>> GetAll(string userEmail)
         {
-            var vehicles = unitOfWork.VehicleRepository.GetAll();
+            var vehicles = unitOfWork.VehicleRepository.GetAllIncluding(x => x.UserNavigation);
             var users = unitOfWork.UserRepository.GetAll();
 
             var result = 
@@ -39,8 +55,6 @@ namespace UcabGo.Application.Services
 
             return result.ToList();
         }
-
-
         public async Task<Vehicle> GetById(int id)
         {
             var vehicle = await unitOfWork.VehicleRepository.GetById(id);
@@ -57,11 +71,17 @@ namespace UcabGo.Application.Services
 
             var vehicleDb = await GetById(vehicle.Id);
             var dto = mapper.Map<VehicleDto>(vehicleDb);
+            dto.Owner = mapper.Map<UserDto>(vehicleDb.UserNavigation);
             return dto;
         }
         public async Task<VehicleDto> Update(VehicleUpdateInput vehicle)
         {
             var vehicleDb = await GetById(vehicle.Id);
+
+            if(vehicleDb == null)
+            {
+                throw new Exception("VEHICLE_NOT_FOUND");
+            }
 
             vehicleDb.Brand = vehicle.Brand;
             vehicleDb.Model = vehicle.Model;
