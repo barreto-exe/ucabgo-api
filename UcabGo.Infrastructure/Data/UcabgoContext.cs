@@ -22,6 +22,14 @@ namespace UcabGo.Infrastructure.Data
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Vehicle> Vehicles { get; set; } = null!;
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
+                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
