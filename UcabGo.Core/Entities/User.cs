@@ -1,4 +1,7 @@
-﻿namespace UcabGo.Core.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace UcabGo.Core.Entities
 {
     public partial class User : BaseEntity
     {
@@ -8,6 +11,7 @@
             Vehicles = new HashSet<Vehicle>();
         }
 
+        public int Id { get; set; }
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public string Name { get; set; } = null!;

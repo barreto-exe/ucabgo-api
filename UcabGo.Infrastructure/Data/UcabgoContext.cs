@@ -1,10 +1,18 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using UcabGo.Core.Entities;
+using UcabGo.Infrastructure;
 
 namespace UcabGo.Infrastructure.Data
 {
     public partial class UcabgoContext : DbContext
     {
+        public UcabgoContext()
+        {
+        }
+
         public UcabgoContext(DbContextOptions<UcabgoContext> options)
             : base(options)
         {
@@ -14,6 +22,7 @@ namespace UcabGo.Infrastructure.Data
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Vehicle> Vehicles { get; set; } = null!;
 
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.UseCollation("latin1_swedish_ci")
@@ -21,23 +30,17 @@ namespace UcabGo.Infrastructure.Data
 
             modelBuilder.Entity<Soscontact>(entity =>
             {
-                entity.HasKey(e => new { e.Id })
-                    .HasName("PRIMARY")
-                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-
                 entity.ToTable("soscontact");
 
                 entity.HasIndex(e => e.User, "IdUser");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Name).HasMaxLength(255);
 
                 entity.Property(e => e.Phone).HasMaxLength(20);
+
+                entity.Property(e => e.User).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Soscontacts)
@@ -69,19 +72,11 @@ namespace UcabGo.Infrastructure.Data
 
             modelBuilder.Entity<Vehicle>(entity =>
             {
-                entity.HasKey(e => new { e.Id })
-                    .HasName("PRIMARY")
-                    .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
-
                 entity.ToTable("vehicle");
 
                 entity.HasIndex(e => e.User, "IdUser");
 
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedOnAdd();
-
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.Brand).HasMaxLength(100);
 
@@ -90,6 +85,8 @@ namespace UcabGo.Infrastructure.Data
                 entity.Property(e => e.Model).HasMaxLength(100);
 
                 entity.Property(e => e.Plate).HasMaxLength(20);
+
+                entity.Property(e => e.User).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Vehicles)

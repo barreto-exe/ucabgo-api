@@ -1,7 +1,11 @@
-﻿namespace UcabGo.Core.Entities
+﻿using System;
+using System.Collections.Generic;
+
+namespace UcabGo.Core.Entities
 {
     public partial class Soscontact : BaseEntity
     {
+        public int Id { get; set; }
         public int User { get; set; }
         public string Name { get; set; } = null!;
         public string Phone { get; set; } = null!;
