@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using UcabGo.Core.Data.Auth.Inputs;
+using UcabGo.Core.Data.Destinations.Dtos;
+using UcabGo.Core.Data.Destinations.Inputs;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
 using UcabGo.Core.Data.User.Dto;
@@ -24,6 +26,10 @@ namespace UcabGo.Core.Mapping
             CreateMap<Soscontact, SoscontactDto>();
             CreateMap<SoscontactDto, Soscontact>();
             CreateMap<SoscontactInput, Soscontact>();
+
+            CreateMap<Destination, DestinationDto>();
+            CreateMap<DestinationDto, Destination>();
+            CreateMap<DestinationInput, Destination>();
         }
     }
 }

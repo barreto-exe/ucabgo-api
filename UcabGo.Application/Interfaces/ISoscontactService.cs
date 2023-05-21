@@ -11,7 +11,7 @@ using UcabGo.Core.Entities;
 
 namespace UcabGo.Application.Interfaces
 {
-    public interface ISoscontactServices
+    public interface ISoscontactService
     {
         Task<IEnumerable<SoscontactDto>> GetAllDtos(string userEmail);
         Task<IEnumerable<Soscontact>> GetAll(string userEmail);

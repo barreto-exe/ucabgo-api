@@ -5,48 +5,48 @@ using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
-using UcabGo.Core.Data.Soscontact.Dto;
-using UcabGo.Core.Data.Soscontact.Inputs;
+using UcabGo.Core.Data.Destinations.Dtos;
+using UcabGo.Core.Data.Destinations.Inputs;
 using UcabGo.Core.Data.Vehicle.Dtos;
 
 namespace UcabGo.Api.Functions
 {
-    public class Soscontact
+    public class Destination
     {
         private readonly ApiResponse apiResponse;
-        private readonly ISoscontactService services;
-        public Soscontact(ApiResponse apiResponse, ISoscontactService services)
+        private readonly IDestinationService services;
+        public Destination(ApiResponse apiResponse, IDestinationService services)
         {
             this.apiResponse = apiResponse;
             this.services = services;
         }
 
 
-        #region CreateSoscontact
-        [FunctionName("CreateSoscontact")]
-        [OpenApiOperation(tags: new[] { "SosContact" })]
+        #region CreateDestination
+        [FunctionName("CreateDestination")]
+        [OpenApiOperation(tags: new[] { "Destination" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json", 
-            bodyType: typeof(SoscontactInput), 
+            bodyType: typeof(DestinationInput), 
             Required = true, 
-            Description = "Create a user's SOS contact.")]
+            Description = "Create a user's destination.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json", 
-            bodyType: typeof(SoscontactDto), 
-            Description = "The info of the SOS contact.")]
+            bodyType: typeof(DestinationDto), 
+            Description = "The info of the user's destination.")]
         #endregion
-        public async Task<IActionResult> CreateSoscontact(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/sos-contacts")] HttpRequest req, ILogger log)
+        public async Task<IActionResult> CreateDestination(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/destinations")] HttpRequest req, ILogger log)
         {
-            async Task<IActionResult> Action(SoscontactInput input)
+            async Task<IActionResult> Action(DestinationInput input)
             {
                 try
                 {
                     var dto = await services.Create(input);
                     apiResponse.Data = dto;
-                    apiResponse.Message = "SOSCONTACT_CREATED";
+                    apiResponse.Message = "DESTINATION_CREATED";
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -56,28 +56,28 @@ namespace UcabGo.Api.Functions
                 }
             }
 
-            return await RequestHandler.Handle<SoscontactInput>(req, log, apiResponse, Action, isAnonymous: false);
+            return await RequestHandler.Handle<DestinationInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 
-        #region GetSoscontacts
-        [FunctionName("GetSoscontacts")]
-        [OpenApiOperation(tags: new[] { "SosContact" })]
+        #region GetDestination
+        [FunctionName("GetDestination")]
+        [OpenApiOperation(tags: new[] { "Destination" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(IEnumerable<SoscontactDto>),
-            Description = "A list of the data of user's SOS contacts.")]
+            bodyType: typeof(IEnumerable<DestinationDto>),
+            Description = "A list of the data of user's destinations.")]
         #endregion
-        public async Task<IActionResult> GetSoscontacts(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/sos-contacts")] HttpRequest req, ILogger log)
+        public async Task<IActionResult> GetDestinations(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/destinations")] HttpRequest req, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
             {
                 var list = await services.GetAllDtos(input.Email);
                 apiResponse.Data = list;
-                apiResponse.Message = "SOSCONTACTS_FOUND";
+                apiResponse.Message = "DESTINATIONS_FOUND";
                 return new OkObjectResult(apiResponse);
             }
 
@@ -85,31 +85,31 @@ namespace UcabGo.Api.Functions
         }
 
 
-        #region UpdateSoscontacts
-        [FunctionName("UpdateSoscontacts")]
-        [OpenApiOperation(tags: new[] { "SosContact" })]
+        #region UpdateDestination
+        [FunctionName("UpdateDestination")]
+        [OpenApiOperation(tags: new[] { "Destination" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json",
-            bodyType: typeof(SoscontactUpdateInput),
+            bodyType: typeof(DestinationUpdateInput),
             Required = true,
-            Description = "Updates an user's SOS contact info.")]
+            Description = "Updates an user's destination info.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(SoscontactDto) ,
-            Description = "The updated SOS contact info.")]
+            bodyType: typeof(DestinationDto) ,
+            Description = "The updated destination info.")]
         #endregion
-        public async Task<IActionResult> UpdateSoscontacts(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users/sos-contacts")] HttpRequest req, ILogger log)
+        public async Task<IActionResult> UpdateDestination(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users/destinations")] HttpRequest req, ILogger log)
         {
-            async Task<IActionResult> Action(SoscontactUpdateInput input)
+            async Task<IActionResult> Action(DestinationUpdateInput input)
             {
                 try
                 {
                     var dto = await services.Update(input);
                     apiResponse.Data = dto;
-                    apiResponse.Message = "SOSCONTACT_UPDATED";
+                    apiResponse.Message = "DESTINATION_UPDATED";
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -119,35 +119,35 @@ namespace UcabGo.Api.Functions
                 }
             }
 
-            return await RequestHandler.Handle<SoscontactUpdateInput>(req, log, apiResponse, Action, isAnonymous: false);
+            return await RequestHandler.Handle<DestinationUpdateInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 
-        #region DeleteSoscontact
-        [FunctionName("DeleteSoscontact")]
-        [OpenApiOperation(tags: new[] { "SosContact" })]
+        #region DeleteDestination
+        [FunctionName("DeleteDestination")]
+        [OpenApiOperation(tags: new[] { "Destination" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiParameter(
             name: "id",
             In = ParameterLocation.Path,
             Required = true,
             Type = typeof(int),
-            Description = "The ID of the SOS contact to delete.")]
+            Description = "The ID of the destination to delete.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(SoscontactDto),
-            Description = "Info of the deleted SOS contact.")]
+            bodyType: typeof(DestinationDto),
+            Description = "Info of the deleted destination.")]
         #endregion
-        public async Task<IActionResult> DeleteSoscontact(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "user/sos-contacts/{id:int}")] HttpRequest req, int id, ILogger log)
+        public async Task<IActionResult> DeleteDestination(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "delete", Route = "user/destinations/{id:int}")] HttpRequest req, int id, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
             {
                 try
                 {
                     var dto = await services.Delete(input.Email, id);
-                    apiResponse.Message = "SOSCONTACT_DELETED";
+                    apiResponse.Message = "DESTINATION_DELETED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }

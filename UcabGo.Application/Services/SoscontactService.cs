@@ -15,12 +15,12 @@ using UcabGo.Core.Interfaces;
 
 namespace UcabGo.Application.Services
 {
-    public class SoscontactServices : ISoscontactServices
+    public class SoscontactService : ISoscontactService
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IUserService userService;
         private readonly IMapper mapper;
-        public SoscontactServices(IUnitOfWork unitOfWork, IUserService userService, IMapper mapper)
+        public SoscontactService(IUnitOfWork unitOfWork, IUserService userService, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.userService = userService;
@@ -45,10 +45,10 @@ namespace UcabGo.Application.Services
             var users = unitOfWork.UserRepository.GetAll();
 
             var result =
-                from v in list
-                join u in users on v.User equals u.Id
-                where v.UserNavigation.Email == userEmail
-                select v;
+                from item in list
+                join u in users on item.User equals u.Id
+                where item.UserNavigation.Email == userEmail
+                select item;
 
             return result.ToList();
         }
