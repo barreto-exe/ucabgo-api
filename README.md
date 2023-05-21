@@ -30,19 +30,15 @@ Clone the UCAB GO API repository to your local machine using Git.
 
 Create an empty MariaDB database and save the connection string and use it when necessary in the text steps.
 
-### 4. **Update the connection string**
-
-Update the connection string in the `local.settings.json` file to point to your MariaDB database.
-
-### 5. **Add the required keys to `local.settings.json`**
+### 4. **Add the required keys to `local.settings.json`**
 
 Add the following keys to the `local.settings.json` file: `SqlConnectionString`, `JWT_SECRET`, `JWT_ISS`, `JWT_AUD`. These keys are required for the API to function properly.
 
-### 6. **Open the project in Visual Studio**
+### 5. **Open the project in Visual Studio**
 
 Open the UCAB GO API project in Visual Studio by navigating to the project folder and double-clicking on the `.sln` file.
 
-### 7. **Run Database Migrations**
+### 6. **Run Database Migrations**
 
 Before running database migrations, it's important to understand why they are necessary. Database migrations are used to keep the database schema in sync with the application's codebase.
 To sync your database with the tables that the project needs, follow these steps:
@@ -61,11 +57,11 @@ Update-Database
 
 **Note: You'll need to follow this process every time a database update is made.**
 
-### 8. **Run the project**
+### 7. **Run the project**
 
 Run the project by clicking on the "Run" button in Visual Studio. This will launch the API and allow you to start making requests.
 
-### 9. **Start making requests**
+### 8. **Start making requests**
 
 You can go to `/api/swagger/ui` to start making requests to the UCAB GO API. Refer to our documentation for more information on how to use the API.
 
