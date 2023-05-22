@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
-using UcabGo.Core.Data.Vehicle.Dtos;
 
 namespace UcabGo.Api.Functions
 {
@@ -27,14 +23,14 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "SosContact" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(SoscontactInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(SoscontactInput),
+            Required = true,
             Description = "Create a user's SOS contact.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
-            contentType: "application/json", 
-            bodyType: typeof(SoscontactDto), 
+            contentType: "application/json",
+            bodyType: typeof(SoscontactDto),
             Description = "The info of the SOS contact.")]
         #endregion
         public async Task<IActionResult> CreateSoscontact(
@@ -97,11 +93,11 @@ namespace UcabGo.Api.Functions
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(SoscontactDto) ,
+            bodyType: typeof(SoscontactDto),
             Description = "The updated SOS contact info.")]
         #endregion
         public async Task<IActionResult> UpdateSoscontacts(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "users/sos-contacts")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/sos-contacts")] HttpRequest req, ILogger log)
         {
             async Task<IActionResult> Action(SoscontactUpdateInput input)
             {

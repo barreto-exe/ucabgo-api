@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 using UcabGo.Core.Entities;
-using UcabGo.Infrastructure;
 
 namespace UcabGo.Infrastructure.Data
 {

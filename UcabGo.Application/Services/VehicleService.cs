@@ -1,11 +1,4 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
@@ -47,7 +40,7 @@ namespace UcabGo.Application.Services
             var vehicles = unitOfWork.VehicleRepository.GetAllIncluding(x => x.UserNavigation);
             var users = unitOfWork.UserRepository.GetAll();
 
-            var result = 
+            var result =
                 from v in vehicles
                 join u in users on v.User equals u.Id
                 where v.UserNavigation.Email == userEmail
@@ -63,7 +56,7 @@ namespace UcabGo.Application.Services
         public async Task<VehicleDto> Create(VehicleInput vehicleInput)
         {
             var vehicle = mapper.Map<Vehicle>(vehicleInput);
-            
+
             int idUser = (await userService.GetByEmail(vehicleInput.Email)).Id;
             vehicle.User = idUser;
             await unitOfWork.VehicleRepository.Add(vehicle);
@@ -78,7 +71,7 @@ namespace UcabGo.Application.Services
         {
             var vehicleDb = await GetById(vehicle.Id);
 
-            if(vehicleDb == null)
+            if (vehicleDb == null)
             {
                 throw new Exception("VEHICLE_NOT_FOUND");
             }
@@ -99,7 +92,7 @@ namespace UcabGo.Application.Services
             var usersVehicles = await GetAll(userEmail);
             var vehicle = usersVehicles.FirstOrDefault(v => v.Id == id);
 
-            if(vehicle == null)
+            if (vehicle == null)
             {
                 throw new Exception("VEHICLE_NOT_FOUND");
             }

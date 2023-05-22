@@ -33,11 +33,11 @@ namespace UcabGo.Api
             builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             builder.Services.AddTransient<ApiResponse>();
 
-            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IVehicleService, VehicleService>();
-            builder.Services.AddTransient<ISoscontactService,  SoscontactService>();
+            builder.Services.AddTransient<ISoscontactService, SoscontactService>();
             builder.Services.AddTransient<IDestinationService, DestinationService>();
 
             //Swagger

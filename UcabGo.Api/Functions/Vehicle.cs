@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Vehicle.Dtos;
@@ -25,9 +22,9 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "Vehicle", "User" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
-            bodyType: typeof(IEnumerable<VehicleDto>), 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(IEnumerable<VehicleDto>),
             Description = "Get the user's vehicles.")]
         #endregion
         public async Task<IActionResult> GetVehicles(
@@ -49,15 +46,15 @@ namespace UcabGo.Api.Functions
         [FunctionName("CreateVehicle")]
         [OpenApiOperation(tags: new[] { "Vehicle", "User" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiRequestBody(contentType: 
-            "application/json", 
-            bodyType: typeof(VehicleInput), 
-            Required = true, 
+        [OpenApiRequestBody(contentType:
+            "application/json",
+            bodyType: typeof(VehicleInput),
+            Required = true,
             Description = "Creates a user's vehicle.")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
-            bodyType: typeof(VehicleDto), 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(VehicleDto),
             Description = "The created vehicle.")]
         #endregion
         public async Task<IActionResult> CreateVehicle(
@@ -79,13 +76,13 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "User", "Vehicle" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(VehicleUpdateInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(VehicleUpdateInput),
+            Required = true,
             Description = "Updates a user's vehicle.")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
             bodyType: typeof(VehicleDto),
             Description = "The data of the updated vehicle.")]
         #endregion
@@ -101,7 +98,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = vehicle;
                     return new OkObjectResult(apiResponse);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
                     return new BadRequestObjectResult(apiResponse);
@@ -117,15 +114,15 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "User", "Vehicle" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiParameter(
-            name: "id", 
-            In = ParameterLocation.Path, 
-            Required = true, 
-            Type = typeof(int), 
+            name: "id",
+            In = ParameterLocation.Path,
+            Required = true,
+            Type = typeof(int),
             Description = "The ID of the vehicle to delete.")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
-            bodyType: typeof(VehicleDto), 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(VehicleDto),
             Description = "Info of the deleted vehicle.")]
         #endregion
         public async Task<IActionResult> DeleteVehicle(

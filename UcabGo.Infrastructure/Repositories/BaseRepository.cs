@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;

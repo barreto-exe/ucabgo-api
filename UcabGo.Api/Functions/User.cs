@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Application.Interfaces;
+﻿using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Inputs;
 
 namespace UcabGo.Api.Functions
@@ -22,9 +17,9 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "User" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(PhoneInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(PhoneInput),
+            Required = true,
             Description = "Change users phone.")]
         [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
         #endregion

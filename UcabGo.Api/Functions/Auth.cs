@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Application.Interfaces;
+﻿using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
@@ -25,9 +20,9 @@ namespace UcabGo.Api.Functions
         [OpenApiOperation(tags: new[] { "Auth" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(ChangePasswordInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(ChangePasswordInput),
+            Required = true,
             Description = "Change the password of a user.")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK)]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.BadRequest)]
@@ -57,14 +52,14 @@ namespace UcabGo.Api.Functions
         [FunctionName("Login")]
         [OpenApiOperation(tags: new[] { "Auth" })]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(LoginInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(LoginInput),
+            Required = true,
             Description = "The user login details")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
-            bodyType: typeof(LoginDto), 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(LoginDto),
             Description = "The login details of the registered user")]
         #endregion
         public async Task<IActionResult> Login(
@@ -93,14 +88,14 @@ namespace UcabGo.Api.Functions
         [FunctionName("Register")]
         [OpenApiOperation(tags: new[] { "Auth" })]
         [OpenApiRequestBody(
-            contentType: "application/json", 
-            bodyType: typeof(RegisterInput), 
-            Required = true, 
+            contentType: "application/json",
+            bodyType: typeof(RegisterInput),
+            Required = true,
             Description = "The user registration details")]
         [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK, 
-            contentType: "application/json", 
-            bodyType: typeof(LoginDto), 
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(LoginDto),
             Description = "The login details of the registered user")]
         #endregion
         public async Task<IActionResult> Register(

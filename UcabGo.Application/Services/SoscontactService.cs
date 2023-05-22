@@ -1,15 +1,7 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
-using UcabGo.Core.Data.User.Dto;
-using UcabGo.Core.Data.Vehicle.Dtos;
-using UcabGo.Core.Data.Vehicle.Inputs;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -73,7 +65,7 @@ namespace UcabGo.Application.Services
         {
             var itemDb = await GetById(sosContact.Id);
 
-            if(itemDb == null)
+            if (itemDb == null)
             {
                 throw new Exception("SOSCONTACT_NOT_FOUND");
             }
