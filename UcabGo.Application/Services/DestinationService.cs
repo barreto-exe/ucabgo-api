@@ -45,7 +45,7 @@ namespace UcabGo.Application.Services
                 from item in list
                 where item.UserNavigation.Email == userEmail
                 select item;
-            return result;
+            return result.ToList();
         }
         public async Task<Destination> GetById(int id)
         {
