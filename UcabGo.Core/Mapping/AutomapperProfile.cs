@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using UcabGo.Core.Data.Auth.Inputs;
-using UcabGo.Core.Data.Destinations.Dtos;
-using UcabGo.Core.Data.Destinations.Inputs;
+using UcabGo.Core.Data.Destination.Dtos;
+using UcabGo.Core.Data.Destination.Inputs;
+using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
 using UcabGo.Core.Data.User.Dto;
@@ -30,6 +32,13 @@ namespace UcabGo.Core.Mapping
             CreateMap<Destination, DestinationDto>();
             CreateMap<DestinationDto, Destination>();
             CreateMap<DestinationInput, Destination>();
+
+            CreateMap<Ride, RideDto>()
+                .ForMember(dest => dest.Driver, opt => opt.Ignore())
+                .ForMember(dest => dest.Vehicle, opt => opt.Ignore())
+                .ForMember(dest => dest.Destination, opt => opt.Ignore());
+            CreateMap<RideDto, Ride>();
+            CreateMap<RideInput, Ride>();
         }
     }
 }

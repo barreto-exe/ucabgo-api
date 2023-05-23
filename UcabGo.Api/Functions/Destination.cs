@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
-using UcabGo.Core.Data.Destinations.Dtos;
-using UcabGo.Core.Data.Destinations.Inputs;
+using UcabGo.Core.Data.Destination.Dtos;
+using UcabGo.Core.Data.Destination.Inputs;
 
 namespace UcabGo.Api.Functions
 {

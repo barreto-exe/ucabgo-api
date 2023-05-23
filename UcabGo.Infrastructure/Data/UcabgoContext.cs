@@ -15,6 +15,9 @@ namespace UcabGo.Infrastructure.Data
         }
 
         public virtual DbSet<Destination> Destinations { get; set; } = null!;
+        public virtual DbSet<Location> Locations { get; set; } = null!;
+        public virtual DbSet<Passenger> Passengers { get; set; } = null!;
+        public virtual DbSet<Ride> Rides { get; set; } = null!;
         public virtual DbSet<Soscontact> Soscontacts { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Vehicle> Vehicles { get; set; } = null!;
@@ -47,6 +50,10 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Detail).HasMaxLength(255);
 
+                entity.Property(e => e.IsActive)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
                 entity.Property(e => e.User).HasColumnType("int(11)");
 
                 entity.Property(e => e.Zone).HasMaxLength(255);
@@ -56,6 +63,118 @@ namespace UcabGo.Infrastructure.Data
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("destinations_ibfk_1");
+            });
+
+            modelBuilder.Entity<Location>(entity =>
+            {
+                entity.ToTable("locations");
+
+                entity.HasIndex(e => e.User, "User");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Alias).HasMaxLength(255);
+
+                entity.Property(e => e.Detail).HasMaxLength(255);
+
+                entity.Property(e => e.User).HasColumnType("int(11)");
+
+                entity.Property(e => e.Zone).HasMaxLength(255);
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.Locations)
+                    .HasForeignKey(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("locations_ibfk_1");
+            });
+
+            modelBuilder.Entity<Passenger>(entity =>
+            {
+                entity.ToTable("passenger");
+
+                entity.HasIndex(e => e.InitialLocation, "InitialLocation");
+
+                entity.HasIndex(e => e.Passenger1, "Passenger");
+
+                entity.HasIndex(e => e.Ride, "Ride");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.InitialLocation).HasColumnType("int(11)");
+
+                entity.Property(e => e.IsAccepted)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.Passenger1)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("Passenger");
+
+                entity.Property(e => e.Ride).HasColumnType("int(11)");
+
+                entity.Property(e => e.TimeAccepted).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeSolicited).HasColumnType("datetime");
+
+                entity.HasOne(d => d.InitialLocationNavigation)
+                    .WithMany(p => p.Passengers)
+                    .HasForeignKey(d => d.InitialLocation)
+                    .HasConstraintName("passenger_ibfk_3");
+
+                entity.HasOne(d => d.Passenger1Navigation)
+                    .WithMany(p => p.Passengers)
+                    .HasForeignKey(d => d.Passenger1)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("passenger_ibfk_2");
+
+                entity.HasOne(d => d.RideNavigation)
+                    .WithMany(p => p.Passengers)
+                    .HasForeignKey(d => d.Ride)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("passenger_ibfk_1");
+            });
+
+            modelBuilder.Entity<Ride>(entity =>
+            {
+                entity.ToTable("ride");
+
+                entity.HasIndex(e => e.Destination, "Destination");
+
+                entity.HasIndex(e => e.Driver, "Driver");
+
+                entity.HasIndex(e => e.Vehicle, "Vehicle");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Destination).HasColumnType("int(11)");
+
+                entity.Property(e => e.Driver).HasColumnType("int(11)");
+
+                entity.Property(e => e.IsAvailable)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
+                entity.Property(e => e.SeatQuantity).HasColumnType("int(11)");
+
+                entity.Property(e => e.Vehicle).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.DestinationNavigation)
+                    .WithMany(p => p.Rides)
+                    .HasForeignKey(d => d.Destination)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ride_ibfk_3");
+
+                entity.HasOne(d => d.DriverNavigation)
+                    .WithMany(p => p.Rides)
+                    .HasForeignKey(d => d.Driver)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ride_ibfk_1");
+
+                entity.HasOne(d => d.VehicleNavigation)
+                    .WithMany(p => p.Rides)
+                    .HasForeignKey(d => d.Vehicle)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ride_ibfk_2");
             });
 
             modelBuilder.Entity<Soscontact>(entity =>

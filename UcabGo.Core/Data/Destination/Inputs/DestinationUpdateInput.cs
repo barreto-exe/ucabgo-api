@@ -1,4 +1,4 @@
-﻿namespace UcabGo.Core.Data.Destinations.Inputs
+﻿namespace UcabGo.Core.Data.Destination.Inputs
 {
     public class DestinationUpdateInput : BaseRequest
     {

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Destinations.Dtos;
-using UcabGo.Core.Data.Destinations.Inputs;
+using UcabGo.Core.Data.Destination.Dtos;
+using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
@@ -67,6 +67,7 @@ namespace UcabGo.Application.Services
 
             var itemDb = await GetById(item.Id);
             var dto = mapper.Map<DestinationDto>(itemDb);
+            dto.Driver = mapper.Map<UserDto>(item.UserNavigation);
             return dto;
 
             static bool IsUCABGuayana(Destination input)

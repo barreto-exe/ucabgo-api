@@ -5,6 +5,9 @@
         public User()
         {
             Destinations = new HashSet<Destination>();
+            Locations = new HashSet<Location>();
+            Passengers = new HashSet<Passenger>();
+            Rides = new HashSet<Ride>();
             Soscontacts = new HashSet<Soscontact>();
             Vehicles = new HashSet<Vehicle>();
         }
@@ -19,6 +22,9 @@
         public string? Phone { get; set; }
 
         public virtual ICollection<Destination> Destinations { get; set; }
+        public virtual ICollection<Location> Locations { get; set; }
+        public virtual ICollection<Passenger> Passengers { get; set; }
+        public virtual ICollection<Ride> Rides { get; set; }
         public virtual ICollection<Soscontact> Soscontacts { get; set; }
         public virtual ICollection<Vehicle> Vehicles { get; set; }
     }

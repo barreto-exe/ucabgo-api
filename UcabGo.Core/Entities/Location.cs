@@ -1,10 +1,10 @@
 ﻿namespace UcabGo.Core.Entities
 {
-    public partial class Destination : BaseEntity
+    public partial class Location : BaseEntity
     {
-        public Destination()
+        public Location()
         {
-            Rides = new HashSet<Ride>();
+            Passengers = new HashSet<Passenger>();
         }
 
         public int Id { get; set; }
@@ -14,9 +14,8 @@
         public string? Detail { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
-        public ulong? IsActive { get; set; }
 
         public virtual User UserNavigation { get; set; } = null!;
-        public virtual ICollection<Ride> Rides { get; set; }
+        public virtual ICollection<Passenger> Passengers { get; set; }
     }
 }

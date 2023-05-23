@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UcabGo.Infrastructure.Repositories
 {
@@ -22,6 +23,18 @@ namespace UcabGo.Infrastructure.Repositories
         public IQueryable<T> GetAllIncluding(Expression<Func<T, object>> includeProperty)
         {
             return entities.Include(includeProperty);
+        }
+
+        public IQueryable<T> GetAllIncluding(params Expression<Func<T, object>>[] navigationProperties)
+        {
+            IQueryable<T> query = entities;
+
+            foreach (var navigationProperty in navigationProperties)
+            {
+                query = query.Include(navigationProperty);
+            }
+
+            return query;
         }
 
         public async Task<T> GetById(object id)

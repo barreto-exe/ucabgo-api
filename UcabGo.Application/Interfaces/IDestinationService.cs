@@ -1,5 +1,5 @@
-﻿using UcabGo.Core.Data.Destinations.Dtos;
-using UcabGo.Core.Data.Destinations.Inputs;
+﻿using UcabGo.Core.Data.Destination.Dtos;
+using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Entities;
 
 namespace UcabGo.Application.Interfaces

@@ -39,6 +39,7 @@ namespace UcabGo.Api
             builder.Services.AddTransient<IVehicleService, VehicleService>();
             builder.Services.AddTransient<ISoscontactService, SoscontactService>();
             builder.Services.AddTransient<IDestinationService, DestinationService>();
+            builder.Services.AddTransient<IRideService, RideService>();
 
             //Swagger
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly(), opts =>

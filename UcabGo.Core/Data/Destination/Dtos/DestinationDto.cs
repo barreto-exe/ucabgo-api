@@ -1,6 +1,6 @@
 ﻿using UcabGo.Core.Data.User.Dto;
 
-namespace UcabGo.Core.Data.Destinations.Dtos
+namespace UcabGo.Core.Data.Destination.Dtos
 {
     public class DestinationDto
     {

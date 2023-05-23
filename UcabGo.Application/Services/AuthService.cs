@@ -4,7 +4,7 @@ using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
-using UcabGo.Core.Data.Destinations.Inputs;
+using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UcabGo.Infrastructure.Data;
 
@@ -10,9 +11,10 @@ using UcabGo.Infrastructure.Data;
 namespace UcabGo.Infrastructure.Migrations
 {
     [DbContext(typeof(UcabgoContext))]
-    partial class UcabgoContextModelSnapshot : ModelSnapshot
+    [Migration("20230522003900_AddRideRelatedEntities")]
+    partial class AddRideRelatedEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,7 +153,7 @@ namespace UcabGo.Infrastructure.Migrations
                     b.Property<int>("Driver")
                         .HasColumnType("int(11)");
 
-                    b.Property<ulong>("IsAvailable")
+                    b.Property<ulong>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit(1)")
                         .HasDefaultValueSql("b'0'");
