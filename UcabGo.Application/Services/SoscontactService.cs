@@ -22,13 +22,7 @@ namespace UcabGo.Application.Services
         public async Task<IEnumerable<SoscontactDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
-            var itemsDtos = items.Select(x => new SoscontactDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-                Phone = x.Phone,
-            });
-
+            var itemsDtos = mapper.Map<IEnumerable<SoscontactDto>>(items);
             return itemsDtos;
         }
         public async Task<IEnumerable<Soscontact>> GetAll(string userEmail)

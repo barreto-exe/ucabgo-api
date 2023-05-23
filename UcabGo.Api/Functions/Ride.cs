@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data;
 using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Data.Ride.Inputs;
 
 namespace UcabGo.Api.Functions
@@ -17,6 +19,37 @@ namespace UcabGo.Api.Functions
         {
             this.apiResponse = response;
             this.rideService = rideService;
+        }
+
+
+        #region GetRides
+        [FunctionName("GetRides")]
+        [OpenApiOperation(tags: new[] { "Ride" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiParameter(
+            name: nameof(RideFilter.OnlyAvailable),
+            In = ParameterLocation.Query,
+            Required = false,
+            Type = typeof(bool),
+            Description = "If true, only available rides will be returned.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(IEnumerable<RideDto>),
+            Description = "The information of the user's rides.")]
+        #endregion
+        public async Task<IActionResult> GetRides(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "rides")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(RideFilter input)
+            {
+                var rides = await rideService.GetAll(input.Email, input.OnlyAvailable);
+                apiResponse.Message = "RIDES_FOUND";
+                apiResponse.Data = rides;
+                return new OkObjectResult(apiResponse);
+            }
+
+            return await RequestHandler.Handle<RideFilter>(req, log, apiResponse, Action, isAnonymous: true);
         }
 
 
@@ -58,30 +91,30 @@ namespace UcabGo.Api.Functions
         }
 
 
-        #region UpdateRide
-        [FunctionName("UpdateRide")]
+        #region StartRide
+        [FunctionName("StartRide")]
         [OpenApiOperation(tags: new[] { "Ride" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json",
-            bodyType: typeof(RideUpdateInput),
+            bodyType: typeof(RideAvailableInput),
             Required = true,
-            Description = "The new data for the ride.")]
+            Description = "Let the user start a previusly created ride.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
             bodyType: typeof(RideDto),
-            Description = "The updated data of the ride.")]
+            Description = "The data of the ride.")]
         #endregion
-        public async Task<IActionResult> UpdateRide(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides")] HttpRequest req, ILogger log)
+        public async Task<IActionResult> StartRide(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/start")] HttpRequest req, ILogger log)
         {
-            async Task<IActionResult> Action(RideUpdateInput input)
+            async Task<IActionResult> Action(RideAvailableInput input)
             {
                 try
                 {
-                    var dto = await rideService.Update(input);
-                    apiResponse.Message = "RIDE_UPDATED";
+                    var dto = await rideService.StartRide(input);
+                    apiResponse.Message = "RIDE_STARTED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }
@@ -91,9 +124,81 @@ namespace UcabGo.Api.Functions
                     return new BadRequestObjectResult(apiResponse);
                 }
             }
-
-            return await RequestHandler.Handle<RideUpdateInput>(req, log, apiResponse, Action, isAnonymous: false);
+            return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
+
+        #region CompleteRide
+        [FunctionName("CompleteRide")]
+        [OpenApiOperation(tags: new[] { "Ride" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(RideAvailableInput),
+            Required = true,
+            Description = "Let the user complete a previosuly started ride.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(RideDto),
+            Description = "The data of the ride.")]
+        #endregion
+        public async Task<IActionResult> CompleteRide(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/complete")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(RideAvailableInput input)
+            {
+                try
+                {
+                    var dto = await rideService.CompleteRide(input);
+                    apiResponse.Message = "RIDE_COMPLETED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse .Message = ex.Message;
+                    return new BadRequestObjectResult(apiResponse);
+                }
+            }
+            return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
+
+        #region CancelRide
+        [FunctionName("CancelRide")]
+        [OpenApiOperation(tags: new[] { "Ride" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(RideAvailableInput),
+            Required = true,
+            Description = "Let the user cancel a created -but yet not started- ride. You can't cancel a ride that has already started.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(RideDto),
+            Description = "The data of the ride.")]
+        #endregion
+        public async Task<IActionResult> CancelRide(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/cancel")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(RideAvailableInput input)
+            {
+                try
+                {
+                    var dto = await rideService.CancelRide(input);
+                    apiResponse.Message = "RIDE_CANCELED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    return new BadRequestObjectResult(apiResponse);
+                }
+            }
+            return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
     }
 }

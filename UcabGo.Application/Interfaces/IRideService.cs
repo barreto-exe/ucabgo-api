@@ -11,11 +11,12 @@ namespace UcabGo.Application.Interfaces
 {
     public interface IRideService
     {
-        Task<IEnumerable<RideDto>> GetAll(string driverEmail);
+        Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyActive = false);
         Task<IEnumerable<Ride>> GetAll();
         Task<Ride> GetById(int id);
         Task<RideDto> Create(RideInput input);
-        Task<RideDto> Update(RideUpdateInput input);
-        Task<RideDto> Delete(string driverEmail, int id);
+        Task<RideDto> StartRide(RideAvailableInput input);
+        Task<RideDto> CompleteRide(RideAvailableInput input);
+        Task<RideDto> CancelRide(RideAvailableInput input);
     }
 }

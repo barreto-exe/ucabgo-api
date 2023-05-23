@@ -21,6 +21,10 @@ namespace UcabGo.Core.Data.Ride.Dtos
         public float LatitudeOrigin { get; set; }
         public float LongitudeOrigin { get; set; }
         public bool IsAvailable { get; set; }
+        public DateTime TimeCreated { get; set; }
+        public DateTime? TimeStarted { get; set; }
+        public DateTime? TimeEnded { get; set; }
+        public DateTime? TimeCanceled { get; set; }
         public virtual IEnumerable<Passenger> Passengers { get; set; }
     }
 }

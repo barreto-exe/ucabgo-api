@@ -23,16 +23,7 @@ namespace UcabGo.Application.Services
         public async Task<IEnumerable<VehicleDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
-            var itemsDtos = items.Select(v => new VehicleDto
-            {
-                Id = v.Id,
-                Brand = v.Brand,
-                Model = v.Model,
-                Plate = v.Plate,
-                Color = v.Color,
-                Owner = mapper.Map<UserDto>(v.UserNavigation),
-            });
-
+            var itemsDtos = mapper.Map<IEnumerable<VehicleDto>>(items);
             return itemsDtos;
         }
         public async Task<IEnumerable<Vehicle>> GetAll(string userEmail)

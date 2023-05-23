@@ -21,7 +21,8 @@ namespace UcabGo.Core.Mapping
             CreateMap<UserDto, User>();
             CreateMap<RegisterInput, User>();
 
-            CreateMap<Vehicle, VehicleDto>();
+            CreateMap<Vehicle, VehicleDto>()
+                .ForMember(dest => dest.Owner, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<VehicleDto, Vehicle>();
             CreateMap<VehicleInput, Vehicle>();
 
@@ -29,14 +30,15 @@ namespace UcabGo.Core.Mapping
             CreateMap<SoscontactDto, Soscontact>();
             CreateMap<SoscontactInput, Soscontact>();
 
-            CreateMap<Destination, DestinationDto>();
+            CreateMap<Destination, DestinationDto>()
+                .ForMember(dest => dest.Driver, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<DestinationDto, Destination>();
             CreateMap<DestinationInput, Destination>();
 
             CreateMap<Ride, RideDto>()
-                .ForMember(dest => dest.Driver, opt => opt.Ignore())
-                .ForMember(dest => dest.Vehicle, opt => opt.Ignore())
-                .ForMember(dest => dest.Destination, opt => opt.Ignore());
+                .ForMember(dest => dest.Driver, opt => opt.MapFrom(x => x.DriverNavigation))
+                .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(x => x.VehicleNavigation))
+                .ForMember(dest => dest.Destination, opt => opt.MapFrom(x => x.DestinationNavigation));
             CreateMap<RideDto, Ride>();
             CreateMap<RideInput, Ride>();
         }

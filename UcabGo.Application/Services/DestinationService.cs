@@ -23,19 +23,8 @@ namespace UcabGo.Application.Services
         public async Task<IEnumerable<DestinationDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
-            var itemsDtos = items.Select(x => new DestinationDto
-            {
-                Id = x.Id,
-                Driver = mapper.Map<UserDto>(x.UserNavigation),
-                Alias = x.Alias,
-                Zone = x.Zone,
-                Detail = x.Detail,
-                Latitude = x.Latitude,
-                Longitude = x.Longitude,
-                IsActive = Convert.ToBoolean(x.IsActive)
-            });
-
-            return itemsDtos;
+            var itemDtos = mapper.Map<IEnumerable<DestinationDto>>(items);
+            return itemDtos;
         }
         public async Task<IEnumerable<Destination>> GetAll(string userEmail)
         {

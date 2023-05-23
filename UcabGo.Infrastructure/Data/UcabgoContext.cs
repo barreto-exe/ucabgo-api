@@ -156,6 +156,8 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.SeatQuantity).HasColumnType("int(11)");
 
+                entity.Property(e => e.TimeCanceled).HasColumnType("datetime");
+
                 entity.Property(e => e.TimeCreated).HasColumnType("datetime");
 
                 entity.Property(e => e.TimeEnded).HasColumnType("datetime");

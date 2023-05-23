@@ -33,7 +33,7 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<RideDto>> GetAll(string driverEmail)
+        public async Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyAvailable = false)
         {
             var items = unitOfWork
                 .RideRepository
@@ -42,23 +42,25 @@ namespace UcabGo.Application.Services
                     r => r.DestinationNavigation,
                     r => r.DriverNavigation);
 
-            var ridesFromDriver = from r in items
+            IQueryable<Ride>? ridesFromDriver;
+            if (onlyAvailable)
+            {
+                ridesFromDriver = from r in items
+                                  where 
+                                    r.DriverNavigation.Email == driverEmail && 
+                                    (r.IsAvailable == Convert.ToUInt64(true) ||
+                                    (r.TimeStarted != null && r.TimeEnded == null && r.TimeCanceled == null))
+                                  select r;
+            }
+            else
+            {
+                ridesFromDriver = from r in items
                                   where r.DriverNavigation.Email == driverEmail
                                   select r;
+            }
 
-            var ridesDtos = ridesFromDriver.Select(x => new RideDto
-            {
-                Id = x.Id,
-                Driver = mapper.Map<UserDto>(x.DriverNavigation),
-                Vehicle = mapper.Map<VehicleDto>(x.VehicleNavigation),
-                Destination = mapper.Map<DestinationDto>(x.DestinationNavigation),
-                SeatQuantity = x.SeatQuantity,
-                LongitudeOrigin = x.LongitudeOrigin,
-                LatitudeOrigin = x.LatitudeOrigin,
-                IsAvailable = Convert.ToBoolean(x.IsAvailable),
-                Passengers = x.Passengers,
-            });
 
+            var ridesDtos = mapper.Map<IEnumerable<RideDto>>(ridesFromDriver.ToList());
             return ridesDtos;
         }
         public async Task<IEnumerable<Ride>> GetAll()
@@ -80,7 +82,11 @@ namespace UcabGo.Application.Services
         {
             //Validate if has an active ride
             var rides = await GetAll(input.Email);
-            var activeRide = rides.FirstOrDefault(x => x.IsAvailable);
+            var activeRide = rides.FirstOrDefault(
+                 x => x.IsAvailable || 
+                (x.TimeStarted != null && x.TimeCanceled == null && x.TimeEnded == null)); 
+            
+            //If is available, or has started and not been canceled nor ended, then is consider a ride in progress.
             if (activeRide != null)
             {
                 throw new Exception("ACTIVE_RIDE_FOUND");
@@ -108,7 +114,8 @@ namespace UcabGo.Application.Services
             int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.Driver = idUser;
             item.IsAvailable = Convert.ToUInt64(true);
-            
+            item.TimeCreated = DateTime.Now;
+
             //Save changes
             await unitOfWork.RideRepository.Add(item);
             await unitOfWork.SaveChangesAsync();
@@ -121,35 +128,97 @@ namespace UcabGo.Application.Services
             dto.Destination = mapper.Map<DestinationDto>(itemDb.DestinationNavigation);
             return dto;
         }
-        public async Task<RideDto> Update(RideUpdateInput input)
+        public async Task<RideDto> StartRide(RideAvailableInput input)
         {
-            var itemDb = await GetById(input.Id);
-            if (itemDb == null)
+            var rides = await GetAll(input.Email);
+            var rideDto = rides.FirstOrDefault(x => x.Id == input.Id);
+            if (rideDto == null)
             {
                 throw new Exception("RIDE_NOT_FOUND");
             }
 
-            itemDb.IsAvailable = Convert.ToUInt64(input.IsAvailable);
+            var rideDb = await GetById(input.Id);
 
-            unitOfWork.RideRepository.Update(itemDb);
+            //Validate if ride is not available
+            bool cantStartRide =
+                rideDb.TimeStarted  != null || //Can't start if already started
+                rideDb.TimeEnded    != null || //Can't start if already ended
+                rideDb.TimeCanceled != null || //Can't start if already canceled
+                !Convert.ToBoolean(rideDb.IsAvailable);
+            if (cantStartRide)
+            {
+                throw new Exception("CANT_START_RIDE");
+            }
+
+            rideDb.TimeStarted = DateTime.Now;
+            rideDb.IsAvailable = Convert.ToUInt64(false);
+
+            unitOfWork.RideRepository.Update(rideDb);
             await unitOfWork.SaveChangesAsync();
 
-            var dto = mapper.Map<RideDto>(itemDb);
+            var dto = mapper.Map<RideDto>(rideDb);
             return dto;
         }
-        public async Task<RideDto> Delete(string driverEmail, int id)
+        public async Task<RideDto> CompleteRide(RideAvailableInput input)
         {
-            var items = await GetAll(driverEmail);
-            var itemDb = items.FirstOrDefault(x => x.Id == id);
-            if (itemDb == null)
+            var rides = await GetAll(input.Email);
+            var rideDto = rides.FirstOrDefault(x => x.Id == input.Id);
+            if (rideDto == null)
             {
                 throw new Exception("RIDE_NOT_FOUND");
             }
 
-            await unitOfWork.RideRepository.Delete(id);
+            var rideDb = await GetById(input.Id);
+
+            //Validate if ride is not available
+            bool cantCompleteRide =
+                rideDb.TimeStarted  == null || //Can't complete if not started
+                rideDb.TimeEnded    != null || //Can't complete if already ended
+                rideDb.TimeCanceled != null || //Can't complete if already canceled
+                Convert.ToBoolean(rideDb.IsAvailable); //Can't complete if available
+            if (cantCompleteRide)
+            {
+                throw new Exception("CANT_COMPLETE_RIDE");
+            }
+
+            rideDb.TimeEnded = DateTime.Now;
+            rideDb.IsAvailable = Convert.ToUInt64(false);
+
+            unitOfWork.RideRepository.Update(rideDb);
             await unitOfWork.SaveChangesAsync();
 
-            var dto = mapper.Map<RideDto>(itemDb);
+            var dto = mapper.Map<RideDto>(rideDb);
+            return dto;
+        }
+        public async Task<RideDto> CancelRide(RideAvailableInput input)
+        {
+            var rides = await GetAll(input.Email);
+            var rideDto = rides.FirstOrDefault(x => x.Id == input.Id);
+            if (rideDto == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
+
+            var rideDb = await GetById(input.Id);
+
+            //Validate if ride is not available
+            bool cantCancelRide =
+                rideDb.TimeStarted  != null || //Can't cancel if already started
+                rideDb.TimeEnded    != null || //Can't cancel if already ended
+                rideDb.TimeCanceled != null || //Can't cancel if already canceled
+                !Convert.ToBoolean(rideDb.IsAvailable);
+            if (cantCancelRide)
+            {
+                throw new Exception("CANT_CANCEL_RIDE");
+            }
+
+            rideDb.TimeCanceled = DateTime.Now;
+            rideDb.IsAvailable = Convert.ToUInt64(false);
+
+            unitOfWork.RideRepository.Update(rideDb);
+            await unitOfWork.SaveChangesAsync();
+
+            var dto = mapper.Map<RideDto>(rideDb);
             return dto;
         }
     }
