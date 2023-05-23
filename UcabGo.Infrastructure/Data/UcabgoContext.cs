@@ -156,6 +156,12 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.SeatQuantity).HasColumnType("int(11)");
 
+                entity.Property(e => e.TimeCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeEnded).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeStarted).HasColumnType("datetime");
+
                 entity.Property(e => e.Vehicle).HasColumnType("int(11)");
 
                 entity.HasOne(d => d.DestinationNavigation)

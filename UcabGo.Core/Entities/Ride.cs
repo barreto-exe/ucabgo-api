@@ -15,6 +15,9 @@
         public float LatitudeOrigin { get; set; }
         public float LongitudeOrigin { get; set; }
         public ulong IsAvailable { get; set; }
+        public DateTime TimeCreated { get; set; }
+        public DateTime? TimeStarted { get; set; }
+        public DateTime? TimeEnded { get; set; }
 
         public virtual Destination DestinationNavigation { get; set; } = null!;
         public virtual User DriverNavigation { get; set; } = null!;
