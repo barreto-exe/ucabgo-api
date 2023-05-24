@@ -64,8 +64,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("SOSCONTACT_NOT_FOUND");
             }
 
-            itemDb.Name = sosContact.Name;
-            itemDb.Phone = sosContact.Phone;
+            itemDb.Name = sosContact.Name ?? itemDb.Name;
+            itemDb.Phone = sosContact.Phone ?? itemDb.Phone;
 
             unitOfWork.SoscontactRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();

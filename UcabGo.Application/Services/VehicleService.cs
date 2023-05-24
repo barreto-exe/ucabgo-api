@@ -67,10 +67,10 @@ namespace UcabGo.Application.Services
                 throw new Exception("VEHICLE_NOT_FOUND");
             }
 
-            vehicleDb.Brand = vehicle.Brand;
-            vehicleDb.Model = vehicle.Model;
-            vehicleDb.Plate = vehicle.Plate;
-            vehicleDb.Color = vehicle.Color;
+            vehicleDb.Brand = vehicle.Brand ?? vehicleDb.Brand;
+            vehicleDb.Model = vehicle.Model ?? vehicleDb.Model;
+            vehicleDb.Plate = vehicle.Plate ?? vehicleDb.Plate;
+            vehicleDb.Color = vehicle.Color ?? vehicleDb.Color;
 
             unitOfWork.VehicleRepository.Update(vehicleDb);
             await unitOfWork.SaveChangesAsync();

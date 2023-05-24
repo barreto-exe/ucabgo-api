@@ -84,12 +84,12 @@ namespace UcabGo.Application.Services
                 throw new Exception("DESTINATION_NOT_FOUND");
             }
 
-            itemDb.Alias = input.Alias;
-            itemDb.Zone = input.Zone;
-            itemDb.Detail = input.Detail;
-            itemDb.Latitude = input.Latitude;
-            itemDb.Longitude = input.Longitude;
-            itemDb.IsActive = Convert.ToUInt64(input.IsActive);
+            itemDb.Alias = input.Alias ?? itemDb.Alias;
+            itemDb.Zone = input.Zone ?? itemDb.Zone;
+            itemDb.Detail = input.Detail ?? itemDb.Detail;
+            itemDb.Latitude = input.Latitude ?? itemDb.Latitude;
+            itemDb.Longitude = input.Longitude ?? itemDb.Longitude;
+            itemDb.IsActive = input.IsActive != null ? Convert.ToUInt64(input.IsActive) : itemDb.IsActive;
 
             unitOfWork.DestinationRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();

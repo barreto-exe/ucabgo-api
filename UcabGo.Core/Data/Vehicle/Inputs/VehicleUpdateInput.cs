@@ -6,13 +6,9 @@ namespace UcabGo.Core.Data.Vehicle.Inputs
     {
         [Required]
         public int Id { get; set; }
-        [Required]
-        public string Brand { get; set; }
-        [Required]
-        public string Model { get; set; }
-        [Required]
-        public string Plate { get; set; }
-        [Required]
-        public string Color { get; set; }
+        public string? Brand { get; set; }
+        public string? Model { get; set; }
+        public string? Plate { get; set; }
+        public string? Color { get; set; }
     }
 }
