@@ -20,6 +20,7 @@
         public string LastName { get; set; } = null!;
         public string? SecondLastName { get; set; }
         public string? Phone { get; set; }
+        public double? WalkingDistance { get; set; }
 
         public virtual ICollection<Destination> Destinations { get; set; }
         public virtual ICollection<Location> Locations { get; set; }

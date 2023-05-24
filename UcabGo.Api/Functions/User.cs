@@ -1,4 +1,5 @@
 ﻿using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.User.Inputs;
 
 namespace UcabGo.Api.Functions
@@ -28,12 +29,44 @@ namespace UcabGo.Api.Functions
         {
             async Task<IActionResult> Action(PhoneInput input)
             {
-                await userService.UpdatePhone(input);
+                var dto = await userService.UpdatePhone(input);
                 apiResponse.Message = "PHONE_UPDATED";
+                apiResponse.Data = dto;
                 return new OkObjectResult(apiResponse);
             }
 
             return await RequestHandler.Handle<PhoneInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
+
+
+        #region ChangeWalkingDistance
+        [FunctionName("ChangeWalkingDistance")]
+        [OpenApiOperation(tags: new[] { "User" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(WalkingInput),
+            Required = true,
+            Description = "The amount of meters a ride soliciter is willing to walk.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(UserDto),
+            Description = "The data of the user updated.")]
+        #endregion
+        public async Task<IActionResult> ChangeWalkingDistance(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/walking-distance")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(WalkingInput input)
+            {
+                var dto = await userService.UpdateWalkingDistance(input);
+                apiResponse.Message = "WALKING_DISTANCE_UPDATED";
+                apiResponse.Data = dto;
+                return new OkObjectResult(apiResponse);
+            }
+
+            return await RequestHandler.Handle<WalkingInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
     }
 }

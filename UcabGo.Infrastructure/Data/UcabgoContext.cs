@@ -229,6 +229,8 @@ namespace UcabGo.Infrastructure.Data
                 entity.Property(e => e.SecondLastName).HasMaxLength(255);
 
                 entity.Property(e => e.SecondName).HasMaxLength(255);
+
+                entity.Property(e => e.WalkingDistance).HasDefaultValueSql("'0'");
             });
 
             modelBuilder.Entity<Vehicle>(entity =>

@@ -62,12 +62,25 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
         }
 
-        public async Task UpdatePhone(PhoneInput input)
+        public async Task<UserDto> UpdatePhone(PhoneInput input)
         {
             var user = await GetByEmail(input.Email);
             user.Phone = input.Phone;
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
+
+            var userDto = mapper.Map<UserDto>(user);
+            return userDto;
+        }
+        public async Task<UserDto> UpdateWalkingDistance(WalkingInput input)
+        {
+            var user = await GetByEmail(input.Email);
+            user.WalkingDistance = input.WalkingDistance;
+            unitOfWork.UserRepository.Update(user);
+            await unitOfWork.SaveChangesAsync();
+
+            var userDto = mapper.Map<UserDto>(user);
+            return userDto;
         }
     }
 }

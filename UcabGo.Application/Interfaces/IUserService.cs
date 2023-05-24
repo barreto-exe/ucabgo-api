@@ -14,6 +14,7 @@ namespace UcabGo.Application.Interfaces
         Task<UserDto> Update(User user);
         Task Delete(int id);
 
-        Task UpdatePhone(PhoneInput input);
+        Task<UserDto> UpdatePhone(PhoneInput input);
+        Task<UserDto> UpdateWalkingDistance(WalkingInput input);
     }
 }
