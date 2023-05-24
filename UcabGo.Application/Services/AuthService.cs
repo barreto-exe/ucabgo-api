@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using System.Runtime.CompilerServices;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.Destination.Inputs;
+using UcabGo.Core.Data.Location.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
 
@@ -14,11 +16,13 @@ namespace UcabGo.Application.Services
         private readonly IMapper mapper;
         private readonly IUserService userService;
         private readonly IDestinationService destinationService;
-        public AuthService(IMapper mapper, IUserService userService, IDestinationService destinationService)
+        private readonly ILocationService locationService;
+        public AuthService(IMapper mapper, IUserService userService, IDestinationService destinationService, ILocationService locationService)
         {
             this.mapper = mapper;
             this.userService = userService;
             this.destinationService = destinationService;
+            this.locationService = locationService;
         }
 
         public async Task<LoginDto> Register(RegisterInput input)
@@ -30,9 +34,9 @@ namespace UcabGo.Application.Services
                 throw new Exception("USER_ALREADY_EXISTS");
             }
 
-
             var newUser = await userService.Create(userInput);
 
+            //Create default UCAB destination for drivers
             await destinationService.Create(new DestinationInput()
             {
                 Email = newUser.Email,
@@ -43,10 +47,17 @@ namespace UcabGo.Application.Services
                 Longitude = -62.7179975f,
             }, isRegistering: true);
 
-
-            //Also create default UCAB Location
-
-            // ...
+            //Create default UCAB location for passangers
+            await locationService.Create(new LocationInput()
+            {
+                Email = newUser.Email,
+                Alias = "UCAB Guayana",
+                Zone = "UCAB Guayana",
+                Detail = "UCAB Guayana",
+                Latitude = 8.2970305f,
+                Longitude = -62.7179975f,
+                IsHome = false,
+            }, isRegistering: true);
 
             return await Login(new LoginInput()
             {

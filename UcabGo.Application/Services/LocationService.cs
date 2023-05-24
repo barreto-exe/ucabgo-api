@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Location.Inputs;
+using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -42,18 +44,36 @@ namespace UcabGo.Application.Services
         {
             return await unitOfWork.LocationRepository.GetById(id);
         }
-        public async Task<LocationDto> Create(LocationInput location)
+        public async Task<LocationDto> Create(LocationInput input, bool isRegistering = false)
         {
-            var item = mapper.Map<Location>(location);
+            var item = mapper.Map<Location>(input);
 
-            int idUser = (await userService.GetByEmail(location.Email)).Id;
+            if (IsUCABGuayana(item) && !isRegistering)
+            {
+                throw new Exception("UCAB_LOCATION_ALREADY_CREATED");
+            }
+
+            int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.User = idUser;
             await unitOfWork.LocationRepository.Add(item);
             await unitOfWork.SaveChangesAsync();
 
             var itemDb = await GetById(item.Id);
             var dto = mapper.Map<LocationDto>(itemDb);
+            dto.User = mapper.Map<UserDto>(item.UserNavigation);
             return dto;
+
+            static bool IsUCABGuayana(Location input)
+            {
+                if (input.Alias == "UCAB Guayana") return true;
+                if (input.Zone == "UCAB Guayana") return true;
+
+                // TODO - Implement more validations
+
+                // ...
+
+                return false;
+            }
         }
         public async Task<LocationDto> Update(LocationUpdateInput location)
         {

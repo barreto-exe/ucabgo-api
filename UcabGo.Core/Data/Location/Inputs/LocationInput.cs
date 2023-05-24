@@ -19,5 +19,7 @@ namespace UcabGo.Core.Data.Location.Inputs
         public float Latitude { get; set; }
         [Required]
         public float Longitude { get; set; }
+        [Required]
+        public bool IsHome { get; set; }
     }
 }
