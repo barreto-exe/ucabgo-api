@@ -1,18 +1,10 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Core.Data.User.Dto;
 
 namespace UcabGo.Core.Data.Location.Inputs
 {
-    public class LocationInput : BaseRequest
+    public class HomeInput : BaseRequest
     {
-        [Required]
-        public string Alias { get; set; }
         [Required]
         public string Zone { get; set; }
         public string? Detail { get; set; }
@@ -20,7 +12,5 @@ namespace UcabGo.Core.Data.Location.Inputs
         public float Latitude { get; set; }
         [Required]
         public float Longitude { get; set; }
-        [JsonIgnore]
-        public bool IsHome { get; set; }
     }
 }

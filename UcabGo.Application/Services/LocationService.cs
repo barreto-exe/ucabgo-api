@@ -21,6 +21,20 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
+        public async Task<LocationDto> GetHome(string userEmail)
+        {
+            var items = await GetAll(userEmail);
+            var item = items.FirstOrDefault(x => Convert.ToBoolean(x.IsHome));
+            var itemDto = mapper.Map<LocationDto>(item);
+            return itemDto;
+        }
+        public async Task<IEnumerable<LocationDto>> GetLocations(string userEmail)
+        {
+            var items = await GetAll(userEmail);
+            var ucabAndHome = items.Where(x => x.Alias == "UCAB Guayana" || Convert.ToBoolean(x.IsHome));
+            var itemsDtos = mapper.Map<IEnumerable<LocationDto>>(ucabAndHome);
+            return itemsDtos;
+        }
         public async Task<IEnumerable<LocationDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
@@ -53,14 +67,24 @@ namespace UcabGo.Application.Services
                 throw new Exception("UCAB_LOCATION_ALREADY_CREATED");
             }
 
+            //Remove current home
+            var locations = await GetAll(input.Email);
+            var homeLocation = locations.FirstOrDefault(x => Convert.ToBoolean(x.IsHome));
+            if (homeLocation != null)
+            {
+                homeLocation.IsHome = 0;
+            }
+
+            //Assign id of user to Location
             int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.User = idUser;
+
+            //Add location to DB
             await unitOfWork.LocationRepository.Add(item);
             await unitOfWork.SaveChangesAsync();
 
             var itemDb = await GetById(item.Id);
             var dto = mapper.Map<LocationDto>(itemDb);
-            dto.User = mapper.Map<UserDto>(item.UserNavigation);
             return dto;
 
             static bool IsUCABGuayana(Location input)
@@ -111,5 +135,6 @@ namespace UcabGo.Application.Services
             var dto = mapper.Map<LocationDto>(itemDb);
             return dto;
         }
+
     }
 }

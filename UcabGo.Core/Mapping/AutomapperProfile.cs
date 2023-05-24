@@ -48,6 +48,7 @@ namespace UcabGo.Core.Mapping
                 .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<LocationDto, Location>();
             CreateMap<LocationInput, Location>();
+            CreateMap<HomeInput, LocationInput>();
         }
     }
 }

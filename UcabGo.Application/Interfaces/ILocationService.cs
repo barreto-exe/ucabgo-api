@@ -6,6 +6,8 @@ namespace UcabGo.Application.Interfaces
 {
     public interface ILocationService
     {
+        Task<LocationDto> GetHome(string userEmail);
+        Task<IEnumerable<LocationDto>> GetLocations(string userEmail);
         Task<IEnumerable<LocationDto>> GetAllDtos(string userEmail);
         Task<IEnumerable<Location>> GetAll(string userEmail);
         Task<Location> GetById(int id);

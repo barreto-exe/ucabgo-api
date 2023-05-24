@@ -13,6 +13,7 @@ namespace UcabGo.Core.Data.Location.Dtos
         public string? Detail { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
+        public bool IsHome { get; set; }
         public UserDto User { get; set; }
     }
 }
