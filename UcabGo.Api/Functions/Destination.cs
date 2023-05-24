@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Destination.Dtos;
@@ -48,7 +49,16 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new OkObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "UCAB_DESTINATION_ALREADY_CREATED":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while creating destination.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -71,18 +81,10 @@ namespace UcabGo.Api.Functions
         {
             async Task<IActionResult> Action(BaseRequest input)
             {
-                try
-                {
-                    var list = await services.GetAllDtos(input.Email);
-                    apiResponse.Data = list;
-                    apiResponse.Message = "DESTINATIONS_FOUND";
-                    return new OkObjectResult(apiResponse);
-                }
-                catch(Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
-                }
+                var list = await services.GetAllDtos(input.Email);
+                apiResponse.Data = list;
+                apiResponse.Message = "DESTINATIONS_FOUND";
+                return new OkObjectResult(apiResponse);
             }
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
@@ -119,7 +121,18 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "UCAB_DESTINATION_IS_READONLY":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while updating destination.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -158,7 +171,18 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "UCAB_DESTINATION_IS_READONLY":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while deleting destination with id {ID}.", id);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 

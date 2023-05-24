@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Soscontact.Dto;
@@ -48,7 +49,14 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while creating SOS contact.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -111,7 +119,16 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "SOSCONTACT_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while updating SOS contact.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -150,7 +167,16 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "SOSCONTACT_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "An error occured while deleting SOS contact {ID}", id);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 

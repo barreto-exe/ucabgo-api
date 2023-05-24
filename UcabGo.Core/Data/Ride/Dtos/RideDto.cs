@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Core.Data.Destination.Dtos;
+﻿using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Entities;

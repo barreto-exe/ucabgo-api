@@ -1,6 +1,7 @@
-﻿using UcabGo.Application.Interfaces;
+﻿using System;
+using System.Web.Http;
+using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Dto;
-using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
 
 namespace UcabGo.Api.Functions
@@ -38,10 +39,19 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSWORD_CHANGED";
                     return new OkObjectResult(apiResponse);
                 }
-                catch (UserNotFoundException)
+                catch (Exception ex)
                 {
-                    apiResponse.Message = "USER_NOT_FOUND";
-                    return new NotFoundObjectResult(apiResponse);
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "USER_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while changing password.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -74,10 +84,20 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = await authService.Login(input);
                     return new OkObjectResult(apiResponse);
                 }
-                catch (UserNotFoundException)
+                catch (Exception ex)
                 {
-                    apiResponse.Message = "WRONG_CREDENTIALS";
-                    return new BadRequestObjectResult(apiResponse);
+                    apiResponse.Message = ex.Message;
+
+                    switch (ex.Message)
+                    {
+                        case "WRONG_CREDENTIALS":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while logging in.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -109,10 +129,19 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = await authService.Register(input);
                     return new OkObjectResult(apiResponse);
                 }
-                catch (UserExistsException)
+                catch (Exception ex)
                 {
-                    apiResponse.Message = "USER_ALREADY_EXISTS";
-                    return new BadRequestObjectResult(apiResponse);
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "USER_ALREADY_EXISTS":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while registering user.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 

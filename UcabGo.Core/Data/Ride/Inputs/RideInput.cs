@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Core.Data.Destination.Dtos;
-using UcabGo.Core.Data.User.Dto;
-using UcabGo.Core.Data.Vehicle.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UcabGo.Core.Data.Ride.Inputs
 {

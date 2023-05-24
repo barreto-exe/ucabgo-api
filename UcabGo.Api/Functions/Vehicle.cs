@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Vehicle.Dtos;
@@ -19,7 +20,7 @@ namespace UcabGo.Api.Functions
 
         #region GetVehicles
         [FunctionName("GetVehicles")]
-        [OpenApiOperation(tags: new[] { "Vehicle", "User" })]
+        [OpenApiOperation(tags: new[] { "Vehicle" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
@@ -62,10 +63,25 @@ namespace UcabGo.Api.Functions
         {
             async Task<IActionResult> Action(VehicleInput input)
             {
-                var vehicle = await vehicleService.Create(input);
-                apiResponse.Message = "VEHICLE_CREATED";
-                apiResponse.Data = vehicle;
-                return new OkObjectResult(apiResponse);
+                try
+                {
+                    var vehicle = await vehicleService.Create(input);
+                    apiResponse.Message = "VEHICLE_CREATED";
+                    apiResponse.Data = vehicle;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while creating vehicle", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
             }
 
             return await RequestHandler.Handle<VehicleInput>(req, log, apiResponse, Action, isAnonymous: false);
@@ -73,7 +89,7 @@ namespace UcabGo.Api.Functions
 
         #region UpdateVehicle
         [FunctionName("UpdateVehicle")]
-        [OpenApiOperation(tags: new[] { "User", "Vehicle" })]
+        [OpenApiOperation(tags: new[] { "Vehicle" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json",
@@ -101,7 +117,16 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "VEHICLE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while updating vehicle.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
 
             }
@@ -111,7 +136,7 @@ namespace UcabGo.Api.Functions
 
         #region DeleteVehicle
         [FunctionName("DeleteVehicle")]
-        [OpenApiOperation(tags: new[] { "User", "Vehicle" })]
+        [OpenApiOperation(tags: new[] { "Vehicle" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiParameter(
             name: "id",
@@ -137,10 +162,19 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    apiResponse.Message = e.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "VEHICLE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while deleting vehicle with id {ID}", id);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 

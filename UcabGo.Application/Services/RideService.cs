@@ -1,15 +1,8 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Inputs;
-using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Entities;
@@ -46,8 +39,8 @@ namespace UcabGo.Application.Services
             if (onlyAvailable)
             {
                 ridesFromDriver = from r in items
-                                  where 
-                                    r.DriverNavigation.Email == driverEmail && 
+                                  where
+                                    r.DriverNavigation.Email == driverEmail &&
                                     (r.IsAvailable == Convert.ToUInt64(true) ||
                                     (r.TimeStarted != null && r.TimeEnded == null && r.TimeCanceled == null))
                                   select r;
@@ -68,8 +61,8 @@ namespace UcabGo.Application.Services
             var result = unitOfWork
                 .RideRepository
                 .GetAllIncluding(
-                    r => r.Vehicle, 
-                    r => r.Destination, 
+                    r => r.Vehicle,
+                    r => r.Destination,
                     r => r.Driver);
 
             return result.ToList();
@@ -83,9 +76,9 @@ namespace UcabGo.Application.Services
             //Validate if has an active ride
             var rides = await GetAll(input.Email);
             var activeRide = rides.FirstOrDefault(
-                 x => x.IsAvailable || 
-                (x.TimeStarted != null && x.TimeCanceled == null && x.TimeEnded == null)); 
-            
+                 x => x.IsAvailable ||
+                (x.TimeStarted != null && x.TimeCanceled == null && x.TimeEnded == null));
+
             //If is available, or has started and not been canceled nor ended, then is consider a ride in progress.
             if (activeRide != null)
             {
@@ -141,8 +134,8 @@ namespace UcabGo.Application.Services
 
             //Validate if ride is not available
             bool cantStartRide =
-                rideDb.TimeStarted  != null || //Can't start if already started
-                rideDb.TimeEnded    != null || //Can't start if already ended
+                rideDb.TimeStarted != null || //Can't start if already started
+                rideDb.TimeEnded != null || //Can't start if already ended
                 rideDb.TimeCanceled != null || //Can't start if already canceled
                 !Convert.ToBoolean(rideDb.IsAvailable);
             if (cantStartRide)
@@ -172,8 +165,8 @@ namespace UcabGo.Application.Services
 
             //Validate if ride is not available
             bool cantCompleteRide =
-                rideDb.TimeStarted  == null || //Can't complete if not started
-                rideDb.TimeEnded    != null || //Can't complete if already ended
+                rideDb.TimeStarted == null || //Can't complete if not started
+                rideDb.TimeEnded != null || //Can't complete if already ended
                 rideDb.TimeCanceled != null || //Can't complete if already canceled
                 Convert.ToBoolean(rideDb.IsAvailable); //Can't complete if available
             if (cantCompleteRide)
@@ -203,8 +196,8 @@ namespace UcabGo.Application.Services
 
             //Validate if ride is not available
             bool cantCancelRide =
-                rideDb.TimeStarted  != null || //Can't cancel if already started
-                rideDb.TimeEnded    != null || //Can't cancel if already ended
+                rideDb.TimeStarted != null || //Can't cancel if already started
+                rideDb.TimeEnded != null || //Can't cancel if already ended
                 rideDb.TimeCanceled != null || //Can't cancel if already canceled
                 !Convert.ToBoolean(rideDb.IsAvailable);
             if (cantCancelRide)

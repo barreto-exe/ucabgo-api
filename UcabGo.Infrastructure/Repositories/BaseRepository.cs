@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace UcabGo.Infrastructure.Repositories
 {

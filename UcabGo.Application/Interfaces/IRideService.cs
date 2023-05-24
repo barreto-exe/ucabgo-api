@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UcabGo.Core.Data.Ride.Dtos;
+﻿using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Entities;
 

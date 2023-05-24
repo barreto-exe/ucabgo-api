@@ -2,12 +2,10 @@
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
-using UcabGo.Core.Data.Auth.Exceptions;
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
-using UcabGo.Core.Interfaces;
 
 namespace UcabGo.Application.Services
 {
@@ -29,7 +27,7 @@ namespace UcabGo.Application.Services
 
             if (await userService.GetByEmail(userInput.Email) != null)
             {
-                throw new UserExistsException();
+                throw new Exception("USER_ALREADY_EXISTS");
             }
 
 
@@ -62,7 +60,7 @@ namespace UcabGo.Application.Services
             var user = await userService.GetByEmailAndPass(input);
             if (user == null)
             {
-                throw new UserNotFoundException();
+                throw new Exception("WRONG_CREDENTIALS");
             }
 
             var userDto = mapper.Map<UserDto>(user);
@@ -84,7 +82,7 @@ namespace UcabGo.Application.Services
 
             if (user == null)
             {
-                throw new UserNotFoundException();
+                throw new Exception("USER_NOT_FOUND");
             }
 
             user.Password = input.NewPassword;

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web.Http;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Data.Ride.Inputs;
@@ -83,7 +80,20 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "ACTIVE_RIDE_FOUND":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "DESTINATION_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while creating a ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 
@@ -121,7 +131,18 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "CANT_START_RIDE":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while starting a ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
             return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
@@ -157,8 +178,19 @@ namespace UcabGo.Api.Functions
                 }
                 catch (Exception ex)
                 {
-                    apiResponse .Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "CANT_COMPLETE_RIDE":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while completing a ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
             return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
@@ -195,7 +227,18 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    return new BadRequestObjectResult(apiResponse);
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "CANT_CANCEL_RIDE":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while canceling a ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
             return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
