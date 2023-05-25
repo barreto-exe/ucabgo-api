@@ -74,6 +74,11 @@ namespace UcabGo.Application.Services
         }
         public async Task<UserDto> UpdateWalkingDistance(WalkingInput input)
         {
+            if(input.WalkingDistance < 0)
+            {
+                throw new Exception("NEGATIVE_NUMBER");
+            }
+
             var user = await GetByEmail(input.Email);
             user.WalkingDistance = input.WalkingDistance;
             unitOfWork.UserRepository.Update(user);

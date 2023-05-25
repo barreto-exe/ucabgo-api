@@ -1,4 +1,6 @@
-﻿using UcabGo.Application.Interfaces;
+﻿using System;
+using System.Web.Http;
+using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.User.Inputs;
 
@@ -59,10 +61,27 @@ namespace UcabGo.Api.Functions
         {
             async Task<IActionResult> Action(WalkingInput input)
             {
-                var dto = await userService.UpdateWalkingDistance(input);
-                apiResponse.Message = "WALKING_DISTANCE_UPDATED";
-                apiResponse.Data = dto;
-                return new OkObjectResult(apiResponse);
+                try
+                {
+                    var dto = await userService.UpdateWalkingDistance(input);
+                    apiResponse.Message = "WALKING_DISTANCE_UPDATED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch(Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch(ex.Message)
+                    {
+                        case "NEGATIVE_NUMBER":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex.Message);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
             }
 
             return await RequestHandler.Handle<WalkingInput>(req, log, apiResponse, Action, isAnonymous: false);
