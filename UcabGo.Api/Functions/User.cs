@@ -68,10 +68,10 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    switch(ex.Message)
+                    switch (ex.Message)
                     {
                         case "NEGATIVE_NUMBER":
                             return new BadRequestObjectResult(apiResponse);

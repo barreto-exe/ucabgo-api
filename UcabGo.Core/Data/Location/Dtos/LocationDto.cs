@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UcabGo.Core.Data.User.Dto;
+﻿using UcabGo.Core.Data.User.Dto;
 
 namespace UcabGo.Core.Data.Location.Dtos
 {

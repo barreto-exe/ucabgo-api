@@ -98,17 +98,13 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.InitialLocation, "InitialLocation");
 
-                entity.HasIndex(e => e.Passenger1, "Passenger");
+                entity.HasIndex(e => e.User, "Passenger");
 
                 entity.HasIndex(e => e.Ride, "Ride");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
                 entity.Property(e => e.InitialLocation).HasColumnType("int(11)");
-
-                entity.Property(e => e.Passenger1)
-                    .HasColumnType("int(11)")
-                    .HasColumnName("Passenger");
 
                 entity.Property(e => e.Ride).HasColumnType("int(11)");
 
@@ -118,22 +114,24 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.TimeSolicited).HasColumnType("datetime");
 
+                entity.Property(e => e.User).HasColumnType("int(11)");
+
                 entity.HasOne(d => d.InitialLocationNavigation)
                     .WithMany(p => p.Passengers)
                     .HasForeignKey(d => d.InitialLocation)
                     .HasConstraintName("passenger_ibfk_3");
-
-                entity.HasOne(d => d.Passenger1Navigation)
-                    .WithMany(p => p.Passengers)
-                    .HasForeignKey(d => d.Passenger1)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("passenger_ibfk_2");
 
                 entity.HasOne(d => d.RideNavigation)
                     .WithMany(p => p.Passengers)
                     .HasForeignKey(d => d.Ride)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("passenger_ibfk_1");
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.Passengers)
+                    .HasForeignKey(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("passenger_ibfk_2");
             });
 
             modelBuilder.Entity<Ride>(entity =>

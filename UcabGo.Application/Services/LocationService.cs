@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Location.Inputs;
-using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -107,10 +105,10 @@ namespace UcabGo.Application.Services
                 throw new Exception("LOCATION_NOT_FOUND");
             }
 
-            itemDb.Alias     = location.Alias     ?? itemDb.Alias;
-            itemDb.Zone      = location.Zone      ?? itemDb.Zone;
-            itemDb.Detail    = location.Detail    ?? itemDb.Detail;
-            itemDb.Latitude  = location.Latitude  ?? itemDb.Latitude;
+            itemDb.Alias = location.Alias ?? itemDb.Alias;
+            itemDb.Zone = location.Zone ?? itemDb.Zone;
+            itemDb.Detail = location.Detail ?? itemDb.Detail;
+            itemDb.Latitude = location.Latitude ?? itemDb.Latitude;
             itemDb.Longitude = location.Longitude ?? itemDb.Longitude;
 
             unitOfWork.LocationRepository.Update(itemDb);
