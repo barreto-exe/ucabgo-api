@@ -4,7 +4,7 @@ using UcabGo.Core.Data.User.Dto;
 
 namespace UcabGo.Core.Data.Passanger.Dtos
 {
-    public class PassangerDto
+    public class PassengerDto
     {
         public int Id { get; set; }
         public virtual RideDto Ride { get; set; }
@@ -13,5 +13,6 @@ namespace UcabGo.Core.Data.Passanger.Dtos
         public DateTime TimeSolicited { get; set; }
         public DateTime? TimeAccepted { get; set; }
         public DateTime? TimeIgnored { get; set; }
+        public DateTime? TimeCancelled { get; set; }
     }
 }

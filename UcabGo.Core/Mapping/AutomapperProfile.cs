@@ -4,6 +4,8 @@ using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Location.Inputs;
+using UcabGo.Core.Data.Passanger.Dtos;
+using UcabGo.Core.Data.Passanger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Data.Soscontact.Dto;
@@ -49,6 +51,13 @@ namespace UcabGo.Core.Mapping
             CreateMap<LocationDto, Location>();
             CreateMap<LocationInput, Location>();
             CreateMap<HomeInput, LocationInput>();
+
+            CreateMap<Passenger, PassengerDto>()
+                .ForMember(dest => dest.Ride, opt => opt.MapFrom(x => x.RideNavigation))
+                .ForMember(dest => dest.InitialLocation, opt => opt.MapFrom(x => x.InitialLocationNavigation))
+                .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
+            CreateMap<PassengerDto,  Passenger>();
+            CreateMap<PassengerInput, Passenger>();
         }
     }
 }

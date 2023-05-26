@@ -28,7 +28,7 @@ namespace UcabGo.Api.Functions
             In = ParameterLocation.Query,
             Required = false,
             Type = typeof(bool),
-            Description = "If true, only available rides will be returned.")]
+            Description = "If true, only the available ride will be returned. A user can have only one available ride.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
