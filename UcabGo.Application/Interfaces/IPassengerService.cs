@@ -12,7 +12,8 @@ namespace UcabGo.Application.Interfaces
     {
         Task<Passenger> GetById(int id);
         Task<IEnumerable<PassengerDto>> GetPassengersByRide(int rideId);
-        Task<PassengerDto> AcceptPassenger(int passengerId);
-        Task<PassengerDto> IgnorePassenger(int passengerId);
+        Task<PassengerDto> AcceptPassenger(string driverEmail, int rideId, int passengerId);
+        Task<PassengerDto> IgnorePassenger(string driverEmail, int rideId, int passengerId);
+        Task<PassengerDto> CancelPassenger(string driverEmail, int rideId, int passengerId);
     }
 }

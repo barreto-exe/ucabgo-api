@@ -38,13 +38,25 @@ namespace UcabGo.Application.Services
             var dtos = mapper.Map<IEnumerable<PassengerDto>>(passengers);
             return dtos;
         }
-        public async Task<PassengerDto> AcceptPassenger(int passengerId)
+        public async Task<PassengerDto> AcceptPassenger(string driverEmail, int rideId, int passengerId)
         {
+            var rides = await rideService.GetAll(driverEmail);
+            var rideDto = rides.FirstOrDefault(x => x.Id == rideId);
+            if (rideDto == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
             var passenger = await unitOfWork.PassengerRepository.GetById(passengerId);
             if (passenger == null)
             {
                 throw new Exception("PASSENGER_NOT_FOUND");
             }
+            bool canAccept = passenger.TimeAccepted == null && passenger.TimeIgnored == null && passenger.TimeCancelled == null;
+            if(!canAccept)
+            {
+                throw new Exception("REQUEST_NOT_AVAILABLE_OR_ACCEPTED");
+            }
+
             passenger.TimeAccepted = DateTime.Now;
             
             unitOfWork.PassengerRepository.Update(passenger);
@@ -53,14 +65,56 @@ namespace UcabGo.Application.Services
             var dto = mapper.Map<PassengerDto>(passenger);
             return dto;
         }
-        public async Task<PassengerDto> IgnorePassenger(int passengerId)
+        public async Task<PassengerDto> IgnorePassenger(string driverEmail, int rideId, int passengerId)
         {
+            var rides = await rideService.GetAll(driverEmail);
+            var rideDto = rides.FirstOrDefault(x => x.Id == rideId);
+            if (rideDto == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
             var passenger = await unitOfWork.PassengerRepository.GetById(passengerId);
             if (passenger == null)
             {
                 throw new Exception("PASSENGER_NOT_FOUND");
             }
+
+            bool canIgnore = passenger.TimeAccepted == null && passenger.TimeIgnored == null && passenger.TimeCancelled == null;
+            if (!canIgnore)
+            {
+                throw new Exception("REQUEST_NOT_AVAILABLE_OR_ACCEPTED");
+            }
+
             passenger.TimeIgnored = DateTime.Now;
+
+            unitOfWork.PassengerRepository.Update(passenger);
+            await unitOfWork.SaveChangesAsync();
+
+            var dto = mapper.Map<PassengerDto>(passenger);
+            return dto;
+        }
+
+        public async Task<PassengerDto> CancelPassenger(string driverEmail, int rideId, int passengerId)
+        {
+            var rides = await rideService.GetAll(driverEmail);
+            var rideDto = rides.FirstOrDefault(x => x.Id == rideId);
+            if (rideDto == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
+            var passenger = await unitOfWork.PassengerRepository.GetById(passengerId);
+            if (passenger == null)
+            {
+                throw new Exception("PASSENGER_NOT_FOUND");
+            }
+
+            bool canCancel = passenger.TimeCancelled != null;
+            if (!canCancel)
+            {
+                throw new Exception("REQUEST_ALREADY_CANCELED");
+            }
+
+            passenger.TimeCancelled = DateTime.Now;
 
             unitOfWork.PassengerRepository.Update(passenger);
             await unitOfWork.SaveChangesAsync();
