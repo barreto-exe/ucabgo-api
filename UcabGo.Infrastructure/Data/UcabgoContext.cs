@@ -106,10 +106,6 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.InitialLocation).HasColumnType("int(11)");
 
-                entity.Property(e => e.IsAccepted)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
-
                 entity.Property(e => e.Passenger1)
                     .HasColumnType("int(11)")
                     .HasColumnName("Passenger");
@@ -117,6 +113,8 @@ namespace UcabGo.Infrastructure.Data
                 entity.Property(e => e.Ride).HasColumnType("int(11)");
 
                 entity.Property(e => e.TimeAccepted).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeIgnored).HasColumnType("datetime");
 
                 entity.Property(e => e.TimeSolicited).HasColumnType("datetime");
 
