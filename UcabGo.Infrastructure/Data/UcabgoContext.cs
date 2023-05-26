@@ -110,6 +110,8 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.TimeAccepted).HasColumnType("datetime");
 
+                entity.Property(e => e.TimeCancelled).HasColumnType("datetime");
+
                 entity.Property(e => e.TimeIgnored).HasColumnType("datetime");
 
                 entity.Property(e => e.TimeSolicited).HasColumnType("datetime");
