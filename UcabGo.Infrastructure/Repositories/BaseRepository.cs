@@ -35,22 +35,22 @@ namespace UcabGo.Infrastructure.Repositories
 
             return query;
         }
+        public IQueryable<T> GetAllIncluding(params string[] navigationProperties)
+        {
+            IQueryable<T> query = entities;
+
+            foreach (string navigationProperty in navigationProperties)
+            {
+                query = query.Include(navigationProperty);
+            }
+
+            return query;
+        }
+
 
         public async Task<T> GetById(object id)
         {
             return await entities.FindAsync(id);
-        }
-
-        public async Task<T> GetById(object id, params Expression<Func<T, object>>[] navigationProperties)
-        {
-            DbSet<T> query = entities;
-
-            foreach (var navigationProperty in navigationProperties)
-            {
-                query = query.Include(navigationProperty) as DbSet<T>;
-            }
-
-            return await query.FindAsync(id);
         }
 
         public async Task Add(T item)

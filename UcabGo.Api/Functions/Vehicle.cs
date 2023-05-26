@@ -40,7 +40,7 @@ namespace UcabGo.Api.Functions
                 return new OkObjectResult(apiResponse);
             }
 
-            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: true);
+            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
         #region CreateVehicle

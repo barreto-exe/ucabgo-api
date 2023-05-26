@@ -53,7 +53,6 @@ namespace UcabGo.Core.Mapping
             CreateMap<HomeInput, LocationInput>();
 
             CreateMap<Passenger, PassengerDto>()
-                .ForMember(dest => dest.Ride, opt => opt.MapFrom(x => x.RideNavigation))
                 .ForMember(dest => dest.InitialLocation, opt => opt.MapFrom(x => x.InitialLocationNavigation))
                 .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<PassengerDto,  Passenger>();

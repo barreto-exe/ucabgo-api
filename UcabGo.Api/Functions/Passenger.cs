@@ -25,6 +25,12 @@ namespace UcabGo.Api.Functions
         [FunctionName("GetPassengersByRide")]
         [OpenApiOperation(tags: new[] { "Ride" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiParameter(
+            name: "rideId",
+            In = ParameterLocation.Path,
+            Required = true,
+            Type = typeof(int),
+            Description = "The ID of the ride to consult.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
@@ -32,7 +38,7 @@ namespace UcabGo.Api.Functions
             Description = "A list with the information of the passengers asking for this ride.")]
         #endregion
         public async Task<IActionResult> GetPassengersByRide(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "rides/{id:int}/passengers")] HttpRequest req, int rideId, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "rides/{rideId:int}/passengers")] HttpRequest req, int rideId, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
             {
@@ -46,8 +52,16 @@ namespace UcabGo.Api.Functions
                 catch (Exception ex)
                 {
                     apiResponse.Message = ex.Message;
-                    log.LogError(ex, "Error while getting passengers by ride. RideId: {ID}", rideId);
-                    return new InternalServerErrorResult();
+                    switch(ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while getting passengers by ride. RideId: {ID}", rideId);
+                                return new InternalServerErrorResult();
+                            }
+                    }
                 }
             }
 

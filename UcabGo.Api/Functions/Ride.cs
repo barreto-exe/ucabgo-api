@@ -46,7 +46,7 @@ namespace UcabGo.Api.Functions
                 return new OkObjectResult(apiResponse);
             }
 
-            return await RequestHandler.Handle<RideFilter>(req, log, apiResponse, Action, isAnonymous: true);
+            return await RequestHandler.Handle<RideFilter>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 

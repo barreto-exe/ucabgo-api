@@ -61,15 +61,26 @@ namespace UcabGo.Application.Services
             var result = unitOfWork
                 .RideRepository
                 .GetAllIncluding(
-                    r => r.Vehicle,
-                    r => r.Destination,
-                    r => r.Driver);
+                    r => r.VehicleNavigation,
+                    r => r.DestinationNavigation,
+                    r => r.DriverNavigation,
+                    r => r.Passengers);
 
             return result.ToList();
         }
         public async Task<Ride> GetById(int id)
         {
-            return await unitOfWork.RideRepository.GetById(id);
+            var result = unitOfWork
+                .RideRepository
+                .GetAllIncluding(
+                    "VehicleNavigation",
+                    "DestinationNavigation",
+                    "DriverNavigation",
+                    "Passengers.UserNavigation",
+                    "Passengers.InitialLocationNavigation");
+
+            var ride = result.FirstOrDefault(x => x.Id == id);
+            return ride;
         }
         public async Task<RideDto> Create(RideInput input)
         {

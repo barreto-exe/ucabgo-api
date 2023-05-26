@@ -7,7 +7,7 @@ namespace UcabGo.Core.Data.Passanger.Dtos
     public class PassengerDto
     {
         public int Id { get; set; }
-        public virtual RideDto Ride { get; set; }
+        public virtual int Ride { get; set; }
         public virtual LocationDto InitialLocation { get; set; }
         public virtual UserDto User { get; set; }
         public DateTime TimeSolicited { get; set; }
