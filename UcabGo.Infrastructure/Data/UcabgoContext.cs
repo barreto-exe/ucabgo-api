@@ -50,10 +50,6 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Detail).HasMaxLength(255);
 
-                entity.Property(e => e.IsActive)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
-
                 entity.Property(e => e.User).HasColumnType("int(11)");
 
                 entity.Property(e => e.Zone).HasMaxLength(255);

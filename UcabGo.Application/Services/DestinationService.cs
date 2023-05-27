@@ -89,7 +89,6 @@ namespace UcabGo.Application.Services
             itemDb.Detail = input.Detail ?? itemDb.Detail;
             itemDb.Latitude = input.Latitude ?? itemDb.Latitude;
             itemDb.Longitude = input.Longitude ?? itemDb.Longitude;
-            itemDb.IsActive = input.IsActive != null ? Convert.ToUInt64(input.IsActive) : itemDb.IsActive;
 
             unitOfWork.DestinationRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();
