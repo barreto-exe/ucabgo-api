@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using System.Security.Cryptography;
+using System.Text;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.User.Dto;
@@ -32,12 +34,16 @@ namespace UcabGo.Application.Services
         }
         public async Task<User> GetByEmailAndPass(LoginInput login)
         {
+            login.Password = EncodePassword(login.Password);
+
             var users = unitOfWork.UserRepository.GetAll();
             var user = users.Where(x => x.Email == login.Email && x.Password == login.Password).FirstOrDefault();
             return user;
         }
         public async Task<UserDto> Create(User user)
         {
+            user.Password = EncodePassword(user.Password);
+
             await unitOfWork.UserRepository.Add(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -48,6 +54,8 @@ namespace UcabGo.Application.Services
         }
         public async Task<UserDto> Update(User user)
         {
+            user.Password = EncodePassword(user.Password);
+
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
 
@@ -86,6 +94,20 @@ namespace UcabGo.Application.Services
 
             var userDto = mapper.Map<UserDto>(user);
             return userDto;
+        }
+        
+        private static string EncodePassword(string password)
+        {
+            using MD5 md5Hash = MD5.Create();
+
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
+            StringBuilder sb = new();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sb.Append(data[i].ToString("x2"));
+            }
+
+            return sb.ToString();
         }
     }
 }
