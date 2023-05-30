@@ -7,7 +7,7 @@ namespace UcabGo.Core.Data.Auth.Inputs
         [Required]
         public string OldPassword { get; set; }
         [Required]
-        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$", ErrorMessage = "Password must be at least 8 characters long and contain at least one letter and one number.")]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$", ErrorMessage = "Password must: (1) Be at least 8 characters long. (2) Contain at least one capital letter. (3) Contain at least one number. (4) Contain at least one special character.")]
         public string NewPassword { get; set; }
     }
 }
