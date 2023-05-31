@@ -1,10 +1,4 @@
 using AutoMapper;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
@@ -63,9 +57,9 @@ namespace UcabGo.Application.Services
                 OnlyAvailable = true
             })).FirstOrDefault();
             var passengerDto = rideDto?.Passengers?.FirstOrDefault(p => p.Id == idUser);
-            var passengerIsInRide = 
-                passengerDto?.TimeAccepted != null && 
-                passengerDto?.TimeCancelled == null && 
+            var passengerIsInRide =
+                passengerDto?.TimeAccepted != null &&
+                passengerDto?.TimeCancelled == null &&
                 passengerDto?.TimeIgnored == null &&
                 passengerDto?.TimeFinished == null;
             if (rideDto != null && passengerIsInRide)
@@ -74,10 +68,10 @@ namespace UcabGo.Application.Services
             }
 
             //Validate if available seats
-            var activePassengers = ride.Passengers.Where(p => 
-                p.TimeAccepted != null && 
-                p.TimeCancelled == null && 
-                p.TimeIgnored == null && 
+            var activePassengers = ride.Passengers.Where(p =>
+                p.TimeAccepted != null &&
+                p.TimeCancelled == null &&
+                p.TimeIgnored == null &&
                 p.TimeFinished == null);
             int availableSeats = ride.SeatQuantity - activePassengers.Count();
             if (availableSeats <= 0)
@@ -116,7 +110,7 @@ namespace UcabGo.Application.Services
                     "DestinationNavigation",
                     "DriverNavigation");
             List<Ride> result;
-            if(filter.OnlyAvailable)
+            if (filter.OnlyAvailable)
             {
                 result = rides
                     .Where(r => ridesIds.Contains(r.Id) && Convert.ToBoolean(r.IsAvailable))

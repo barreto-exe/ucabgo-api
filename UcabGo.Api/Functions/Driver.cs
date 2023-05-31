@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
-using UcabGo.Core.Data.Passanger.Dtos;
-using UcabGo.Core.Data;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data;
+using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Data.Ride.Inputs;

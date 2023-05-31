@@ -216,9 +216,9 @@ namespace UcabGo.Application.Services
                 throw new Exception("PASSENGER_NOT_FOUND");
             }
 
-            bool canIgnore = 
-                passenger.TimeAccepted == null && 
-                passenger.TimeIgnored == null && 
+            bool canIgnore =
+                passenger.TimeAccepted == null &&
+                passenger.TimeIgnored == null &&
                 passenger.TimeCancelled == null;
             if (!canIgnore)
             {
@@ -248,12 +248,12 @@ namespace UcabGo.Application.Services
             }
 
             //Can cancel if not cancelled and ride is not cancelled and not ended
-            bool canCancel = 
+            bool canCancel =
                 passenger.TimeAccepted != null &&
-                passenger.TimeCancelled == null && 
+                passenger.TimeCancelled == null &&
                 passenger.TimeIgnored == null &&
                 passenger.TimeFinished == null &&
-                rideDto.TimeCanceled == null && 
+                rideDto.TimeCanceled == null &&
                 rideDto.TimeEnded == null;
             if (!canCancel)
             {

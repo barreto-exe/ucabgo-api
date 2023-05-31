@@ -16,5 +16,7 @@ namespace UcabGo.Core.Data.Ride.Filters
         public float FinalLongitude { get; set; }
         [Required]
         public string FinalZone { get; set; }
+        [Required]
+        public int WalkingDistance { get; set; }
     }
 }

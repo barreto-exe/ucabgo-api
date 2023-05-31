@@ -95,7 +95,7 @@ namespace UcabGo.Application.Services
             var userDto = mapper.Map<UserDto>(user);
             return userDto;
         }
-        
+
         private static string EncodePassword(string password)
         {
             using MD5 md5Hash = MD5.Create();

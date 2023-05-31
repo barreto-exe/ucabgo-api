@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
-using UcabGo.Core.Data.Ride.Inputs;
-using UcabGo.Core.Data.User.Dto;
-using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 

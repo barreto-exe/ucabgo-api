@@ -1,17 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
 using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
-using UcabGo.Core.Entities;
 
 namespace UcabGo.Api.Functions
 {

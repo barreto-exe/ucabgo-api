@@ -1,5 +1,4 @@
 using UcabGo.Core.Data.Location.Dtos;
-using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.User.Dto;
 
 namespace UcabGo.Core.Data.Passanger.Dtos

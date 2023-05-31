@@ -1,7 +1,6 @@
 ﻿using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
-using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Entities;
 
 namespace UcabGo.Application.Interfaces

@@ -2,7 +2,6 @@
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
-using UcabGo.Core.Entities;
 
 namespace UcabGo.Core.Data.Ride.Dtos
 {
@@ -17,9 +16,9 @@ namespace UcabGo.Core.Data.Ride.Dtos
         {
             get
             {
-                var activePassengers = Passengers.Where(p => 
-                    p.TimeAccepted != null && 
-                    p.TimeCancelled == null && 
+                var activePassengers = Passengers.Where(p =>
+                    p.TimeAccepted != null &&
+                    p.TimeCancelled == null &&
                     p.TimeIgnored == null &&
                     p.TimeFinished == null);
                 return SeatQuantity - activePassengers.Count();

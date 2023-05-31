@@ -4,8 +4,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Reflection;
@@ -14,9 +12,6 @@ using UcabGo.Application.Services;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
 using UcabGo.Infrastructure.Repositories;
-using System.Buffers;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 [assembly: WebJobsStartup(typeof(UcabGo.Api.Startup))]
 namespace UcabGo.Api

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
-using UcabGo.Core.Data.Ride.Inputs;
 
 namespace UcabGo.Api.Functions
 {
@@ -29,6 +27,7 @@ namespace UcabGo.Api.Functions
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLatitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The latitude of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLongitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The longitude of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalZone), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The zone of the final location of the ride.")]
+        [OpenApiParameter(name: nameof(MatchingFilter.WalkingDistance), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The distance the user asking for a ride is willing to walk.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
@@ -59,7 +58,7 @@ namespace UcabGo.Api.Functions
                             }
                     }
                 }
-                }
+            }
 
             return await RequestHandler.Handle<MatchingFilter>(req, log, apiResponse, Action, isAnonymous: false);
         }
