@@ -282,6 +282,8 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         case "LOCATION_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
+                        case "NO_AVAILABLE_SEATS":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while asking ride.", input);

@@ -12,6 +12,14 @@ namespace UcabGo.Core.Data.Ride.Dtos
         public VehicleDto Vehicle { get; set; }
         public DestinationDto Destination { get; set; }
         public int SeatQuantity { get; set; }
+        public int AvailableSeats
+        {
+            get
+            {
+                var activePassengers = Passengers.Where(p => p.TimeAccepted != null && p.TimeCancelled == null && p.TimeIgnored == null);
+                return SeatQuantity - activePassengers.Count();
+            }
+        }
         public float LatitudeOrigin { get; set; }
         public float LongitudeOrigin { get; set; }
         public bool IsAvailable { get; set; }

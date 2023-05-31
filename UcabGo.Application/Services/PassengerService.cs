@@ -56,6 +56,14 @@ namespace UcabGo.Application.Services
             
             //...
 
+            //Validate if available seats
+            var activePassengers = ride.Passengers.Where(p => p.TimeAccepted != null && p.TimeCancelled == null && p.TimeIgnored == null);
+            int availableSeats = ride.SeatQuantity - activePassengers.Count();
+            if (availableSeats <= 0)
+            {
+                throw new Exception("NO_AVAILABLE_SEATS");
+            }
+
             //Create passenger
             var item = mapper.Map<Passenger>(input);
             item.User = idUser;

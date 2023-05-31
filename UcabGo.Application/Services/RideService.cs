@@ -41,7 +41,7 @@ namespace UcabGo.Application.Services
 
             //TODO - Matching algorithm here
 
-            var ridesDtos = mapper.Map<IEnumerable<RideDto>>(rides.ToList());
+            var ridesDtos = mapper.Map<List<RideDto>>(rides.ToList());
             return ridesDtos;
         }
 
