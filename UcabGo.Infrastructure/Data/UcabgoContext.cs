@@ -65,7 +65,7 @@ namespace UcabGo.Infrastructure.Data
             {
                 entity.ToTable("locations");
 
-                entity.HasIndex(e => e.User, "User");
+                entity.HasIndex(e => e.User, "User1");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
@@ -107,6 +107,8 @@ namespace UcabGo.Infrastructure.Data
                 entity.Property(e => e.TimeAccepted).HasColumnType("datetime");
 
                 entity.Property(e => e.TimeCancelled).HasColumnType("datetime");
+
+                entity.Property(e => e.TimeFinished).HasColumnType("datetime");
 
                 entity.Property(e => e.TimeIgnored).HasColumnType("datetime");
 
@@ -156,7 +158,9 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.TimeCanceled).HasColumnType("datetime");
 
-                entity.Property(e => e.TimeCreated).HasColumnType("datetime");
+                entity.Property(e => e.TimeCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("'0001-01-01 00:00:00'");
 
                 entity.Property(e => e.TimeEnded).HasColumnType("datetime");
 
@@ -231,7 +235,7 @@ namespace UcabGo.Infrastructure.Data
             {
                 entity.ToTable("vehicle");
 
-                entity.HasIndex(e => e.User, "IdUser");
+                entity.HasIndex(e => e.User, "IdUser1");
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 

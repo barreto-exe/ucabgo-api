@@ -10,6 +10,7 @@
         public DateTime? TimeAccepted { get; set; }
         public DateTime? TimeIgnored { get; set; }
         public DateTime? TimeCancelled { get; set; }
+        public DateTime? TimeFinished { get; set; }
 
         public virtual Location InitialLocationNavigation { get; set; } = null!;
         public virtual Ride RideNavigation { get; set; } = null!;

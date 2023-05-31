@@ -211,6 +211,8 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         case "NOT_IN_RIDE":
                             return new BadRequestObjectResult(apiResponse);
+                        case "RIDE_NOT_STARTED":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while finishing ride.", input);

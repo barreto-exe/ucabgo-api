@@ -14,5 +14,6 @@ namespace UcabGo.Core.Data.Passanger.Dtos
         public DateTime? TimeAccepted { get; set; }
         public DateTime? TimeIgnored { get; set; }
         public DateTime? TimeCancelled { get; set; }
+        public DateTime? TimeFinished { get; set; }
     }
 }

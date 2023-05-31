@@ -17,7 +17,11 @@ namespace UcabGo.Core.Data.Ride.Dtos
         {
             get
             {
-                var activePassengers = Passengers.Where(p => p.TimeAccepted != null && p.TimeCancelled == null && p.TimeIgnored == null);
+                var activePassengers = Passengers.Where(p => 
+                    p.TimeAccepted != null && 
+                    p.TimeCancelled == null && 
+                    p.TimeIgnored == null &&
+                    p.TimeFinished == null);
                 return SeatQuantity - activePassengers.Count();
             }
         }

@@ -101,6 +101,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("CANT_START_RIDE");
             }
 
+            //TODO - Autoignore all passengers that were not accepted.
+
             rideDb.TimeStarted = DateTime.Now;
             rideDb.IsAvailable = Convert.ToUInt64(false);
 
@@ -214,7 +216,10 @@ namespace UcabGo.Application.Services
                 throw new Exception("PASSENGER_NOT_FOUND");
             }
 
-            bool canIgnore = passenger.TimeAccepted == null && passenger.TimeIgnored == null && passenger.TimeCancelled == null;
+            bool canIgnore = 
+                passenger.TimeAccepted == null && 
+                passenger.TimeIgnored == null && 
+                passenger.TimeCancelled == null;
             if (!canIgnore)
             {
                 throw new Exception("REQUEST_NOT_AVAILABLE_OR_ACCEPTED");
@@ -244,14 +249,15 @@ namespace UcabGo.Application.Services
 
             //Can cancel if not cancelled and ride is not cancelled and not ended
             bool canCancel = 
+                passenger.TimeAccepted != null &&
                 passenger.TimeCancelled == null && 
-                passenger.TimeIgnored == null && 
-                //passenger.TimeFinished == null &&
+                passenger.TimeIgnored == null &&
+                passenger.TimeFinished == null &&
                 rideDto.TimeCanceled == null && 
                 rideDto.TimeEnded == null;
             if (!canCancel)
             {
-                throw new Exception("REQUEST_ALREADY_CANCELED");
+                throw new Exception("REQUEST_ALREADY_CANCELED_OR_NOT_ACCEPTED");
             }
 
             passenger.TimeCancelled = DateTime.Now;

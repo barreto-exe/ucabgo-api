@@ -11,6 +11,5 @@ namespace UcabGo.Core.Data.Destination.Dtos
         public string? Detail { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
-        public bool IsActive { get; set; }
     }
 }

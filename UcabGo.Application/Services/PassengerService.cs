@@ -66,14 +66,19 @@ namespace UcabGo.Application.Services
             var passengerIsInRide = 
                 passengerDto?.TimeAccepted != null && 
                 passengerDto?.TimeCancelled == null && 
-                passengerDto?.TimeIgnored == null;
+                passengerDto?.TimeIgnored == null &&
+                passengerDto?.TimeFinished == null;
             if (rideDto != null && passengerIsInRide)
             {
                 throw new Exception("ALREADY_IN_RIDE");
             }
 
             //Validate if available seats
-            var activePassengers = ride.Passengers.Where(p => p.TimeAccepted != null && p.TimeCancelled == null && p.TimeIgnored == null);
+            var activePassengers = ride.Passengers.Where(p => 
+                p.TimeAccepted != null && 
+                p.TimeCancelled == null && 
+                p.TimeIgnored == null && 
+                p.TimeFinished == null);
             int availableSeats = ride.SeatQuantity - activePassengers.Count();
             if (availableSeats <= 0)
             {
@@ -173,19 +178,6 @@ namespace UcabGo.Application.Services
             //Get user id
             int idUser = (await userService.GetByEmail(input.Email)).Id;
 
-            //Get ride
-            var ride = await rideService.GetById(input.RideId);
-            if (ride == null)
-            {
-                throw new Exception("RIDE_NOT_FOUND");
-            }
-
-            //Validate if ride is available
-            if (!Convert.ToBoolean(ride.IsAvailable))
-            {
-                throw new Exception("RIDE_NOT_AVAILABLE");
-            }
-
             //Validate if user is in ride
             var passenger = unitOfWork
                 .PassengerRepository
@@ -198,7 +190,27 @@ namespace UcabGo.Application.Services
                 throw new Exception("NOT_IN_RIDE");
             }
 
-            //passenger.TimeFinished = DateTime.Now;
+            //Get ride
+            var ride = await rideService.GetById(input.RideId);
+            if (ride == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
+
+            //Cant finish passenger if Ride is not started
+            if (ride.TimeStarted == null || passenger.TimeAccepted == null)
+            {
+                throw new Exception("RIDE_NOT_STARTED");
+            }
+
+            //Validate if ride is available
+            if (ride.TimeEnded != null || ride.TimeCanceled != null)
+            {
+                throw new Exception("RIDE_NOT_AVAILABLE");
+            }
+
+
+            passenger.TimeFinished = DateTime.Now;
             unitOfWork.PassengerRepository.Update(passenger);
             await unitOfWork.SaveChangesAsync();
 

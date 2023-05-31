@@ -453,7 +453,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         case "PASSENGER_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
-                        case "REQUEST_ALREADY_CANCELED":
+                        case "REQUEST_ALREADY_CANCELED_OR_NOT_ACCEPTED":
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
