@@ -2,6 +2,7 @@
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
@@ -24,6 +25,29 @@ namespace UcabGo.Application.Services
             this.vehicleService = vehicleService;
             this.destinationService = destinationService;
             this.mapper = mapper;
+        }
+
+        public async Task<IEnumerable<RideDto>> GetMathchingAll(MatchingFilter filter)
+        {
+            var items = unitOfWork
+                .RideRepository
+                .GetAllIncluding(
+                    "VehicleNavigation",
+                    "DestinationNavigation",
+                    "DriverNavigation",
+                    "Passengers.UserNavigation",
+                    "Passengers.InitialLocationNavigation");
+
+            var rides = from r in items
+                        where
+                            r.IsAvailable == Convert.ToUInt64(true) &&
+                            r.DriverNavigation.Email != filter.Email
+                        select r;
+
+            //TODO - Matching algorithm here
+
+            var ridesDtos = mapper.Map<IEnumerable<RideDto>>(rides.ToList());
+            return ridesDtos;
         }
 
         public async Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyAvailable = false)
