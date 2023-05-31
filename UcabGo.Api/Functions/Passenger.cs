@@ -12,11 +12,13 @@ namespace UcabGo.Api.Functions
 {
     public class Passenger
     {
-        private readonly IPassengerService passengerService;
+        private readonly IDriverService driverService;
+        private readonly IRideService rideService;
         private readonly ApiResponse apiResponse;
-        public Passenger(IPassengerService passengerService, ApiResponse apiResponse)
+        public Passenger(IDriverService driverService, IRideService rideService, ApiResponse apiResponse)
         {
-            this.passengerService = passengerService;
+            this.driverService = driverService;
+            this.rideService = rideService;
             this.apiResponse = apiResponse;
         }
 
@@ -44,7 +46,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dtos = await passengerService.GetPassengersByRide(rideId);
+                    var dtos = await rideService.GetPassengers(rideId);
                     apiResponse.Message = "PASSENGERS_FOUND";
                     apiResponse.Data = dtos;
                     return new OkObjectResult(apiResponse);
@@ -99,7 +101,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await passengerService.AcceptPassenger(input.Email, rideId, passengerId);
+                    var dto = await driverService.AcceptPassenger(input.Email, rideId, passengerId);
                     apiResponse.Message = "PASSENGER_ACCEPTED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -157,7 +159,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await passengerService.IgnorePassenger(input.Email, rideId, passengerId);
+                    var dto = await driverService.IgnorePassenger(input.Email, rideId, passengerId);
                     apiResponse.Message = "PASSENGER_IGNORED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -215,7 +217,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await passengerService.CancelPassenger(input.Email, rideId, passengerId);
+                    var dto = await driverService.CancelPassenger(input.Email, rideId, passengerId);
                     apiResponse.Message = "PASSENGER_CANCELLED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);

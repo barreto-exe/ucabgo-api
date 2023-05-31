@@ -12,6 +12,7 @@ namespace UcabGo.Api.Functions
     {
         private readonly ApiResponse apiResponse;
         private readonly IRideService rideService;
+        private readonly IDriverService driverService;
         public Ride(ApiResponse response, IRideService rideService)
         {
             this.apiResponse = response;
@@ -118,7 +119,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.Create(input);
+                    var dto = await driverService.CreateRide(input);
                     apiResponse.Message = "RIDE_CREATED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -169,7 +170,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.StartRide(input);
+                    var dto = await driverService.StartRide(input);
                     apiResponse.Message = "RIDE_STARTED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -217,7 +218,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.CompleteRide(input);
+                    var dto = await driverService.CompleteRide(input);
                     apiResponse.Message = "RIDE_COMPLETED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -265,7 +266,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.CancelRide(input);
+                    var dto = await driverService.CancelRide(input);
                     apiResponse.Message = "RIDE_CANCELED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
