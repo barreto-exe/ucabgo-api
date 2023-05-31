@@ -7,6 +7,8 @@ using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
+using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Entities;
 
 namespace UcabGo.Api.Functions
 {
@@ -14,11 +16,13 @@ namespace UcabGo.Api.Functions
     {
         private readonly IDriverService driverService;
         private readonly IRideService rideService;
+        private readonly IPassengerService passengerService;
         private readonly ApiResponse apiResponse;
-        public Passenger(IDriverService driverService, IRideService rideService, ApiResponse apiResponse)
+        public Passenger(IDriverService driverService, IRideService rideService, IPassengerService passengerService, ApiResponse apiResponse)
         {
             this.driverService = driverService;
             this.rideService = rideService;
+            this.passengerService = passengerService;
             this.apiResponse = apiResponse;
         }
 
@@ -69,8 +73,6 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
-
         #region AcceptPassengerRequest
         [FunctionName("AcceptPassengerRequest")]
         [OpenApiOperation(tags: new[] { "Ride" })]
@@ -128,7 +130,6 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
         #region IgnorePassengerRequest
         [FunctionName("IgnorePassengerRequest")]
         [OpenApiOperation(tags: new[] { "Ride" })]
@@ -186,7 +187,6 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
         #region CancelPassengerRequest
         [FunctionName("CancelPassengerRequest")]
         [OpenApiOperation(tags: new[] { "Ride" })]
@@ -244,5 +244,55 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
+
+
+        #region AskForRide
+        [FunctionName("AskForRide")]
+        [OpenApiOperation(tags: new[] { "Passenger" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(PassengerInput),
+            Required = true,
+            Description = "The information from the passenger in order to ask for a ride.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(PassengerDto),
+            Description = "The data from the passenger that asked for a ride.")]
+        #endregion
+        public async Task<IActionResult> AskForRide(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "rides/ask")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(PassengerInput input)
+            {
+                try
+                {
+                    var dto = await passengerService.AskForRide(input);
+                    apiResponse.Message = "PASSENGER_ASKED_FOR_RIDE";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "LOCATION_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while asking ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<PassengerInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
     }
 }

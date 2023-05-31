@@ -172,6 +172,7 @@ namespace UcabGo.Application.Services
             var dto = mapper.Map<RideDto>(rideDb);
             return dto;
         }
+
         public async Task<PassengerDto> AcceptPassenger(string driverEmail, int rideId, int passengerId)
         {
             var rides = await rideService.GetAll(driverEmail);
@@ -241,7 +242,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("PASSENGER_NOT_FOUND");
             }
 
-            bool canCancel = passenger.TimeCancelled != null;
+            //Can cancel if not cancelled and ride is not cancelled and not ended
+            bool canCancel = passenger.TimeCancelled == null && rideDto.TimeCanceled == null && rideDto.TimeEnded == null;
             if (!canCancel)
             {
                 throw new Exception("REQUEST_ALREADY_CANCELED");
