@@ -243,7 +243,12 @@ namespace UcabGo.Application.Services
             }
 
             //Can cancel if not cancelled and ride is not cancelled and not ended
-            bool canCancel = passenger.TimeCancelled == null && rideDto.TimeCanceled == null && rideDto.TimeEnded == null;
+            bool canCancel = 
+                passenger.TimeCancelled == null && 
+                passenger.TimeIgnored == null && 
+                //passenger.TimeFinished == null &&
+                rideDto.TimeCanceled == null && 
+                rideDto.TimeEnded == null;
             if (!canCancel)
             {
                 throw new Exception("REQUEST_ALREADY_CANCELED");

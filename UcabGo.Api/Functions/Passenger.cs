@@ -8,6 +8,7 @@ using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Entities;
@@ -121,5 +122,106 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<RideFilter>(req, log, apiResponse, Action, isAnonymous: false);
         }
+
+        #region CancelRideByPassenger
+        [FunctionName("CancelRideByPassenger")]
+        [OpenApiOperation(tags: new[] { "Passenger" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(CancelRideInput),
+            Required = true,
+            Description = "The information for canceling the ride.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(PassengerDto),
+            Description = "The information of the passenger that canceled the ride.")]
+        #endregion
+        public async Task<IActionResult> CancelRideByPassenger(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/cancel")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(CancelRideInput input)
+            {
+                try
+                {
+                    var dto = await passengerService.CancelRide(input);
+                    apiResponse.Message = "RIDE_CANCELED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "RIDE_NOT_AVAILABLE":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "NOT_IN_RIDE":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while canceling ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<CancelRideInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
+        #region FinishRideByPassenger
+        [FunctionName("FinishRideByPassenger")]
+        [OpenApiOperation(tags: new[] { "Passenger" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(FinishRideInput),
+            Required = true,
+            Description = "The information for finishing a ride.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(PassengerDto),
+            Description = "The information of the user that have succesfully exited a ride.")]
+        #endregion
+        public async Task<IActionResult> FinishRideByPassenger(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/finish")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(FinishRideInput input)
+            {
+                try
+                {
+                    var dto = await passengerService.FinishRide(input);
+                    apiResponse.Message = "RIDE_FINISHED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "RIDE_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        case "RIDE_NOT_AVAILABLE":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "NOT_IN_RIDE":
+                            return new BadRequestObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while finishing ride.", input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<FinishRideInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
     }
 }

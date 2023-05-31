@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Entities;
@@ -61,7 +62,12 @@ namespace UcabGo.Application.Services
                 Email = input.Email,
                 OnlyAvailable = true
             })).FirstOrDefault();
-            if (rideDto != null)
+            var passengerDto = rideDto?.Passengers?.FirstOrDefault(p => p.Id == idUser);
+            var passengerIsInRide = 
+                passengerDto?.TimeAccepted != null && 
+                passengerDto?.TimeCancelled == null && 
+                passengerDto?.TimeIgnored == null;
+            if (rideDto != null && passengerIsInRide)
             {
                 throw new Exception("ALREADY_IN_RIDE");
             }
@@ -89,15 +95,13 @@ namespace UcabGo.Application.Services
             //Get user id
             int idUser = (await userService.GetByEmail(filter.Email)).Id;
 
-            //Get passenger objects from user
-            var passengerList = unitOfWork
+            //Get ride Ids from user
+            var ridesIds = unitOfWork
                 .PassengerRepository
-                .GetAll();
-            var ridesIds = passengerList
+                .GetAll()
                 .Where(p => p.User == idUser)
                 .Select(p => p.Ride)
                 .ToList();
-
 
             //Get available rides
             var rides = unitOfWork
@@ -127,6 +131,78 @@ namespace UcabGo.Application.Services
             });
 
             return dtos;
+        }
+        public async Task<PassengerDto> CancelRide(CancelRideInput input)
+        {
+            //Get user id
+            int idUser = (await userService.GetByEmail(input.Email)).Id;
+
+            //Get ride
+            var ride = await rideService.GetById(input.RideId);
+            if (ride == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
+
+            //Validate if ride is available
+            if (!Convert.ToBoolean(ride.IsAvailable))
+            {
+                throw new Exception("RIDE_NOT_AVAILABLE");
+            }
+
+            //Validate if user is in ride
+            var passenger = unitOfWork
+                .PassengerRepository
+                .GetAll()
+                .Where(p => p.User == idUser && p.Ride == input.RideId)
+                .OrderByDescending(p => p.TimeSolicited)
+                .FirstOrDefault();
+            if (passenger == null)
+            {
+                throw new Exception("NOT_IN_RIDE");
+            }
+
+            passenger.TimeCancelled = DateTime.Now;
+            unitOfWork.PassengerRepository.Update(passenger);
+            await unitOfWork.SaveChangesAsync();
+
+            return mapper.Map<PassengerDto>(passenger);
+        }
+        public async Task<PassengerDto> FinishRide(FinishRideInput input)
+        {
+            //Get user id
+            int idUser = (await userService.GetByEmail(input.Email)).Id;
+
+            //Get ride
+            var ride = await rideService.GetById(input.RideId);
+            if (ride == null)
+            {
+                throw new Exception("RIDE_NOT_FOUND");
+            }
+
+            //Validate if ride is available
+            if (!Convert.ToBoolean(ride.IsAvailable))
+            {
+                throw new Exception("RIDE_NOT_AVAILABLE");
+            }
+
+            //Validate if user is in ride
+            var passenger = unitOfWork
+                .PassengerRepository
+                .GetAll()
+                .Where(p => p.User == idUser && p.Ride == input.RideId)
+                .OrderByDescending(p => p.TimeSolicited)
+                .FirstOrDefault();
+            if (passenger == null)
+            {
+                throw new Exception("NOT_IN_RIDE");
+            }
+
+            //passenger.TimeFinished = DateTime.Now;
+            unitOfWork.PassengerRepository.Update(passenger);
+            await unitOfWork.SaveChangesAsync();
+
+            return mapper.Map<PassengerDto>(passenger);
         }
     }
 }
