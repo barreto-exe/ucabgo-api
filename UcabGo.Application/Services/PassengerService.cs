@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -52,9 +53,12 @@ namespace UcabGo.Application.Services
                 throw new Exception("LOCATION_NOT_FOUND");
             }
 
-            //TODO - Validate if user already asked for ride
-            
-            //...
+            //Validate if user is already in a ride
+            var rideDto = await CurrentRide(input.Email);
+            if (rideDto != null)
+            {
+                throw new Exception("ALREADY_IN_RIDE");
+            }
 
             //Validate if available seats
             var activePassengers = ride.Passengers.Where(p => p.TimeAccepted != null && p.TimeCancelled == null && p.TimeIgnored == null);
@@ -73,6 +77,35 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             return mapper.Map<PassengerDto>(item);
+        }
+
+        public async Task<RideDto?> CurrentRide(string passengerEmail)
+        {
+            //Get user id
+            int idUser = (await userService.GetByEmail(passengerEmail)).Id;
+
+            //Get passengers
+            var passengerList = unitOfWork.PassengerRepository.GetAll();
+
+            var passenger = passengerList
+                .FirstOrDefault(p =>
+                    p.User == idUser &&
+                    p.TimeAccepted != null &&
+                    p.TimeCancelled == null &&
+                    p.TimeIgnored == null);
+            if (passenger == null)
+            {
+                return null;
+            }
+
+            //Get ride
+            var ride = await rideService.GetById(passenger.Ride);
+            if (ride == null)
+            {
+                return null;
+            }
+
+            return mapper.Map<RideDto>(ride);
         }
     }
 }
