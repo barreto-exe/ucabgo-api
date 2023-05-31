@@ -1,4 +1,5 @@
 ﻿using UcabGo.Core.Data.Destination.Dtos;
+using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Entities;
@@ -27,6 +28,6 @@ namespace UcabGo.Core.Data.Ride.Dtos
         public DateTime? TimeStarted { get; set; }
         public DateTime? TimeEnded { get; set; }
         public DateTime? TimeCanceled { get; set; }
-        public virtual IEnumerable<Passenger> Passengers { get; set; }
+        public virtual IEnumerable<PassengerDto> Passengers { get; set; }
     }
 }

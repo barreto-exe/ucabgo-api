@@ -1,4 +1,5 @@
 using AutoMapper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -54,7 +56,11 @@ namespace UcabGo.Application.Services
             }
 
             //Validate if user is already in a ride
-            var rideDto = await CurrentRide(input.Email);
+            var rideDto = (await GetRides(new RideFilter()
+            {
+                Email = input.Email,
+                OnlyAvailable = true
+            })).FirstOrDefault();
             if (rideDto != null)
             {
                 throw new Exception("ALREADY_IN_RIDE");
@@ -78,34 +84,49 @@ namespace UcabGo.Application.Services
 
             return mapper.Map<PassengerDto>(item);
         }
-
-        public async Task<RideDto?> CurrentRide(string passengerEmail)
+        public async Task<IEnumerable<RideDto>> GetRides(RideFilter filter)
         {
             //Get user id
-            int idUser = (await userService.GetByEmail(passengerEmail)).Id;
+            int idUser = (await userService.GetByEmail(filter.Email)).Id;
 
-            //Get passengers
-            var passengerList = unitOfWork.PassengerRepository.GetAll();
+            //Get passenger objects from user
+            var passengerList = unitOfWork
+                .PassengerRepository
+                .GetAll();
+            var ridesIds = passengerList
+                .Where(p => p.User == idUser)
+                .Select(p => p.Ride)
+                .ToList();
 
-            var passenger = passengerList
-                .FirstOrDefault(p =>
-                    p.User == idUser &&
-                    p.TimeAccepted != null &&
-                    p.TimeCancelled == null &&
-                    p.TimeIgnored == null);
-            if (passenger == null)
+
+            //Get available rides
+            var rides = unitOfWork
+                .RideRepository
+                .GetAllIncluding(
+                    "VehicleNavigation",
+                    "DestinationNavigation",
+                    "DriverNavigation");
+            List<Ride> result;
+            if(filter.OnlyAvailable)
             {
-                return null;
+                result = rides
+                    .Where(r => ridesIds.Contains(r.Id) && Convert.ToBoolean(r.IsAvailable))
+                    .ToList();
             }
-
-            //Get ride
-            var ride = await rideService.GetById(passenger.Ride);
-            if (ride == null)
+            else
             {
-                return null;
+                result = rides
+                    .Where(r => ridesIds.Contains(r.Id))
+                    .ToList();
             }
+            var dtos = mapper.Map<List<RideDto>>(result);
 
-            return mapper.Map<RideDto>(ride);
+            dtos.ForEach(async dto =>
+            {
+                dto.Passengers = await rideService.GetPassengers(dto.Id);
+            });
+
+            return dtos;
         }
     }
 }

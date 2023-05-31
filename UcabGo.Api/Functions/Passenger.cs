@@ -8,241 +8,20 @@ using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Entities;
 
 namespace UcabGo.Api.Functions
 {
     public class Passenger
     {
-        private readonly IDriverService driverService;
-        private readonly IRideService rideService;
         private readonly IPassengerService passengerService;
         private readonly ApiResponse apiResponse;
-        public Passenger(IDriverService driverService, IRideService rideService, IPassengerService passengerService, ApiResponse apiResponse)
+        public Passenger(IPassengerService passengerService, ApiResponse apiResponse)
         {
-            this.driverService = driverService;
-            this.rideService = rideService;
             this.passengerService = passengerService;
             this.apiResponse = apiResponse;
-        }
-
-
-        #region GetPassengersByRide
-        [FunctionName("GetPassengersByRide")]
-        [OpenApiOperation(tags: new[] { "Ride" })]
-        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiParameter(
-            name: "rideId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the ride to consult.")]
-        [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK,
-            contentType: "application/json",
-            bodyType: typeof(IEnumerable<PassengerDto>),
-            Description = "A list with the information of the passengers asking for this ride.")]
-        #endregion
-        public async Task<IActionResult> GetPassengersByRide(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "rides/{rideId:int}/passengers")] HttpRequest req, int rideId, ILogger log)
-        {
-            async Task<IActionResult> Action(BaseRequest input)
-            {
-                try
-                {
-                    var dtos = await rideService.GetPassengers(rideId);
-                    apiResponse.Message = "PASSENGERS_FOUND";
-                    apiResponse.Data = dtos;
-                    return new OkObjectResult(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    switch(ex.Message)
-                    {
-                        case "RIDE_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        default:
-                            {
-                                log.LogError(ex, "Error while getting passengers by ride. RideId: {ID}", rideId);
-                                return new InternalServerErrorResult();
-                            }
-                    }
-                }
-            }
-
-            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
-        }
-        #region AcceptPassengerRequest
-        [FunctionName("AcceptPassengerRequest")]
-        [OpenApiOperation(tags: new[] { "Ride" })]
-        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiParameter(
-            name: "rideId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the ride to consult.")]
-        [OpenApiParameter(
-            name: "passengerId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the passenger request to accept.")]
-        [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK,
-            contentType: "application/json",
-            bodyType: typeof(PassengerDto),
-            Description = "The information of the accepted passenger.")]
-        #endregion
-        public async Task<IActionResult> AcceptPassengerRequest(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/{rideId:int}/passengers/{passengerId:int}/accept")] HttpRequest req,
-            int rideId, int passengerId, ILogger log)
-        {
-            async Task<IActionResult> Action(BaseRequest input)
-            {
-                try
-                {
-                    var dto = await driverService.AcceptPassenger(input.Email, rideId, passengerId);
-                    apiResponse.Message = "PASSENGER_ACCEPTED";
-                    apiResponse.Data = dto;
-                    return new OkObjectResult(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    switch (ex.Message)
-                    {
-                        case "RIDE_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "PASSENGER_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "REQUEST_NOT_AVAILABLE_OR_ACCEPTED":
-                            return new BadRequestObjectResult(apiResponse);
-                        default:
-                            {
-                                log.LogError(ex, "Error while accepting passenger. RideId: {ID}", rideId);
-                                return new InternalServerErrorResult();
-                            }
-                    }
-                }
-            }
-
-            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
-        }
-        #region IgnorePassengerRequest
-        [FunctionName("IgnorePassengerRequest")]
-        [OpenApiOperation(tags: new[] { "Ride" })]
-        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiParameter(
-            name: "rideId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the ride to consult.")]
-        [OpenApiParameter(
-            name: "passengerId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the passenger request to ignore.")]
-        [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK,
-            contentType: "application/json",
-            bodyType: typeof(PassengerDto),
-            Description = "The information of the ignored passenger.")]
-        #endregion
-        public async Task<IActionResult> IgnorePassengerRequest(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/{rideId:int}/passengers/{passengerId:int}/ignore")] HttpRequest req,
-            int rideId, int passengerId, ILogger log)
-        {
-            async Task<IActionResult> Action(BaseRequest input)
-            {
-                try
-                {
-                    var dto = await driverService.IgnorePassenger(input.Email, rideId, passengerId);
-                    apiResponse.Message = "PASSENGER_IGNORED";
-                    apiResponse.Data = dto;
-                    return new OkObjectResult(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    switch (ex.Message)
-                    {
-                        case "RIDE_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "PASSENGER_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "REQUEST_NOT_AVAILABLE_OR_ACCEPTED":
-                            return new BadRequestObjectResult(apiResponse);
-                        default:
-                            {
-                                log.LogError(ex, "Error while ignoring passenger. RideId: {ID}", rideId);
-                                return new InternalServerErrorResult();
-                            }
-                    }
-                }
-            }
-
-            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
-        }
-        #region CancelPassengerRequest
-        [FunctionName("CancelPassengerRequest")]
-        [OpenApiOperation(tags: new[] { "Ride" })]
-        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiParameter(
-            name: "rideId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the ride to consult.")]
-        [OpenApiParameter(
-            name: "passengerId",
-            In = ParameterLocation.Path,
-            Required = true,
-            Type = typeof(int),
-            Description = "The ID of the passenger request to cancel.")]
-        [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK,
-            contentType: "application/json",
-            bodyType: typeof(PassengerDto),
-            Description = "The information of the cancelled passenger.")]
-        #endregion
-        public async Task<IActionResult> CancelPassengerRequest(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "rides/{rideId:int}/passengers/{passengerId:int}/cancel")] HttpRequest req,
-            int rideId, int passengerId, ILogger log)
-        {
-            async Task<IActionResult> Action(BaseRequest input)
-            {
-                try
-                {
-                    var dto = await driverService.CancelPassenger(input.Email, rideId, passengerId);
-                    apiResponse.Message = "PASSENGER_CANCELLED";
-                    apiResponse.Data = dto;
-                    return new OkObjectResult(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    switch (ex.Message)
-                    {
-                        case "RIDE_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "PASSENGER_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        case "REQUEST_ALREADY_CANCELED":
-                            return new BadRequestObjectResult(apiResponse);
-                        default:
-                            {
-                                log.LogError(ex, "Error while cancelling passenger. RideId: {ID}", rideId);
-                                return new InternalServerErrorResult();
-                            }
-                    }
-                }
-            }
-
-            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 
@@ -262,14 +41,14 @@ namespace UcabGo.Api.Functions
             Description = "The data from the passenger that asked for a ride.")]
         #endregion
         public async Task<IActionResult> AskForRide(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "rides/ask")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "passenger/rides/ask")] HttpRequest req, ILogger log)
         {
             async Task<IActionResult> Action(PassengerInput input)
             {
                 try
                 {
                     var dto = await passengerService.AskForRide(input);
-                    apiResponse.Message = "PASSENGER_ASKED_FOR_RIDE";
+                    apiResponse.Message = "ASKED_FOR_RIDE";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }
@@ -298,6 +77,49 @@ namespace UcabGo.Api.Functions
             return await RequestHandler.Handle<PassengerInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
+        #region GetRides
+        [FunctionName("GetRides")]
+        [OpenApiOperation(tags: new[] { "Passenger" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiParameter(
+            name: nameof(RideFilter.OnlyAvailable),
+            In = ParameterLocation.Query,
+            Required = false,
+            Type = typeof(bool),
+            Description = "If true, only the active ride will be returned. A user can have only one active ride.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(IEnumerable<RideDto>),
+            Description = "The information of the passenger's ride(s).")]
+        #endregion
+        public async Task<IActionResult> GetRides(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "passenger/rides")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(RideFilter input)
+            {
+                try
+                {
+                    var dto = await passengerService.GetRides(input);
+                    apiResponse.Message = "RIDES_FOUND";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while getting passenger's current ride.", input.Email);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
 
+            return await RequestHandler.Handle<RideFilter>(req, log, apiResponse, Action, isAnonymous: false);
+        }
     }
 }
