@@ -82,7 +82,7 @@ namespace UcabGo.Application.Services
         }
         public async Task<UserDto> UpdateWalkingDistance(WalkingInput input)
         {
-            if (input.WalkingDistance < 0)
+            if (input.WalkingDistance <= 0)
             {
                 throw new Exception("LIMIT_REACHED");
             }

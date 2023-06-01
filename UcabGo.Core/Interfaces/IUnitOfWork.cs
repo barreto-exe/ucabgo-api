@@ -12,6 +12,7 @@ namespace UcabGo.Core.Interfaces
         IRepository<Passenger> PassengerRepository { get; }
         IRepository<Ride> RideRepository { get; }
         IRepository<Chatmessage> ChatmessageRepository { get; }
+        IRepository<Evaluation> EvaluationRepository { get; }
 
         void SaveChanges();
         Task SaveChangesAsync();

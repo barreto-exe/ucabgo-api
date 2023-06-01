@@ -48,7 +48,8 @@ namespace UcabGo.Application.Services
                 .GetAllIncluding(
                     r => r.VehicleNavigation,
                     r => r.DestinationNavigation,
-                    r => r.DriverNavigation);
+                    r => r.DriverNavigation,
+                    r => r.Evaluations);
 
             IQueryable<Ride>? ridesFromDriver;
             if (onlyAvailable)

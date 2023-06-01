@@ -16,6 +16,7 @@ namespace UcabGo.Infrastructure.Data
 
         public virtual DbSet<Chatmessage> Chatmessages { get; set; } = null!;
         public virtual DbSet<Destination> Destinations { get; set; } = null!;
+        public virtual DbSet<Evaluation> Evaluations { get; set; } = null!;
         public virtual DbSet<Location> Locations { get; set; } = null!;
         public virtual DbSet<Passenger> Passengers { get; set; } = null!;
         public virtual DbSet<Ride> Rides { get; set; } = null!;
@@ -91,6 +92,47 @@ namespace UcabGo.Infrastructure.Data
                     .HasForeignKey(d => d.User)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("destinations_ibfk_1");
+            });
+
+            modelBuilder.Entity<Evaluation>(entity =>
+            {
+                entity.ToTable("evaluation");
+
+                entity.HasIndex(e => e.Evaluated, "Evaluated");
+
+                entity.HasIndex(e => e.Ride, "EvaluatedRide");
+
+                entity.HasIndex(e => e.Evaluator, "Evaluator");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Evaluated).HasColumnType("int(11)");
+
+                entity.Property(e => e.EvaluationDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Evaluator).HasColumnType("int(11)");
+
+                entity.Property(e => e.Ride).HasColumnType("int(11)");
+
+                entity.Property(e => e.Stars).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.EvaluatedNavigation)
+                    .WithMany(p => p.EvaluationEvaluatedNavigations)
+                    .HasForeignKey(d => d.Evaluated)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("evaluation_ibfk_3");
+
+                entity.HasOne(d => d.EvaluatorNavigation)
+                    .WithMany(p => p.EvaluationEvaluatorNavigations)
+                    .HasForeignKey(d => d.Evaluator)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("evaluation_ibfk_2");
+
+                entity.HasOne(d => d.RideNavigation)
+                    .WithMany(p => p.Evaluations)
+                    .HasForeignKey(d => d.Ride)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("evaluation_ibfk_1");
             });
 
             modelBuilder.Entity<Location>(entity =>

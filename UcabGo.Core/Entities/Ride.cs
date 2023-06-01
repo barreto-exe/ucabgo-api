@@ -5,6 +5,7 @@
         public Ride()
         {
             Chatmessages = new HashSet<Chatmessage>();
+            Evaluations = new HashSet<Evaluation>();
             Passengers = new HashSet<Passenger>();
         }
 
@@ -25,6 +26,7 @@
         public virtual User DriverNavigation { get; set; } = null!;
         public virtual Vehicle VehicleNavigation { get; set; } = null!;
         public virtual ICollection<Chatmessage> Chatmessages { get; set; }
+        public virtual ICollection<Evaluation> Evaluations { get; set; }
         public virtual ICollection<Passenger> Passengers { get; set; }
     }
 }

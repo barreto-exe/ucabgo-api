@@ -4,6 +4,8 @@ using UcabGo.Core.Data.Chat.Dtos;
 using UcabGo.Core.Data.Chat.Input;
 using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Destination.Inputs;
+using UcabGo.Core.Data.Evaluation.Dtos;
+using UcabGo.Core.Data.Evaluation.Inputs;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Location.Inputs;
 using UcabGo.Core.Data.Passanger.Dtos;
@@ -63,6 +65,13 @@ namespace UcabGo.Core.Mapping
             CreateMap<Chatmessage, ChatmessageDto>();
             CreateMap<ChatmessageDto, Chatmessage>();
             CreateMap<ChatmessageInput, Chatmessage>();
+
+            CreateMap<Evaluation, EvaluationDto>()
+                .ForMember(dest => dest.Evaluated, opt => opt.MapFrom(x => x.EvaluatedNavigation))
+                .ForMember(dest => dest.Evaluator, opt => opt.MapFrom(x => x.EvaluatorNavigation))
+                .ForMember(dest => dest.Ride, opt => opt.MapFrom(x => x.RideNavigation));
+            CreateMap<EvaluationDto, Evaluation>();
+            CreateMap<EvaluationInput, Evaluation>();
         }
     }
 }
