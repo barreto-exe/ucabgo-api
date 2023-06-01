@@ -4,6 +4,7 @@
     {
         public User()
         {
+            Chatmessages = new HashSet<Chatmessage>();
             Destinations = new HashSet<Destination>();
             Locations = new HashSet<Location>();
             Passengers = new HashSet<Passenger>();
@@ -22,6 +23,7 @@
         public string? Phone { get; set; }
         public double? WalkingDistance { get; set; }
 
+        public virtual ICollection<Chatmessage> Chatmessages { get; set; }
         public virtual ICollection<Destination> Destinations { get; set; }
         public virtual ICollection<Location> Locations { get; set; }
         public virtual ICollection<Passenger> Passengers { get; set; }

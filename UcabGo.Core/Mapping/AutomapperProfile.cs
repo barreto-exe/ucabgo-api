@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using UcabGo.Core.Data.Auth.Inputs;
+using UcabGo.Core.Data.Chat.Dtos;
+using UcabGo.Core.Data.Chat.Input;
 using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.Location.Dtos;
@@ -57,6 +59,10 @@ namespace UcabGo.Core.Mapping
                 .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<PassengerDto, Passenger>();
             CreateMap<PassengerInput, Passenger>();
+
+            CreateMap<Chatmessage, ChatmessageDto>();
+            CreateMap<ChatmessageDto, Chatmessage>();
+            CreateMap<ChatmessageInput, Chatmessage>();
         }
     }
 }

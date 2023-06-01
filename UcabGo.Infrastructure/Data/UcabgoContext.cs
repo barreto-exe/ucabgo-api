@@ -14,6 +14,7 @@ namespace UcabGo.Infrastructure.Data
         {
         }
 
+        public virtual DbSet<Chatmessage> Chatmessages { get; set; } = null!;
         public virtual DbSet<Destination> Destinations { get; set; } = null!;
         public virtual DbSet<Location> Locations { get; set; } = null!;
         public virtual DbSet<Passenger> Passengers { get; set; } = null!;
@@ -35,6 +36,37 @@ namespace UcabGo.Infrastructure.Data
         {
             modelBuilder.UseCollation("latin1_swedish_ci")
                 .HasCharSet("latin1");
+
+            modelBuilder.Entity<Chatmessage>(entity =>
+            {
+                entity.ToTable("chatmessage");
+
+                entity.HasIndex(e => e.Ride, "ChatRide");
+
+                entity.HasIndex(e => e.User, "ChatUser");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.Content).HasColumnType("text");
+
+                entity.Property(e => e.Ride).HasColumnType("int(11)");
+
+                entity.Property(e => e.TimeSent).HasColumnType("datetime");
+
+                entity.Property(e => e.User).HasColumnType("int(11)");
+
+                entity.HasOne(d => d.RideNavigation)
+                    .WithMany(p => p.Chatmessages)
+                    .HasForeignKey(d => d.Ride)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("chatmessage_ibfk_1");
+
+                entity.HasOne(d => d.UserNavigation)
+                    .WithMany(p => p.Chatmessages)
+                    .HasForeignKey(d => d.User)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("chatmessage_ibfk_2");
+            });
 
             modelBuilder.Entity<Destination>(entity =>
             {

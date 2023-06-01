@@ -14,6 +14,7 @@ namespace UcabGo.Infrastructure.Repositories
         private readonly IRepository<Location> locationRepository;
         private readonly IRepository<Passenger> passengerRepository;
         private readonly IRepository<Ride> rideRepository;
+        private readonly IRepository<Chatmessage> chatmessageRepository;
 
         public UnitOfWork(UcabgoContext ucabgoContext)
         {
@@ -27,6 +28,7 @@ namespace UcabGo.Infrastructure.Repositories
         public IRepository<Location> LocationRepository => locationRepository ?? new BaseRepository<Location>(ucabgoContext);
         public IRepository<Passenger> PassengerRepository => passengerRepository ?? new BaseRepository<Passenger>(ucabgoContext);
         public IRepository<Ride> RideRepository => rideRepository ?? new BaseRepository<Ride>(ucabgoContext);
+        public IRepository<Chatmessage> ChatmessageRepository => chatmessageRepository ?? new BaseRepository<Chatmessage>(ucabgoContext);
 
         public void Dispose()
         {
