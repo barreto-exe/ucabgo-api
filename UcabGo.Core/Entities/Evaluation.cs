@@ -6,6 +6,7 @@
         public int Ride { get; set; }
         public int Evaluator { get; set; }
         public int Evaluated { get; set; }
+        public string Type { get; set; } = null!;
         public int Stars { get; set; }
         public DateTime EvaluationDate { get; set; }
 

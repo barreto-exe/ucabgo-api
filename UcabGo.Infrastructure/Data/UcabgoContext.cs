@@ -116,6 +116,8 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Stars).HasColumnType("int(11)");
 
+                entity.Property(e => e.Type).HasMaxLength(5);
+
                 entity.HasOne(d => d.EvaluatedNavigation)
                     .WithMany(p => p.EvaluationEvaluatedNavigations)
                     .HasForeignKey(d => d.Evaluated)

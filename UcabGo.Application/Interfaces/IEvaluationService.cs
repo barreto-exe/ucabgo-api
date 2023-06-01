@@ -9,6 +9,6 @@ namespace UcabGo.Application.Interfaces
         Task<EvaluationDto> AddEvaluation(EvaluationInput input);
         Task<IEnumerable<EvaluationDto>> GetRecievedEvaluations(EvaluationFilter filter);
         Task<IEnumerable<EvaluationDto>> GetGivenEvaluations(EvaluationFilter filter);
-        Task<float> GetEvaluationAverage(EvaluationFilter filter);
+        Task<float> GetRecievedStarsAverage(EvaluationFilter filter);
     }
 }

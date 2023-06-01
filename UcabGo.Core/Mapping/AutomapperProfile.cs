@@ -71,7 +71,12 @@ namespace UcabGo.Core.Mapping
                 .ForMember(dest => dest.Evaluator, opt => opt.MapFrom(x => x.EvaluatorNavigation))
                 .ForMember(dest => dest.Ride, opt => opt.MapFrom(x => x.RideNavigation));
             CreateMap<EvaluationDto, Evaluation>();
-            CreateMap<EvaluationInput, Evaluation>();
+            CreateMap<EvaluationInput, Evaluation>()
+                .ForMember(dest => dest.Ride, opt => opt.MapFrom(x => x.RideId))
+                .ForMember(dest => dest.Evaluator, opt => opt.MapFrom(x => x.EvaluatorId))
+                .ForMember(dest => dest.Evaluated, opt => opt.MapFrom(x => x.EvaluatedId))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(x => x.EvaluatorType));
+
         }
     }
 }

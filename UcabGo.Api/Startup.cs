@@ -44,6 +44,7 @@ namespace UcabGo.Api
             builder.Services.AddTransient<IPassengerService, PassengerService>();
             builder.Services.AddTransient<IDriverService, DriverService>();
             builder.Services.AddTransient<IChatService, ChatService>();
+            builder.Services.AddTransient<IEvaluationService, EvaluationService>();
 
             //Swagger
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly(), opts =>

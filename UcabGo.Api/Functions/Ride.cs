@@ -27,7 +27,7 @@ namespace UcabGo.Api.Functions
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLatitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The latitude of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLongitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The longitude of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalZone), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The zone of the final location of the ride.")]
-        [OpenApiParameter(name: nameof(MatchingFilter.WalkingDistance), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The distance the user asking for a ride is willing to walk.")]
+        [OpenApiParameter(name: nameof(MatchingFilter.WalkingDistance), In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The distance in meters the user asking for a ride is willing to walk.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",

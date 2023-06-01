@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.Configuration.Annotations;
 using System.Security.Cryptography;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Evaluation.Dtos;
@@ -13,27 +14,30 @@ namespace UcabGo.Application.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IUserService userService;
-        private readonly IVehicleService vehicleService;
-        private readonly IDestinationService destinationService;
-        private readonly IRideService rideService;
-        private readonly IPassengerService passengerService;
         private readonly IMapper mapper;
+        public EvaluationService(IUnitOfWork unitOfWork, IUserService userService, IMapper mapper)
+        {
+            this.unitOfWork = unitOfWork;
+            this.userService = userService;
+            this.mapper = mapper;
+        }
 
         public async Task<EvaluationDto> AddEvaluation(EvaluationInput input)
         {
             var user = await userService.GetByEmail(input.Email);
+            var evaluatedUser = await userService.GetById(input.EvaluatedId);
             var ride = unitOfWork.RideRepository.GetAllIncluding("Passengers").FirstOrDefault(x => x.Id == input.RideId);
             if(ride == null)
             {
                 throw new Exception("RIDE_NOT_FOUND");
             }
-            var evaluator = ride.Passengers.FirstOrDefault(x => x.User == input.EvaluatorId);
-            if(evaluator == null)
+
+            var usersInRide = ride.Passengers.Select(x => x.User).Append(ride.Driver);
+            if(!usersInRide.Any(x => x == input.EvaluatorId))
             {
                 throw new Exception("EVALUATOR_NOT_FOUND");
             }
-            var evaluated = ride.Passengers.FirstOrDefault(x => x.User == input.EvaluatedId);
-            if (evaluated == null)
+            if (!usersInRide.Any(x => x == input.EvaluatedId))
             {
                 throw new Exception("EVALUATED_NOT_FOUND");
             }
@@ -41,8 +45,22 @@ namespace UcabGo.Application.Services
             {
                 throw new Exception("INVALID_STARS");
             }
+            if(input.EvaluatorType != "D" && input.EvaluatorType != "P")
+            {
+                throw new Exception("WRONG_TYPE");
+            }
+
+            var evaluations = unitOfWork.EvaluationRepository.GetAll();
+            var evaluationExists = (from e in evaluations
+                                    where e.Ride == input.RideId && e.Evaluator == input.EvaluatorId && e.Evaluated == input.EvaluatedId
+                                    select e).Any();
+            if(evaluationExists)
+            {
+                throw new Exception("EVALUATION_EXISTS");
+            }
 
             var evaluation = mapper.Map<Evaluation>(input);
+            evaluation.EvaluationDate = DateTime.Now;
 
             await unitOfWork.EvaluationRepository.Add(evaluation);
             await unitOfWork.SaveChangesAsync();
@@ -50,132 +68,67 @@ namespace UcabGo.Application.Services
             return mapper.Map<EvaluationDto>(evaluation);
         }
 
-        public async Task<float> GetEvaluationAverage(EvaluationFilter filter)
+        public async Task<float> GetRecievedStarsAverage(EvaluationFilter filter)
         {
-            throw new NotImplementedException();
+            if (filter.Type != "D" && filter.Type != "P" && filter.Type != "ALL")
+            {
+                throw new Exception("WRONG_TYPE");
+            }
+
+            var evaluations = await GetRecievedEvaluations(filter);
+            if(evaluations.Count() > 0)
+            {
+                return (float) evaluations.Average(x => x.Stars);
+            }
+
+            return 0;
         }
 
         public async Task<IEnumerable<EvaluationDto>> GetGivenEvaluations(EvaluationFilter filter)
         {
-            var user = await userService.GetByEmail(filter.Email);
-
-            IQueryable<Evaluation> userEvaluations;
-
-            switch(filter.Type)
+            if (filter.Type != "D" && filter.Type != "P" && filter.Type != "ALL")
             {
-                case "ALL":
-                    {
-                        var evaluations =
-                            unitOfWork
-                            .EvaluationRepository
-                            .GetAllIncluding(x => x.EvaluatorNavigation, x => x.EvaluatedNavigation, x => x.RideNavigation);
-
-                        userEvaluations =
-                            from e in evaluations
-                            where e.EvaluatorNavigation.Id == user.Id
-                            orderby e.EvaluationDate descending
-                            select e;
-                        break;
-                    }
-                case "D":
-                    {
-                        //Get evaluations the user has given when he is driver
-                        userEvaluations = unitOfWork
-                            .RideRepository
-                            .GetAllIncluding(
-                                r => r.VehicleNavigation,
-                                r => r.DestinationNavigation,
-                                r => r.DriverNavigation,
-                                r => r.Evaluations)
-                            .Where(x => x.Driver == user.Id)
-                            .SelectMany(x => x.Evaluations)
-                            .Where(x => x.Evaluator == user.Id);
-                        break;
-                    }
-                case "P":
-                    {
-                        //Get evaluations the user has given when he is passenger
-                        userEvaluations = unitOfWork
-                            .RideRepository
-                            .GetAllIncluding(
-                                r => r.VehicleNavigation,
-                                r => r.DestinationNavigation,
-                                r => r.DriverNavigation,
-                                r => r.Passengers,
-                                r => r.Evaluations)
-                            .Where(x => x.Passengers.Any(p => p.User == user.Id))
-                            .SelectMany(x => x.Evaluations)
-                            .Where(x => x.Evaluator == user.Id);
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception("WRONG_TYPE");
-                    }
+                throw new Exception("WRONG_TYPE");
             }
+
+            var user = await userService.GetByEmail(filter.Email);
+            var userEvaluations = 
+                GetAllEvaluations()
+               .Where(x => x.Evaluator == user.Id && (filter.Type == "ALL" || x.Type == filter.Type));
 
             return mapper.Map<IEnumerable<EvaluationDto>>(userEvaluations.ToList());
         }
 
         public async Task<IEnumerable<EvaluationDto>> GetRecievedEvaluations(EvaluationFilter filter)
         {
-            var user = await userService.GetByEmail(filter.Email);
-
-            IQueryable<Evaluation> userEvaluations;
-            switch (filter.Type)
+            if(filter.Type != "D" && filter.Type != "P" && filter.Type != "ALL")
             {
-                case "ALL":
-                    {
-                        var evaluations =
-                            unitOfWork
-                            .EvaluationRepository
-                            .GetAllIncluding(x => x.EvaluatorNavigation, x => x.EvaluatedNavigation, x => x.RideNavigation);
-
-                        userEvaluations =
-                            from e in evaluations
-                            where e.EvaluatedNavigation.Id == user.Id
-                            orderby e.EvaluationDate descending
-                            select e;
-                        break;
-                    }
-                case "D":
-                    {
-                        //Get evaluations the user has given when he is driver
-                        userEvaluations = unitOfWork
-                            .RideRepository
-                            .GetAllIncluding(
-                                r => r.VehicleNavigation,
-                                r => r.DestinationNavigation,
-                                r => r.DriverNavigation,
-                                r => r.Evaluations)
-                            .Where(x => x.Driver == user.Id)
-                            .SelectMany(x => x.Evaluations)
-                            .Where(x => x.Evaluator == user.Id);
-                        break;
-                    }
-                case "P":
-                    {
-                        //Get evaluations the user has given when he is passenger
-                        userEvaluations = unitOfWork
-                            .RideRepository
-                            .GetAllIncluding(
-                                r => r.VehicleNavigation,
-                                r => r.DestinationNavigation,
-                                r => r.DriverNavigation,
-                                r => r.Passengers,
-                                r => r.Evaluations)
-                            .Where(x => x.Passengers.Any(p => p.User == user.Id))
-                            .SelectMany(x => x.Evaluations)
-                            .Where(x => x.Evaluator == user.Id);
-                        break;
-                    }
-                default:
-                    {
-                        throw new Exception("WRONG_TYPE");
-                    }
+                throw new Exception("WRONG_TYPE");
             }
 
+            //Change filter Type: P -> D and D -> P
+            if (filter.Type == "D")
+            {
+                filter.Type = "P";
+            }
+            else if (filter.Type == "P")
+            {
+                filter.Type = "D";
+            }
+
+            var user = await userService.GetByEmail(filter.Email);
+            var userEvaluations = 
+                GetAllEvaluations()
+               .Where(x => x.Evaluated == user.Id && (filter.Type == "ALL" || x.Type == filter.Type));
+
             return mapper.Map<IEnumerable<EvaluationDto>>(userEvaluations.ToList());
+        }
+
+        private IQueryable<Evaluation> GetAllEvaluations()
+        {
+            return unitOfWork
+                .EvaluationRepository
+                .GetAllIncluding(x => x.EvaluatorNavigation, x => x.EvaluatedNavigation, x => x.RideNavigation);
         }
     }
 }

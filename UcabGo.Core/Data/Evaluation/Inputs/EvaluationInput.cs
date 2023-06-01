@@ -11,6 +11,8 @@ namespace UcabGo.Core.Data.Evaluation.Inputs
         [Required]
         public int EvaluatedId { get; set; }
         [Required]
+        public string EvaluatorType { get; set; }
+        [Required]
         public int Stars { get; set; }
     }
 }
