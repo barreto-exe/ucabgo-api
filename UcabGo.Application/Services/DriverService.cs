@@ -51,6 +51,12 @@ namespace UcabGo.Application.Services
                 throw new Exception("VEHICLE_NOT_FOUND");
             }
 
+            bool reachLimit = input.SeatQuantity < 1 || input.SeatQuantity > 5;
+            if (reachLimit)
+            {
+                throw new Exception("SEAT_LIMIT_REACHED");
+            }
+
             //Validate if he owns a destination with given id
             var destinations = await destinationService.GetAll(input.Email);
             var destination = destinations.FirstOrDefault(x => x.Id == input.Destination);

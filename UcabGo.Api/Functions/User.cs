@@ -73,7 +73,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
-                        case "NEGATIVE_NUMBER":
+                        case "LIMIT_REACHED":
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {

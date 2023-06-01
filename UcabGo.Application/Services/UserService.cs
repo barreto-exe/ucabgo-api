@@ -84,7 +84,11 @@ namespace UcabGo.Application.Services
         {
             if (input.WalkingDistance < 0)
             {
-                throw new Exception("NEGATIVE_NUMBER");
+                throw new Exception("LIMIT_REACHED");
+            }
+            if (input.WalkingDistance > 10000)
+            {
+                throw new Exception("LIMIT_REACHED");
             }
 
             var user = await GetByEmail(input.Email);

@@ -87,6 +87,8 @@ namespace UcabGo.Api.Functions
                     {
                         case "ACTIVE_RIDE_FOUND":
                             return new BadRequestObjectResult(apiResponse);
+                        case "SEAT_LIMIT_REACHED":
+                            return new BadRequestObjectResult(apiResponse);
                         case "VEHICLE_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
                         case "DESTINATION_NOT_FOUND":
