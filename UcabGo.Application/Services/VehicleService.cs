@@ -48,8 +48,16 @@ namespace UcabGo.Application.Services
         {
             var vehicle = mapper.Map<Vehicle>(vehicleInput);
 
-            int idUser = (await userService.GetByEmail(vehicleInput.Email)).Id;
-            vehicle.User = idUser;
+            User user = await userService.GetByEmail(vehicleInput.Email);
+            foreach (var v in user.Vehicles)
+            {
+                if (v.Plate == vehicle.Plate)
+                {
+                    throw new Exception("VEHICLE_PLATE_REPEATED");
+                }
+            }
+
+            vehicle.User = user.Id;
             await unitOfWork.VehicleRepository.Add(vehicle);
             await unitOfWork.SaveChangesAsync();
 
@@ -65,6 +73,14 @@ namespace UcabGo.Application.Services
             if (vehicleDb == null)
             {
                 throw new Exception("VEHICLE_NOT_FOUND");
+            }
+            User user = await userService.GetByEmail(vehicle.Email);
+            foreach (var v in user.Vehicles)
+            {
+                if (v.Plate == vehicle.Plate)
+                {
+                    throw new Exception("VEHICLE_PLATE_REPEATED");
+                }
             }
 
             vehicleDb.Brand = vehicle.Brand ?? vehicleDb.Brand;
