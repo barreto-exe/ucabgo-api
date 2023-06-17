@@ -24,6 +24,11 @@ namespace UcabGo.Api.Functions
             bodyType: typeof(PhoneInput),
             Required = true,
             Description = "Change users phone.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(UserDto),
+            Description = "The data of the user updated.")]
         [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
         #endregion
         public async Task<IActionResult> ChangePhone(

@@ -49,6 +49,14 @@ namespace UcabGo.Application.Services
                 throw new Exception("UCAB_DESTINATION_ALREADY_CREATED");
             }
 
+            //Delete all destinations with same Alias
+            var items = await GetAll(input.Email);
+            var itemsToDelete = items.Where(x => x.Alias == input.Alias);
+            foreach (var itemToDelete in itemsToDelete)
+            {
+                await Delete(input.Email, itemToDelete.Id);
+            }
+
             int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.User = idUser;
             await unitOfWork.DestinationRepository.Add(item);
