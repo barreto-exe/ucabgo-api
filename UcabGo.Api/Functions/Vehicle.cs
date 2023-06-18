@@ -75,6 +75,8 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
+                        case "VEHICLE_PLATE_REPEATED":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while creating vehicle", input);
@@ -121,6 +123,8 @@ namespace UcabGo.Api.Functions
                     {
                         case "VEHICLE_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
+                        case "VEHICLE_PLATE_REPEATED":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while updating vehicle.", input);
