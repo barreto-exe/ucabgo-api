@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "SqlConnectionString": "",
+    "JWT_SECRET": "",
+    "JWT_AUD": "ucabgo",
+    "JWT_ISS": "ucabgo-api",
+    "BlobConnectionString": "",
+    "BlobContainerName": "images"
+  }
+}
