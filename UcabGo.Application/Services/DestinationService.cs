@@ -57,6 +57,20 @@ namespace UcabGo.Application.Services
                 await Delete(input.Email, itemToDelete.Id);
             }
 
+            var allDestinations = await GetAll(input.Email);
+            foreach (var d in allDestinations)
+            {
+                if (d.Alias == item.Alias || d.Zone == item.Zone)
+                {
+                    throw new Exception("DESTINATION_ALIAS_ALREADY_EXISTS");
+                }
+
+                if (d.Latitude == item.Latitude && d.Longitude == item.Longitude)
+                {
+                    throw new Exception("DESTINATION_GEOLOCATION_ALREADY_EXISTS");
+                }
+            }
+
             int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.User = idUser;
             await unitOfWork.DestinationRepository.Add(item);
@@ -90,6 +104,20 @@ namespace UcabGo.Application.Services
             if (itemDb == null)
             {
                 throw new Exception("DESTINATION_NOT_FOUND");
+            }
+
+            var allDestinations = await GetAll(input.Email);
+            foreach (var d in allDestinations)
+            {
+                if (d.Alias == itemDb.Alias)
+                {
+                    throw new Exception("DESTINATION_ALIAS_ALREADY_EXISTS");
+                }
+
+                if (d.Latitude == itemDb.Latitude && d.Longitude == itemDb.Longitude)
+                {
+                    throw new Exception("DESTINATION_GEOLOCATION_ALREADY_EXISTS");
+                }
             }
 
             itemDb.Alias = input.Alias ?? itemDb.Alias;
