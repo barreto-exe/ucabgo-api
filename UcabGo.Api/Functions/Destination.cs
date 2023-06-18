@@ -53,6 +53,10 @@ namespace UcabGo.Api.Functions
                     {
                         case "UCAB_DESTINATION_ALREADY_CREATED":
                             return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_ALIAS_ALREADY_EXISTS":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_GEOLOCATION_ALREADY_EXISTS":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while creating destination.", input);
@@ -127,6 +131,10 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         case "DESTINATION_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
+                        case "DESTINATION_ALIAS_ALREADY_EXISTS":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_GEOLOCATION_ALREADY_EXISTS":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while updating destination.", input);
