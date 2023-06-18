@@ -61,6 +61,8 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         case "EVALUATION_EXISTS":
                             return new BadRequestObjectResult(apiResponse);
+                        case "EVALUATING_YOURSELF":
+                            return new BadRequestObjectResult(apiResponse);
                         case "WRONG_TYPE":
                             return new BadRequestObjectResult(apiResponse);
                         default:
