@@ -5,6 +5,8 @@ using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Evaluation.Dtos;
 using UcabGo.Core.Data.Evaluation.Filter;
 using UcabGo.Core.Data.Evaluation.Inputs;
+using UcabGo.Core.Data.Ride.Dtos;
+using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Entities;
 using UcabGo.Core.Interfaces;
 
@@ -14,11 +16,13 @@ namespace UcabGo.Application.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IUserService userService;
+        private readonly IRideService rideService;
         private readonly IMapper mapper;
-        public EvaluationService(IUnitOfWork unitOfWork, IUserService userService, IMapper mapper)
+        public EvaluationService(IUnitOfWork unitOfWork, IUserService userService, IRideService rideService, IVehicleService vehicleService, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.userService = userService;
+            this.rideService = rideService;
             this.mapper = mapper;
         }
 
@@ -41,6 +45,10 @@ namespace UcabGo.Application.Services
             {
                 throw new Exception("EVALUATED_NOT_FOUND");
             }
+            if (input.EvaluatedId == input.EvaluatorId)
+            {
+                throw new Exception("EVALUATING_YOURSELF");
+            }
             if(input.Stars < 1 || input.Stars > 5)
             {
                 throw new Exception("INVALID_STARS");
@@ -49,6 +57,8 @@ namespace UcabGo.Application.Services
             {
                 throw new Exception("WRONG_TYPE");
             }
+
+            // TODO - More validations. Ex: TARGET_NOT_DRIVER
 
             var evaluations = unitOfWork.EvaluationRepository.GetAll();
             var evaluationExists = (from e in evaluations
@@ -65,7 +75,12 @@ namespace UcabGo.Application.Services
             await unitOfWork.EvaluationRepository.Add(evaluation);
             await unitOfWork.SaveChangesAsync();
 
-            return mapper.Map<EvaluationDto>(evaluation);
+            var dto = mapper.Map<EvaluationDto>(evaluation);
+
+            // EvaluationDto mapper assigning null to destination and vehicle, same fix as with PassengerDto mapping in DriverService
+            var rideDto = await rideService.GetById(evaluation.Ride);
+            dto.Ride = mapper.Map<RideDto>(rideDto);
+            return dto;
         }
 
         public async Task<float> GetRecievedStarsAverage(EvaluationFilter filter)
