@@ -29,7 +29,6 @@ namespace UcabGo.Api.Functions
             contentType: "application/json",
             bodyType: typeof(UserDto),
             Description = "The data of the user updated.")]
-        [OpenApiResponseWithoutBody(HttpStatusCode.OK)]
         #endregion
         public async Task<IActionResult> ChangePhone(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/phone")] HttpRequest req, ILogger log)
