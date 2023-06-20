@@ -27,7 +27,7 @@ namespace UcabGo.Api.Functions
             contentType: "application/json",
             bodyType: typeof(EvaluationInput),
             Required = true,
-            Description = "The information of the evaluation and the stars given. The range of stars must be between 1 and 5.")]
+            Description = "The information of the evaluation and the stars given. The range of stars must be between 1 and 5. The EvaluatorType must 'P' for passenger or 'D' for Driver.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
