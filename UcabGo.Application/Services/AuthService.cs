@@ -40,10 +40,10 @@ namespace UcabGo.Application.Services
             {
                 Email = newUser.Email,
                 Alias = "UCAB Guayana",
-                Zone = "UCAB Guayana",
-                Detail = "UCAB Guayana",
-                Latitude = 8.2970305f,
-                Longitude = -62.7179975f,
+                Zone = "Av. Atlántico",
+                Detail = "Ciudad Guayana",
+                Latitude = 8.29703f,
+                Longitude = -62.718f,
             }, isRegistering: true);
 
             //Create default UCAB location for passangers
@@ -51,10 +51,10 @@ namespace UcabGo.Application.Services
             {
                 Email = newUser.Email,
                 Alias = "UCAB Guayana",
-                Zone = "UCAB Guayana",
-                Detail = "UCAB Guayana",
-                Latitude = 8.2970305f,
-                Longitude = -62.7179975f,
+                Zone = "Av. Atlántico",
+                Detail = "Ciudad Guayana",
+                Latitude = 8.29703f,
+                Longitude = -62.718f,
                 IsHome = false,
             }, isRegistering: true);
 
