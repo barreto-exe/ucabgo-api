@@ -127,6 +127,10 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         case "DESTINATION_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
+                        case "DESTINATION_NULL_FIELD":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "DESTINATION_FIELD_LENGTH":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while updating destination.", input);

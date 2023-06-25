@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Destination.Inputs;
@@ -84,6 +85,20 @@ namespace UcabGo.Application.Services
             if (input.Alias == "UCAB Guayana" || input.Zone == "UCAB Guayana")
             {
                 throw new Exception("UCAB_DESTINATION_IS_READONLY");
+            }
+
+            input.Zone = input.Zone.Trim();
+            input.Alias = input.Alias.Trim();
+            input.Detail = input.Detail.Trim();
+
+            if (input.Zone.IsNullOrEmpty() || input.Alias.IsNullOrEmpty() || input.Detail.IsNullOrEmpty())
+            {
+                throw new Exception("DESTINATION_NULL_FIELD");
+            }
+
+            if (input.Zone.Length > 32 || input.Alias.Length > 32 || input.Detail.Length > 32)
+            {
+                throw new Exception("DESTINATION_FIELD_LENGTH");
             }
 
             var itemDb = await GetById(input.Id);
