@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
@@ -48,8 +49,31 @@ namespace UcabGo.Application.Services
         {
             var vehicle = mapper.Map<Vehicle>(vehicleInput);
 
-            User user = await userService.GetByEmail(vehicleInput.Email);
-            foreach (var v in user.Vehicles)
+            // Clear whitespaces
+            vehicle.Plate = vehicle.Plate.Replace(" ", "");
+            vehicle.Model = vehicle.Model.Trim();
+            vehicle.Brand = vehicle.Brand.Trim();
+            vehicle.Color = vehicle.Color.Trim();
+
+
+            if (vehicle.Brand.IsNullOrEmpty() || vehicle.Model.IsNullOrEmpty() || vehicle.Plate.IsNullOrEmpty() || vehicle.Color.IsNullOrEmpty())
+            {
+                throw new Exception("VEHICLE_NULL_FIELD");
+            }
+
+            // Venezuelan plates have a maximum of 7 characters
+            if(vehicle.Plate.Length > 7)
+            {
+                throw new Exception("VEHICLE_INVALID_PLATE");
+            }
+
+            if (vehicle.Model.Length > 32 || vehicle.Color.Length > 32 || vehicle.Brand.Length > 32)
+            {
+                throw new Exception("VEHICLE_FIELD_LENGTH");
+            }
+
+            var vehicles = unitOfWork.VehicleRepository.GetAll();
+            foreach (var v in vehicles)
             {
                 if (v.Plate == vehicle.Plate)
                 {
@@ -57,6 +81,7 @@ namespace UcabGo.Application.Services
                 }
             }
 
+            User user = await userService.GetByEmail(vehicleInput.Email);
             vehicle.User = user.Id;
             await unitOfWork.VehicleRepository.Add(vehicle);
             await unitOfWork.SaveChangesAsync();
@@ -68,25 +93,54 @@ namespace UcabGo.Application.Services
         }
         public async Task<VehicleDto> Update(VehicleUpdateInput vehicle)
         {
-            var vehicleDb = await GetById(vehicle.Id);
+            // Clear whitespaces
+            vehicle.Plate = vehicle.Plate.Replace(" ", "");
+            vehicle.Model = vehicle.Model.Trim();
+            vehicle.Brand = vehicle.Brand.Trim();
+            vehicle.Color = vehicle.Color.Trim();
 
+            if (vehicle.Brand.IsNullOrEmpty() || vehicle.Model.IsNullOrEmpty() || vehicle.Plate.IsNullOrEmpty() || vehicle.Color.IsNullOrEmpty())
+            {
+                throw new Exception("VEHICLE_NULL_FIELD");
+            }
+
+            if (vehicle.Plate.Length > 7)
+            {
+                throw new Exception("VEHICLE_INVALID_PLATE");
+            }
+
+            if (vehicle.Model.Length > 32 || vehicle.Color.Length > 32 || vehicle.Brand.Length > 32)
+            {
+                throw new Exception("VEHICLE_FIELD_LENGTH");
+            }
+
+            var vehicleDb = await GetById(vehicle.Id);
             if (vehicleDb == null)
             {
                 throw new Exception("VEHICLE_NOT_FOUND");
             }
-            User user = await userService.GetByEmail(vehicle.Email);
-            foreach (var v in user.Vehicles)
+
+            var vehicles = unitOfWork.VehicleRepository.GetAll();
+
+            foreach (var v in vehicles)
             {
-                if (v.Plate == vehicle.Plate)
+                if (v.Plate == vehicle.Plate && v.Id != vehicle.Id)
                 {
-                    throw new Exception("VEHICLE_PLATE_REPEATED");
+                        throw new Exception("VEHICLE_PLATE_REPEATED");
                 }
             }
 
-            vehicleDb.Brand = vehicle.Brand ?? vehicleDb.Brand;
-            vehicleDb.Model = vehicle.Model ?? vehicleDb.Model;
-            vehicleDb.Plate = vehicle.Plate ?? vehicleDb.Plate;
-            vehicleDb.Color = vehicle.Color ?? vehicleDb.Color;
+            // This operation wasn't working since an empty string is not a nullable value
+
+            /* vehicleDb.Brand = vehicle.Brand ?? vehicleDb.Brand;
+               vehicleDb.Model = vehicle.Model ?? vehicleDb.Model;
+               vehicleDb.Plate = vehicle.Plate ?? vehicleDb.Plate;
+               vehicleDb.Color = vehicle.Color ?? vehicleDb.Color; */
+
+            vehicleDb.Brand = vehicle.Brand;
+            vehicleDb.Model = vehicle.Model;
+            vehicleDb.Plate = vehicle.Plate;
+            vehicleDb.Color = vehicle.Color;
 
             unitOfWork.VehicleRepository.Update(vehicleDb);
             await unitOfWork.SaveChangesAsync();
