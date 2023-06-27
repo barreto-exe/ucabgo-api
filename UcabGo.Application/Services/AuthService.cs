@@ -33,6 +33,11 @@ namespace UcabGo.Application.Services
                 throw new Exception("USER_ALREADY_EXISTS");
             }
 
+            if (input.Name.Length > 32 || input.SecondName.Length > 32 || input.LastName.Length > 32 || input.SecondLastName.Length > 32) 
+            {    
+                throw new Exception("REGISTER_FIELD_LENGTH");
+            }
+
             var newUser = await userService.Create(userInput);
 
             //Create default UCAB destination for drivers
