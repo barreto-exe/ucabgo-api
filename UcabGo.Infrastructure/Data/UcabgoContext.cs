@@ -83,6 +83,10 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Detail).HasMaxLength(255);
 
+                entity.Property(e => e.IsDeleted)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
+
                 entity.Property(e => e.User).HasColumnType("int(11)");
 
                 entity.Property(e => e.Zone).HasMaxLength(255);
@@ -148,6 +152,10 @@ namespace UcabGo.Infrastructure.Data
                 entity.Property(e => e.Alias).HasMaxLength(255);
 
                 entity.Property(e => e.Detail).HasMaxLength(255);
+
+                entity.Property(e => e.IsDeleted)
+                    .HasColumnType("bit(1)")
+                    .HasDefaultValueSql("b'0'");
 
                 entity.Property(e => e.IsHome)
                     .HasColumnType("bit(1)")

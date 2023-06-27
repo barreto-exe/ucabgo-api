@@ -32,7 +32,8 @@ namespace UcabGo.Application.Services
 
             var result =
                 from item in list
-                where item.UserNavigation.Email == userEmail
+                where item.UserNavigation.Email == userEmail &&
+                item.IsDeleted == Convert.ToUInt64(false)
                 select item;
             return result.ToList();
         }
@@ -109,6 +110,7 @@ namespace UcabGo.Application.Services
             var items = await GetAll(userEmail);
             var itemDb = items.FirstOrDefault(x => x.Id == id);
 
+
             if (itemDb == null)
             {
                 throw new Exception("DESTINATION_NOT_FOUND");
@@ -118,7 +120,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("UCAB_DESTINATION_IS_READONLY");
             }
 
-            await unitOfWork.DestinationRepository.Delete(id);
+            itemDb.IsDeleted = Convert.ToUInt64(false);
+            unitOfWork.DestinationRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<DestinationDto>(itemDb);

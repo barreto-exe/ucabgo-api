@@ -36,6 +36,7 @@ namespace UcabGo.Application.Services
         public async Task<IEnumerable<LocationDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
+            items = items.Where(x => x.IsDeleted == Convert.ToUInt64(false));
             var itemsDtos = mapper.Map<IEnumerable<LocationDto>>(items);
             return itemsDtos;
         }
@@ -47,7 +48,8 @@ namespace UcabGo.Application.Services
             var result =
                 from item in list
                 join u in users on item.User equals u.Id
-                where item.UserNavigation.Email == userEmail
+                where item.UserNavigation.Email == userEmail &&
+                item.IsDeleted == Convert.ToUInt64(false)
                 select item;
 
             return result.ToList();
@@ -127,7 +129,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("LOCATION_NOT_FOUND");
             }
 
-            await unitOfWork.LocationRepository.Delete(id);
+            itemDb.IsDeleted = Convert.ToUInt64(true);
+            unitOfWork.LocationRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<LocationDto>(itemDb);
