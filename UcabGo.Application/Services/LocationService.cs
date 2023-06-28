@@ -26,7 +26,7 @@ namespace UcabGo.Application.Services
             var itemDto = mapper.Map<LocationDto>(item);
             return itemDto;
         }
-        public async Task<IEnumerable<LocationDto>> GetLocations(string userEmail)
+        public async Task<IEnumerable<LocationDto>> GetDefaultLocations(string userEmail)
         {
             var items = await GetAll(userEmail);
             var ucabAndHome = items.Where(x => x.Alias == "UCAB Guayana" || Convert.ToBoolean(x.IsHome));
@@ -67,12 +67,20 @@ namespace UcabGo.Application.Services
                 throw new Exception("UCAB_LOCATION_ALREADY_CREATED");
             }
 
-            //Remove current home
-            var locations = await GetAll(input.Email);
-            var homeLocation = locations.FirstOrDefault(x => Convert.ToBoolean(x.IsHome));
-            if (homeLocation != null)
+            if(input.IsHome)
             {
-                homeLocation.IsHome = 0;
+                //Remove current home
+                var locations = unitOfWork.LocationRepository.GetAll();
+                var currentHome = locations.Where(x => Convert.ToBoolean(x.IsHome));
+                if (currentHome != null)
+                {
+                    foreach (var itemHome in currentHome)
+                    {
+                        itemHome.IsHome = Convert.ToUInt64(false);
+                        itemHome.IsDeleted = Convert.ToUInt64(true);
+                        unitOfWork.LocationRepository.Update(itemHome);
+                    }
+                }
             }
 
             //Assign id of user to Location
@@ -99,26 +107,6 @@ namespace UcabGo.Application.Services
                 return false;
             }
         }
-        public async Task<LocationDto> Update(LocationUpdateInput location)
-        {
-            var itemDb = await GetById(location.Id);
-            if (itemDb == null)
-            {
-                throw new Exception("LOCATION_NOT_FOUND");
-            }
-
-            itemDb.Alias = location.Alias ?? itemDb.Alias;
-            itemDb.Zone = location.Zone ?? itemDb.Zone;
-            itemDb.Detail = location.Detail ?? itemDb.Detail;
-            itemDb.Latitude = location.Latitude ?? itemDb.Latitude;
-            itemDb.Longitude = location.Longitude ?? itemDb.Longitude;
-
-            unitOfWork.LocationRepository.Update(itemDb);
-            await unitOfWork.SaveChangesAsync();
-
-            var dto = mapper.Map<LocationDto>(itemDb);
-            return dto;
-        }
 
         public async Task<LocationDto> Delete(int id, string userEmail)
         {
@@ -127,6 +115,14 @@ namespace UcabGo.Application.Services
             if (itemDb == null)
             {
                 throw new Exception("LOCATION_NOT_FOUND");
+            }
+            if (itemDb.Alias == "UCAB Guayana")
+            {
+                throw new Exception("UCAB_LOCATION_IS_READONLY");
+            }
+            if (Convert.ToBoolean(itemDb.IsHome))
+            {
+                throw new Exception("HOME_LOCATION_IS_READONLY");
             }
 
             itemDb.IsDeleted = Convert.ToUInt64(true);

@@ -1,18 +1,19 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
-using UcabGo.Core.Data.Destination.Dtos;
-using UcabGo.Core.Data.Destination.Inputs;
+using UcabGo.Core.Data.Location.Dtos;
+using UcabGo.Core.Data.Location.Inputs;
 
 namespace UcabGo.Api.Functions
 {
     public class Destination
     {
         private readonly ApiResponse apiResponse;
-        private readonly IDestinationService services;
-        public Destination(ApiResponse apiResponse, IDestinationService services)
+        private readonly ILocationService services;
+        public Destination(ApiResponse apiResponse, ILocationService services)
         {
             this.apiResponse = apiResponse;
             this.services = services;
@@ -25,25 +26,25 @@ namespace UcabGo.Api.Functions
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json",
-            bodyType: typeof(DestinationInput),
+            bodyType: typeof(LocationInput),
             Required = true,
             Description = "Create a user's destination.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(DestinationDto),
+            bodyType: typeof(LocationDto),
             Description = "The info of the user's destination.")]
         #endregion
         public async Task<IActionResult> CreateDestination(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user/destinations")] HttpRequest req, ILogger log)
         {
-            async Task<IActionResult> Action(DestinationInput input)
+            async Task<IActionResult> Action(LocationInput input)
             {
                 try
                 {
                     var dto = await services.Create(input);
+                    apiResponse.Message = "LOCATION_CREATED";
                     apiResponse.Data = dto;
-                    apiResponse.Message = "DESTINATION_CREATED";
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -51,7 +52,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
-                        case "UCAB_DESTINATION_ALREADY_CREATED":
+                        case "UCAB_LOCATION_ALREADY_CREATED":
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
@@ -62,7 +63,7 @@ namespace UcabGo.Api.Functions
                 }
             }
 
-            return await RequestHandler.Handle<DestinationInput>(req, log, apiResponse, Action, isAnonymous: false);
+            return await RequestHandler.Handle<LocationInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 
@@ -73,7 +74,7 @@ namespace UcabGo.Api.Functions
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(IEnumerable<DestinationDto>),
+            bodyType: typeof(IEnumerable<LocationDto>),
             Description = "A list of the data of user's destinations.")]
         #endregion
         public async Task<IActionResult> GetDestinations(
@@ -83,62 +84,12 @@ namespace UcabGo.Api.Functions
             {
                 var list = await services.GetAllDtos(input.Email);
                 apiResponse.Data = list;
-                apiResponse.Message = "DESTINATIONS_FOUND";
+                apiResponse.Message = "LOCATIONS_FOUND";
                 return new OkObjectResult(apiResponse);
             }
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
-
-        #region UpdateDestination
-        [FunctionName("UpdateDestination")]
-        [OpenApiOperation(tags: new[] { "Destination" })]
-        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiRequestBody(
-            contentType: "application/json",
-            bodyType: typeof(DestinationUpdateInput),
-            Required = true,
-            Description = "Updates an user's destination info.")]
-        [OpenApiResponseWithBody(
-            statusCode: HttpStatusCode.OK,
-            contentType: "application/json",
-            bodyType: typeof(DestinationDto),
-            Description = "The updated destination info.")]
-        #endregion
-        public async Task<IActionResult> UpdateDestination(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/destinations")] HttpRequest req, ILogger log)
-        {
-            async Task<IActionResult> Action(DestinationUpdateInput input)
-            {
-                try
-                {
-                    var dto = await services.Update(input);
-                    apiResponse.Data = dto;
-                    apiResponse.Message = "DESTINATION_UPDATED";
-                    return new OkObjectResult(apiResponse);
-                }
-                catch (Exception ex)
-                {
-                    apiResponse.Message = ex.Message;
-                    switch (ex.Message)
-                    {
-                        case "UCAB_DESTINATION_IS_READONLY":
-                            return new BadRequestObjectResult(apiResponse);
-                        case "DESTINATION_NOT_FOUND":
-                            return new NotFoundObjectResult(apiResponse);
-                        default:
-                            {
-                                log.LogError(ex, "Error while updating destination.", input);
-                                return new InternalServerErrorResult();
-                            }
-                    }
-                }
-            }
-
-            return await RequestHandler.Handle<DestinationUpdateInput>(req, log, apiResponse, Action, isAnonymous: false);
-        }
-
 
         #region DeleteDestination
         [FunctionName("DeleteDestination")]
@@ -153,7 +104,7 @@ namespace UcabGo.Api.Functions
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(DestinationDto),
+            bodyType: typeof(LocationDto),
             Description = "Info of the deleted destination.")]
         #endregion
         public async Task<IActionResult> DeleteDestination(
@@ -163,8 +114,8 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await services.Delete(input.Email, id);
-                    apiResponse.Message = "DESTINATION_DELETED";
+                    var dto = await services.Delete(id, input.Email);
+                    apiResponse.Message = "LOCATION_DELETED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
                 }
@@ -173,9 +124,11 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
-                        case "UCAB_DESTINATION_IS_READONLY":
+                        case "UCAB_LOCATION_IS_READONLY":
                             return new BadRequestObjectResult(apiResponse);
-                        case "DESTINATION_NOT_FOUND":
+                        case "HOME_LOCATION_IS_READONLY":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "LOCATION_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {

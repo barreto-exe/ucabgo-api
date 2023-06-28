@@ -24,10 +24,10 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     "VehicleNavigation",
-                    "DestinationNavigation",
+                    "FinalLocationNavigation",
                     "DriverNavigation",
                     "Passengers.UserNavigation",
-                    "Passengers.InitialLocationNavigation");
+                    "Passengers.FinalLocationNavigation");
 
             var rides = from r in items
                         where
@@ -47,7 +47,7 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     r => r.VehicleNavigation,
-                    r => r.DestinationNavigation,
+                    r => r.FinalLocationNavigation,
                     r => r.DriverNavigation,
                     r => r.Evaluations);
 
@@ -78,7 +78,7 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     r => r.VehicleNavigation,
-                    r => r.DestinationNavigation,
+                    r => r.FinalLocationNavigation,
                     r => r.DriverNavigation,
                     r => r.Passengers);
 
@@ -90,10 +90,10 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     "VehicleNavigation",
-                    "DestinationNavigation",
+                    "FinalLocationNavigation",
                     "DriverNavigation",
                     "Passengers.UserNavigation",
-                    "Passengers.InitialLocationNavigation");
+                    "Passengers.FinalLocationNavigation");
 
             var ride = result.FirstOrDefault(x => x.Id == id);
             return ride;

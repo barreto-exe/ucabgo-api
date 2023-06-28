@@ -38,7 +38,6 @@ namespace UcabGo.Api
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddTransient<IVehicleService, VehicleService>();
             builder.Services.AddTransient<ISoscontactService, SoscontactService>();
-            builder.Services.AddTransient<IDestinationService, DestinationService>();
             builder.Services.AddTransient<IRideService, RideService>();
             builder.Services.AddTransient<ILocationService, LocationService>();
             builder.Services.AddTransient<IPassengerService, PassengerService>();

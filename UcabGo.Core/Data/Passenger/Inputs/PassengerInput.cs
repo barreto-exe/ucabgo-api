@@ -7,6 +7,10 @@ namespace UcabGo.Core.Data.Passanger.Inputs
         [Required]
         public int Ride { get; set; }
         [Required]
-        public int InitialLocation { get; set; }
+        public int FinalLocation { get; set; }
+        [Required]
+        public float LatitudeOrigin { get; set; }
+        [Required]
+        public float LongitudeOrigin { get; set; }
     }
 }

@@ -10,7 +10,6 @@ namespace UcabGo.Infrastructure.Repositories
         private readonly IRepository<User> userRepository;
         private readonly IRepository<Vehicle> vehicleRepository;
         private readonly IRepository<Soscontact> soscontactRepository;
-        private readonly IRepository<Destination> destinationRepository;
         private readonly IRepository<Location> locationRepository;
         private readonly IRepository<Passenger> passengerRepository;
         private readonly IRepository<Ride> rideRepository;
@@ -25,7 +24,6 @@ namespace UcabGo.Infrastructure.Repositories
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(ucabgoContext);
         public IRepository<Vehicle> VehicleRepository => vehicleRepository ?? new BaseRepository<Vehicle>(ucabgoContext);
         public IRepository<Soscontact> SoscontactRepository => soscontactRepository ?? new BaseRepository<Soscontact>(ucabgoContext);
-        public IRepository<Destination> DestinationRepository => destinationRepository ?? new BaseRepository<Destination>(ucabgoContext);
         public IRepository<Location> LocationRepository => locationRepository ?? new BaseRepository<Location>(ucabgoContext);
         public IRepository<Passenger> PassengerRepository => passengerRepository ?? new BaseRepository<Passenger>(ucabgoContext);
         public IRepository<Ride> RideRepository => rideRepository ?? new BaseRepository<Ride>(ucabgoContext);

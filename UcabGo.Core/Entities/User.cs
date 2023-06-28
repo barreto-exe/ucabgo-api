@@ -5,7 +5,6 @@
         public User()
         {
             Chatmessages = new HashSet<Chatmessage>();
-            Destinations = new HashSet<Destination>();
             EvaluationEvaluatedNavigations = new HashSet<Evaluation>();
             EvaluationEvaluatorNavigations = new HashSet<Evaluation>();
             Locations = new HashSet<Location>();
@@ -26,7 +25,6 @@
         public double? WalkingDistance { get; set; }
 
         public virtual ICollection<Chatmessage> Chatmessages { get; set; }
-        public virtual ICollection<Destination> Destinations { get; set; }
         public virtual ICollection<Evaluation> EvaluationEvaluatedNavigations { get; set; }
         public virtual ICollection<Evaluation> EvaluationEvaluatorNavigations { get; set; }
         public virtual ICollection<Location> Locations { get; set; }

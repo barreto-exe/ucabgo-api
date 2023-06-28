@@ -1,6 +1,5 @@
 using AutoMapper;
 using UcabGo.Application.Interfaces;
-using UcabGo.Core.Data.Destination.Dtos;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
@@ -17,16 +16,14 @@ namespace UcabGo.Application.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IUserService userService;
         private readonly IVehicleService vehicleService;
-        private readonly IDestinationService destinationService;
         private readonly IRideService rideService;
         private readonly ILocationService locationService;
         private readonly IMapper mapper;
-        public DriverService(IUnitOfWork unitOfWork, IUserService userService, IVehicleService vehicleService, IDestinationService destinationService, IRideService rideService, ILocationService locationService, IMapper mapper)
+        public DriverService(IUnitOfWork unitOfWork, IUserService userService, IVehicleService vehicleService, IRideService rideService, ILocationService locationService, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.userService = userService;
             this.vehicleService = vehicleService;
-            this.destinationService = destinationService;
             this.rideService = rideService;
             this.locationService = locationService;
             this.mapper = mapper;
@@ -61,7 +58,7 @@ namespace UcabGo.Application.Services
             }
 
             //Validate if he owns a destination with given id
-            var destinations = await destinationService.GetAll(input.Email);
+            var destinations = await locationService.GetAll(input.Email);
             var destination = destinations.FirstOrDefault(x => x.Id == input.Destination);
             if (destination == null)
             {
@@ -85,7 +82,7 @@ namespace UcabGo.Application.Services
             var dto = mapper.Map<RideDto>(itemDb);
             dto.Driver = mapper.Map<UserDto>(itemDb.DriverNavigation);
             dto.Vehicle = mapper.Map<VehicleDto>(itemDb.VehicleNavigation);
-            dto.Destination = mapper.Map<DestinationDto>(itemDb.DestinationNavigation);
+            dto.Destination = mapper.Map<LocationDto>(itemDb.FinalLocationNavigation);
             return dto;
         }
         public async Task<RideDto> StartRide(RideAvailableInput input)
@@ -104,6 +101,7 @@ namespace UcabGo.Application.Services
                 rideDb.TimeStarted != null || //Can't start if already started
                 rideDb.TimeEnded != null || //Can't start if already ended
                 rideDb.TimeCanceled != null || //Can't start if already canceled
+                !rideDb.Passengers.Any() || //Can't start if 0 passengers
                 !Convert.ToBoolean(rideDb.IsAvailable);
             if (cantStartRide)
             {
@@ -206,7 +204,7 @@ namespace UcabGo.Application.Services
             passenger.TimeAccepted = DateTime.Now;
 
             var userId = passenger.User;
-            var locationId = passenger.InitialLocation;
+            var locationId = passenger.FinalLocation;
 
             unitOfWork.PassengerRepository.Update(passenger);
             await unitOfWork.SaveChangesAsync();
@@ -216,7 +214,7 @@ namespace UcabGo.Application.Services
             //PassengerDto mapping not working correctly. User and Location assigned manually
             //TODO - Fix mapping for PassengerDto
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
-            dto.InitialLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
             return dto;
         }
         public async Task<PassengerDto> IgnorePassenger(string driverEmail, int rideId, int passengerId)
@@ -245,7 +243,7 @@ namespace UcabGo.Application.Services
             passenger.TimeIgnored = DateTime.Now;
 
             var userId = passenger.User;
-            var locationId = passenger.InitialLocation;
+            var locationId = passenger.FinalLocation;
 
             unitOfWork.PassengerRepository.Update(passenger);
             await unitOfWork.SaveChangesAsync();
@@ -254,7 +252,7 @@ namespace UcabGo.Application.Services
 
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
-            dto.InitialLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
             return dto;
         }
         public async Task<PassengerDto> CancelPassenger(string driverEmail, int rideId, int passengerId)
@@ -287,7 +285,7 @@ namespace UcabGo.Application.Services
             passenger.TimeCancelled = DateTime.Now;
 
             var userId = passenger.User;
-            var locationId = passenger.InitialLocation;
+            var locationId = passenger.FinalLocation;
 
             unitOfWork.PassengerRepository.Update(passenger);
             await unitOfWork.SaveChangesAsync();
@@ -296,7 +294,7 @@ namespace UcabGo.Application.Services
 
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
-            dto.InitialLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
             return dto;
         }
     }

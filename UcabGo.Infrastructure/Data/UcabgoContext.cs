@@ -15,7 +15,6 @@ namespace UcabGo.Infrastructure.Data
         }
 
         public virtual DbSet<Chatmessage> Chatmessages { get; set; } = null!;
-        public virtual DbSet<Destination> Destinations { get; set; } = null!;
         public virtual DbSet<Evaluation> Evaluations { get; set; } = null!;
         public virtual DbSet<Location> Locations { get; set; } = null!;
         public virtual DbSet<Passenger> Passengers { get; set; } = null!;
@@ -28,8 +27,8 @@ namespace UcabGo.Infrastructure.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseMySql("server=localhost,3306;user=root;password=labm-801;database=ucabgo1", Microsoft.EntityFrameworkCore.ServerVersion.Parse("10.10.2-mariadb"));
             }
         }
 
@@ -69,35 +68,6 @@ namespace UcabGo.Infrastructure.Data
                     .HasConstraintName("chatmessage_ibfk_2");
             });
 
-            modelBuilder.Entity<Destination>(entity =>
-            {
-                entity.ToTable("destinations");
-
-                entity.HasIndex(e => e.User, "User");
-
-                entity.Property(e => e.Id)
-                    .HasColumnType("int(11)")
-                    .HasComment(" ");
-
-                entity.Property(e => e.Alias).HasMaxLength(255);
-
-                entity.Property(e => e.Detail).HasMaxLength(255);
-
-                entity.Property(e => e.IsDeleted)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
-
-                entity.Property(e => e.User).HasColumnType("int(11)");
-
-                entity.Property(e => e.Zone).HasMaxLength(255);
-
-                entity.HasOne(d => d.UserNavigation)
-                    .WithMany(p => p.Destinations)
-                    .HasForeignKey(d => d.User)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("destinations_ibfk_1");
-            });
-
             modelBuilder.Entity<Evaluation>(entity =>
             {
                 entity.ToTable("evaluation");
@@ -120,7 +90,9 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Stars).HasColumnType("int(11)");
 
-                entity.Property(e => e.Type).HasMaxLength(5);
+                entity.Property(e => e.Type)
+                    .HasMaxLength(5)
+                    .HasDefaultValueSql("''");
 
                 entity.HasOne(d => d.EvaluatedNavigation)
                     .WithMany(p => p.EvaluationEvaluatedNavigations)
@@ -176,7 +148,7 @@ namespace UcabGo.Infrastructure.Data
             {
                 entity.ToTable("passenger");
 
-                entity.HasIndex(e => e.InitialLocation, "InitialLocation");
+                entity.HasIndex(e => e.FinalLocation, "InitialLocation");
 
                 entity.HasIndex(e => e.User, "Passenger");
 
@@ -184,7 +156,7 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.InitialLocation).HasColumnType("int(11)");
+                entity.Property(e => e.FinalLocation).HasColumnType("int(11)");
 
                 entity.Property(e => e.Ride).HasColumnType("int(11)");
 
@@ -200,9 +172,9 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.User).HasColumnType("int(11)");
 
-                entity.HasOne(d => d.InitialLocationNavigation)
+                entity.HasOne(d => d.FinalLocationNavigation)
                     .WithMany(p => p.Passengers)
-                    .HasForeignKey(d => d.InitialLocation)
+                    .HasForeignKey(d => d.FinalLocation)
                     .HasConstraintName("passenger_ibfk_3");
 
                 entity.HasOne(d => d.RideNavigation)
@@ -222,7 +194,7 @@ namespace UcabGo.Infrastructure.Data
             {
                 entity.ToTable("ride");
 
-                entity.HasIndex(e => e.Destination, "Destination");
+                entity.HasIndex(e => e.FinalLocation, "Destination");
 
                 entity.HasIndex(e => e.Driver, "Driver");
 
@@ -230,9 +202,9 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Id).HasColumnType("int(11)");
 
-                entity.Property(e => e.Destination).HasColumnType("int(11)");
-
                 entity.Property(e => e.Driver).HasColumnType("int(11)");
+
+                entity.Property(e => e.FinalLocation).HasColumnType("int(11)");
 
                 entity.Property(e => e.IsAvailable)
                     .HasColumnType("bit(1)")
@@ -252,17 +224,17 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Vehicle).HasColumnType("int(11)");
 
-                entity.HasOne(d => d.DestinationNavigation)
-                    .WithMany(p => p.Rides)
-                    .HasForeignKey(d => d.Destination)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("ride_ibfk_3");
-
                 entity.HasOne(d => d.DriverNavigation)
                     .WithMany(p => p.Rides)
                     .HasForeignKey(d => d.Driver)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("ride_ibfk_1");
+
+                entity.HasOne(d => d.FinalLocationNavigation)
+                    .WithMany(p => p.Rides)
+                    .HasForeignKey(d => d.FinalLocation)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("ride_ibfk_3");
 
                 entity.HasOne(d => d.VehicleNavigation)
                     .WithMany(p => p.Rides)

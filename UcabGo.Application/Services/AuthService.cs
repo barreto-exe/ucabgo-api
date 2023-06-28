@@ -3,7 +3,6 @@ using UcabGo.Application.Interfaces;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Inputs;
-using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.Location.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Entities;
@@ -14,13 +13,11 @@ namespace UcabGo.Application.Services
     {
         private readonly IMapper mapper;
         private readonly IUserService userService;
-        private readonly IDestinationService destinationService;
         private readonly ILocationService locationService;
-        public AuthService(IMapper mapper, IUserService userService, IDestinationService destinationService, ILocationService locationService)
+        public AuthService(IMapper mapper, IUserService userService, ILocationService locationService)
         {
             this.mapper = mapper;
             this.userService = userService;
-            this.destinationService = destinationService;
             this.locationService = locationService;
         }
 
@@ -35,18 +32,7 @@ namespace UcabGo.Application.Services
 
             var newUser = await userService.Create(userInput);
 
-            //Create default UCAB destination for drivers
-            await destinationService.Create(new DestinationInput()
-            {
-                Email = newUser.Email,
-                Alias = "UCAB Guayana",
-                Zone = "Av. Atlántico",
-                Detail = "Ciudad Guayana",
-                Latitude = 8.29703f,
-                Longitude = -62.718f,
-            }, isRegistering: true);
-
-            //Create default UCAB location for passangers
+            //Create default UCAB location
             await locationService.Create(new LocationInput()
             {
                 Email = newUser.Email,

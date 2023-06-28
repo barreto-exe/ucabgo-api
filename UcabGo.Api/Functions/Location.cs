@@ -58,8 +58,6 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
-                        case "UCAB_LOCATION_ALREADY_CREATED":
-                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while creating location.", input);
@@ -109,11 +107,11 @@ namespace UcabGo.Api.Functions
             Description = "A list with the UCAB and home location of the user.")]
         #endregion
         public async Task<IActionResult> GetLocations(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/locations")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "user/default-locations")] HttpRequest req, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
             {
-                var dtos = await locationService.GetLocations(input.Email);
+                var dtos = await locationService.GetDefaultLocations(input.Email);
                 apiResponse.Message = "LOCATIONS_RETRIEVED";
                 apiResponse.Data = dtos;
                 return new OkObjectResult(apiResponse);

@@ -5,6 +5,7 @@
         public Location()
         {
             Passengers = new HashSet<Passenger>();
+            Rides = new HashSet<Ride>();
         }
 
         public int Id { get; set; }
@@ -19,5 +20,6 @@
 
         public virtual User UserNavigation { get; set; } = null!;
         public virtual ICollection<Passenger> Passengers { get; set; }
+        public virtual ICollection<Ride> Rides { get; set; }
     }
 }

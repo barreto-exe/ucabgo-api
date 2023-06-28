@@ -2,8 +2,6 @@
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.Chat.Dtos;
 using UcabGo.Core.Data.Chat.Input;
-using UcabGo.Core.Data.Destination.Dtos;
-using UcabGo.Core.Data.Destination.Inputs;
 using UcabGo.Core.Data.Evaluation.Dtos;
 using UcabGo.Core.Data.Evaluation.Inputs;
 using UcabGo.Core.Data.Location.Dtos;
@@ -38,17 +36,13 @@ namespace UcabGo.Core.Mapping
             CreateMap<SoscontactDto, Soscontact>();
             CreateMap<SoscontactInput, Soscontact>();
 
-            CreateMap<Destination, DestinationDto>()
-                .ForMember(dest => dest.Driver, opt => opt.MapFrom(x => x.UserNavigation));
-            CreateMap<DestinationDto, Destination>();
-            CreateMap<DestinationInput, Destination>();
-
             CreateMap<Ride, RideDto>()
                 .ForMember(dest => dest.Driver, opt => opt.MapFrom(x => x.DriverNavigation))
                 .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(x => x.VehicleNavigation))
-                .ForMember(dest => dest.Destination, opt => opt.MapFrom(x => x.DestinationNavigation));
+                .ForMember(dest => dest.Destination, opt => opt.MapFrom(x => x.FinalLocationNavigation));
             CreateMap<RideDto, Ride>();
-            CreateMap<RideInput, Ride>();
+            CreateMap<RideInput, Ride>()
+                .ForMember(dest => dest.FinalLocation, opt => opt.MapFrom(x => x.Destination));
 
             CreateMap<Location, LocationDto>()
                 .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
@@ -57,7 +51,7 @@ namespace UcabGo.Core.Mapping
             CreateMap<HomeInput, LocationInput>();
 
             CreateMap<Passenger, PassengerDto>()
-                .ForMember(dest => dest.InitialLocation, opt => opt.MapFrom(x => x.InitialLocationNavigation))
+                .ForMember(dest => dest.FinalLocation, opt => opt.MapFrom(x => x.FinalLocationNavigation))
                 .ForMember(dest => dest.User, opt => opt.MapFrom(x => x.UserNavigation));
             CreateMap<PassengerDto, Passenger>();
             CreateMap<PassengerInput, Passenger>();

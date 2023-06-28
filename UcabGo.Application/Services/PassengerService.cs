@@ -43,9 +43,9 @@ namespace UcabGo.Application.Services
                 throw new Exception("RIDE_NOT_FOUND");
             }
 
-            //Validate if initial location exists
-            var initialLocation = await locationService.GetById(input.InitialLocation);
-            if (initialLocation == null || initialLocation.User != idUser)
+            //Validate if final location exists
+            var finalLocation = await locationService.GetById(input.FinalLocation);
+            if (finalLocation == null || finalLocation.User != idUser)
             {
                 throw new Exception("LOCATION_NOT_FOUND");
             }
@@ -107,7 +107,7 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     "VehicleNavigation",
-                    "DestinationNavigation",
+                    "LocationNavigation",
                     "DriverNavigation");
             List<Ride> result;
             if (filter.OnlyAvailable)
