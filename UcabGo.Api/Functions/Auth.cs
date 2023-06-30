@@ -136,6 +136,8 @@ namespace UcabGo.Api.Functions
                     {
                         case "USER_ALREADY_EXISTS":
                             return new BadRequestObjectResult(apiResponse);
+                        case "REGISTER_FIELD_LENGTH":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while registering user.", input);
