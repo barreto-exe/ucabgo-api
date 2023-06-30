@@ -20,9 +20,8 @@ namespace UcabGo.Application.Services
 
         public async Task<IEnumerable<RideMatchDto>> GetMathchingAll(MatchingFilter filter)
         {
-            var items = unitOfWork
-                .RideRepository
-                .GetAllIncluding(
+            var items = 
+                unitOfWork.RideRepository.GetAllIncluding(
                     "VehicleNavigation",
                     "FinalLocationNavigation",
                     "DriverNavigation",
@@ -30,31 +29,27 @@ namespace UcabGo.Application.Services
                     "Passengers.FinalLocationNavigation");
 
             var rides = from r in items
-                        where
-                            r.IsAvailable == Convert.ToUInt64(true) &&
-                            r.DriverNavigation.Email != filter.Email
+                        where r.IsAvailable == Convert.ToUInt64(true) &&
+                              r.DriverNavigation.Email != filter.Email 
                         select new RideMatchDto
                         {
                             Ride = mapper.Map<RideDto>(r),
                             MatchingPercentage = new Random().NextDouble(),
                         };
 
-            if(filter.GoingToCampus)
-            {
-                rides = from r in rides
-                        where r.Ride.Destination.Alias.Contains("UCAB")
-                        select r;
-            }
-            else
-            {
-                rides = from r in rides
-                        where !r.Ride.Destination.Alias.Contains("UCAB")
-                        select r;
-            }
+            var result =
+                rides
+                .ToList()
+                .Where(r => filter.GoingToCampus ? 
+                     r.Ride.Destination.Alias.Contains("UCAB") : 
+                    !r.Ride.Destination.Alias.Contains("UCAB"))
+                .OrderByDescending(x => x.MatchingPercentage)
+                .ToList();
 
             //TODO - Matching algorithm here
 
-            return rides.ToList().OrderByDescending(x => x.MatchingPercentage);
+            result = result.ToList();
+            return result;
         }
 
         public async Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyAvailable = false)
