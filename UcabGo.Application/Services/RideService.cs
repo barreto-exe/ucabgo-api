@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
@@ -12,10 +13,12 @@ namespace UcabGo.Application.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        public RideService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ILogger logger;
+        public RideService(IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<IEnumerable<RideMatchDto>> GetMathchingAll(MatchingFilter filter)
@@ -121,7 +124,7 @@ namespace UcabGo.Application.Services
             return dtos;
         }
 
-        public async Task<IEnumerable<RideDto>> DeleteInactiveRides()
+        public async Task<IEnumerable<RideDto>> CancelInactiveRides()
         {
             var rides = unitOfWork.RideRepository.GetAll();
 
@@ -130,17 +133,30 @@ namespace UcabGo.Application.Services
                                 where r.TimeStarted == null &&
                                       r.TimeEnded == null &&
                                       r.TimeCanceled == null &&
+                                      r.IsAvailable == Convert.ToUInt64(true) &&
                                       r.TimeCreated.AddMinutes(15) <= DateTime.Now
                                 select r;
 
-            //Delete rides 
+            //Cancelling rides 
+            List<Ride> ridesCancelled = new();
             foreach (var ride in ridesToDelete)
             {
-                await unitOfWork.RideRepository.Delete(ride);
+                try
+                {
+                    ride.TimeCanceled = DateTime.Now;
+                    ride.IsAvailable = Convert.ToUInt64(false);
+                    unitOfWork.RideRepository.Update(ride);
+
+                    ridesCancelled.Add(ride);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"Error deleting ride {ride.Id}", ride.Id);
+                }
             }
             await unitOfWork.SaveChangesAsync();
 
-            return mapper.Map<IEnumerable<RideDto>>(ridesToDelete);
+            return mapper.Map<IEnumerable<RideDto>>(ridesCancelled);
         }
     }
 }

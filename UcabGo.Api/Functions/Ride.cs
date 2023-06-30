@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Ride.Dtos;
@@ -61,6 +62,19 @@ namespace UcabGo.Api.Functions
             }
 
             return await RequestHandler.Handle<MatchingFilter>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
+
+        [FunctionName("CancelInactiveRides")]
+        public async Task CancelInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, ILogger log)
+        {
+            log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
+
+            var canceledRides = await rideService.CancelInactiveRides();
+
+            string deletedRidesIds = string.Join(", ", canceledRides.Select(r => r.Id));
+
+            log.LogInformation($"Deleted rides: {deletedRidesIds}");
         }
     }
 }

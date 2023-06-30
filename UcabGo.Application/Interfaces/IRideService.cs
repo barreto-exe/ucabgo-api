@@ -12,6 +12,6 @@ namespace UcabGo.Application.Interfaces
         Task<IEnumerable<Ride>> GetAll();
         Task<Ride> GetById(int id);
         Task<IEnumerable<PassengerDto>> GetPassengers(int rideId);
-        Task<IEnumerable<RideDto>> DeleteInactiveRides();
+        Task<IEnumerable<RideDto>> CancelInactiveRides();
     }
 }

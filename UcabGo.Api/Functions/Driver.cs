@@ -246,19 +246,6 @@ namespace UcabGo.Api.Functions
             }
             return await RequestHandler.Handle<RideAvailableInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
-
-        [FunctionName("DeleteInactiveRides")]
-        public async Task DeleteInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, ILogger log)
-        {
-            log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
-
-            var deletedRides = await rideService.DeleteInactiveRides();
-
-            string deletedRidesIds = string.Join(", ", deletedRides.Select(r => r.Id));
-
-            log.LogInformation($"Deleted rides: {deletedRidesIds}");
-        }
     }
 
     //Portion for the passengers of the ride
