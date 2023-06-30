@@ -77,6 +77,12 @@ namespace UcabGo.Api.Functions
                     {
                         case "VEHICLE_PLATE_REPEATED":
                             return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_NULL_FIELD":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_INVALID_PLATE":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_FIELD_LENGTH":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while creating vehicle", input);
@@ -124,6 +130,12 @@ namespace UcabGo.Api.Functions
                         case "VEHICLE_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
                         case "VEHICLE_PLATE_REPEATED":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_NULL_FIELD":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_INVALID_PLATE":
+                            return new BadRequestObjectResult(apiResponse);
+                        case "VEHICLE_FIELD_SIZE":
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
