@@ -39,8 +39,8 @@ namespace UcabGo.Application.Services
                 Alias = "UCAB Guayana",
                 Zone = "Av. Atlántico",
                 Detail = "Ciudad Guayana",
-                Latitude = 8.29703f,
-                Longitude = -62.718f,
+                Latitude = 8.29727428f,
+                Longitude = -62.71308436f,
                 IsHome = false,
             }, isRegistering: true);
 

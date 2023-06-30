@@ -7,7 +7,7 @@ namespace UcabGo.Application.Interfaces
 {
     public interface IRideService
     {
-        Task<IEnumerable<RideDto>> GetMathchingAll(MatchingFilter filter);
+        Task<IEnumerable<RideMatchDto>> GetMathchingAll(MatchingFilter filter);
         Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyActive = false);
         Task<IEnumerable<Ride>> GetAll();
         Task<Ride> GetById(int id);

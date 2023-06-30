@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 
 namespace UcabGo.Api.Functions
@@ -23,15 +24,14 @@ namespace UcabGo.Api.Functions
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiParameter(name: nameof(MatchingFilter.InitialLatitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The latitude of the initial location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.InitialLongitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The longitude of the initial location of the ride.")]
-        [OpenApiParameter(name: nameof(MatchingFilter.InitialZone), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The zone of the initial location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLatitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The latitude of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.FinalLongitude), In = ParameterLocation.Query, Required = true, Type = typeof(float), Description = "The longitude of the final location of the ride.")]
-        [OpenApiParameter(name: nameof(MatchingFilter.FinalZone), In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The zone of the final location of the ride.")]
         [OpenApiParameter(name: nameof(MatchingFilter.WalkingDistance), In = ParameterLocation.Query, Required = true, Type = typeof(int), Description = "The distance in meters the user asking for a ride is willing to walk.")]
+        [OpenApiParameter(name: nameof(MatchingFilter.GoingToCampus), In = ParameterLocation.Query, Required = true, Type = typeof(bool), Description = "Whether the user is going to campus or not.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
-            bodyType: typeof(IEnumerable<Ride>),
+            bodyType: typeof(IEnumerable<RideMatchDto>),
             Description = "A list of available rides that match with the search, ordered with the best result at the top.")]
         #endregion
         public async Task<IActionResult> GetMatchingRides(

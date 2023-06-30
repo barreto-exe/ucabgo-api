@@ -18,7 +18,7 @@ namespace UcabGo.Application.Services
             this.mapper = mapper;
         }
 
-        public async Task<IEnumerable<RideDto>> GetMathchingAll(MatchingFilter filter)
+        public async Task<IEnumerable<RideMatchDto>> GetMathchingAll(MatchingFilter filter)
         {
             var items = unitOfWork
                 .RideRepository
@@ -33,12 +33,28 @@ namespace UcabGo.Application.Services
                         where
                             r.IsAvailable == Convert.ToUInt64(true) &&
                             r.DriverNavigation.Email != filter.Email
+                        select new RideMatchDto
+                        {
+                            Ride = mapper.Map<RideDto>(r),
+                            MatchingPercentage = new Random().NextDouble(),
+                        };
+
+            if(filter.GoingToCampus)
+            {
+                rides = from r in rides
+                        where r.Ride.Destination.Alias.Contains("UCAB")
                         select r;
+            }
+            else
+            {
+                rides = from r in rides
+                        where !r.Ride.Destination.Alias.Contains("UCAB")
+                        select r;
+            }
 
             //TODO - Matching algorithm here
 
-            var ridesDtos = mapper.Map<List<RideDto>>(rides.ToList());
-            return ridesDtos;
+            return rides.ToList().OrderByDescending(x => x.MatchingPercentage);
         }
 
         public async Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyAvailable = false)
