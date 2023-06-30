@@ -120,5 +120,27 @@ namespace UcabGo.Application.Services
             var dtos = mapper.Map<IEnumerable<PassengerDto>>(passengers);
             return dtos;
         }
+
+        public async Task<IEnumerable<RideDto>> DeleteInactiveRides()
+        {
+            var rides = unitOfWork.RideRepository.GetAll();
+
+            //Get rides that were created, but not started, cancelled or ended and are older than 15 minutes
+            var ridesToDelete = from r in rides
+                                where r.TimeStarted == null &&
+                                      r.TimeEnded == null &&
+                                      r.TimeCanceled == null &&
+                                      r.TimeCreated.AddMinutes(15) <= DateTime.Now
+                                select r;
+
+            //Delete rides 
+            foreach (var ride in ridesToDelete)
+            {
+                await unitOfWork.RideRepository.Delete(ride);
+            }
+            await unitOfWork.SaveChangesAsync();
+
+            return mapper.Map<IEnumerable<RideDto>>(ridesToDelete);
+        }
     }
 }
