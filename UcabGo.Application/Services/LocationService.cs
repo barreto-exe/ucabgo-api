@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.IdentityModel.Tokens;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Location.Inputs;
@@ -65,6 +66,11 @@ namespace UcabGo.Application.Services
             if (IsUCABGuayana(item) && !isRegistering)
             {
                 throw new Exception("UCAB_LOCATION_ALREADY_CREATED");
+            }
+
+            if (item.Detail.IsNullOrEmpty())
+            {
+                throw new Exception("LOCATION_EMPTY_DETAILS");
             }
 
             if(input.IsHome)

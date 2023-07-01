@@ -54,6 +54,8 @@ namespace UcabGo.Api.Functions
                     {
                         case "UCAB_LOCATION_ALREADY_CREATED":
                             return new BadRequestObjectResult(apiResponse);
+                        case "LOCATION_EMPTY_DETAILS":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while creating destination.", input);
