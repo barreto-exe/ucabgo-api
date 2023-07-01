@@ -70,11 +70,20 @@ namespace UcabGo.Api.Functions
         {
             log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
 
-            var canceledRides = await rideService.CancelInactiveRides();
+            bool isAutomaticRideDeletionEnabled = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsAutomaticRideDeletionEnabled"));
 
-            string deletedRidesIds = string.Join(", ", canceledRides.Select(r => r.Id));
+            if (isAutomaticRideDeletionEnabled )
+            {
+                var canceledRides = await rideService.CancelInactiveRides();
 
-            log.LogInformation($"Deleted rides: {deletedRidesIds}");
+                string deletedRidesIds = string.Join(", ", canceledRides.Select(r => r.Id));
+
+                log.LogInformation($"Deleted rides: {deletedRidesIds}");
+            }
+            else
+            {
+                log.LogInformation($"Automatic ride deletion is disabled.");
+            }
         }
     }
 }

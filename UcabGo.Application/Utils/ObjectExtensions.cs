@@ -98,11 +98,18 @@ namespace UcabGo.Application.Utils
             var keyBytes = Encoding.UTF8.GetBytes(jwtSecret);
             var key = new HMACSHA256(keyBytes);
 
+            //Get expiration time minutes
+            var expirationTime = int.Parse(Environment.GetEnvironmentVariable("JWT_EXP"));
+            if (expirationTime == -1)
+            {
+                expirationTime = int.MaxValue;
+            }
+
             // Define expiration time
             var now = DateTime.UtcNow;
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var iat = (int)(now - unixEpoch).TotalSeconds;
-            var exp = (int)(now.AddHours(1) - unixEpoch).TotalSeconds;
+            var exp = (int)(now.AddMinutes(expirationTime) - unixEpoch).TotalSeconds;
 
             // Create the payload
             var claims = new List<Claim>()
