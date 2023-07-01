@@ -99,17 +99,17 @@ namespace UcabGo.Application.Utils
             var key = new HMACSHA256(keyBytes);
 
             //Get expiration time minutes
-            var expirationTime = int.Parse(Environment.GetEnvironmentVariable("JWT_EXP"));
-            if (expirationTime == -1)
-            {
-                expirationTime = int.MaxValue;
-            }
-
-            // Define expiration time
+            int iat, exp = 0;
             var now = DateTime.UtcNow;
             var unixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var iat = (int)(now - unixEpoch).TotalSeconds;
-            var exp = (int)(now.AddMinutes(expirationTime) - unixEpoch).TotalSeconds;
+            iat = (int)(now - unixEpoch).TotalSeconds;
+
+            var expirationTime = int.Parse(Environment.GetEnvironmentVariable("JWT_EXP"));
+            if (expirationTime != -1)
+            {
+                // Define expiration time
+                exp = (int)(now.AddMinutes(expirationTime) - unixEpoch).TotalSeconds;
+            }
 
             // Create the payload
             var claims = new List<Claim>()
@@ -123,8 +123,15 @@ namespace UcabGo.Application.Utils
                 { "iss", issuer },
                 { "aud", audience },
                 { "iat", iat },
-                { "exp", exp },
             };
+            if(expirationTime != -1)
+            {
+                payload.Add("exp", exp);
+            }
+            else
+            {
+                payload.Add("exp", int.MaxValue);
+            }
 
             foreach (var claim in claims)
             {
