@@ -42,7 +42,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.GetMathchingAll(input);
+                    var dto = await rideService.GetMatchingAll(input);
                     apiResponse.Message = "RIDES_FOUND";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
@@ -52,6 +52,8 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = ex.Message;
                     switch (ex.Message)
                     {
+                        case "NO_MATCHING_RIDES":
+                            return new NotFoundObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while looking for rides.", input);
