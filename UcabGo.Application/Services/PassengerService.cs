@@ -107,7 +107,7 @@ namespace UcabGo.Application.Services
                 .RideRepository
                 .GetAllIncluding(
                     "VehicleNavigation",
-                    "LocationNavigation",
+                    "FinalLocationNavigation",
                     "DriverNavigation");
             List<Ride> result;
             if (filter.OnlyAvailable)
