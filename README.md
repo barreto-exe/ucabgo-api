@@ -1,7 +1,7 @@
 # Welcome to the UCAB GO API! 🚗🎓
 This API is designed to support the UCAB GO app, a ride-sharing platform for the UCAB community. With UCAB GO, students, faculty, and staff can easily request rides to and from campus, making transportation more convenient and accessible.
 
-# Technologies Used 💻
+## Technologies Used 💻
 - **.NET 6** - The UCAB GO API is built using .NET 6, a cross-platform framework for building modern applications.
 
 - **Entity Framework Core** - Entity Framework Core is used as the Object-Relational Mapping (ORM) framework for the UCAB GO API. It provides a simple way to interact with the database and map database entities to C# objects.
@@ -16,7 +16,7 @@ This API is designed to support the UCAB GO app, a ride-sharing platform for the
 
 These technologies were chosen for their reliability, performance, and ease of use. They provide a solid foundation for building a robust and scalable API that can meet the needs of the UCAB university community.
 
-# Quick start 🚀
+## Quick start 🚀
 
 ### 1. **Install .NET 6 and Visual Studio**
 
