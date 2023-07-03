@@ -67,7 +67,7 @@ namespace UcabGo.Application.Services
                 throw new Exception("VEHICLE_INVALID_PLATE");
             }
 
-            if (vehicle.Model.Length > 32 || vehicle.Color.Length > 32 || vehicle.Brand.Length > 32)
+            if (vehicle.Model.Length > 32 || vehicle.Color.Length > 20 || vehicle.Brand.Length > 32)
             {
                 throw new Exception("VEHICLE_FIELD_LENGTH");
             }
