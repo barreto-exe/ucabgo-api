@@ -108,7 +108,7 @@ namespace UcabGo.Api.Functions
                     {
                         default:
                             {
-                                log.LogError(ex, "Error while getting passenger's current ride.", input.Email);
+                                log.LogError(ex, "Error while getting passenger's current ride. \n" + ex.StackTrace, input.Email);
                                 return new InternalServerErrorResult();
                             }
                     }
