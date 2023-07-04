@@ -152,8 +152,6 @@ namespace UcabGo.Api.Functions
                     {
                         case "RIDE_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
-                        case "RIDE_NOT_AVAILABLE":
-                            return new BadRequestObjectResult(apiResponse);
                         case "NOT_IN_RIDE":
                             return new BadRequestObjectResult(apiResponse);
                         default:
@@ -202,8 +200,6 @@ namespace UcabGo.Api.Functions
                     {
                         case "RIDE_NOT_FOUND":
                             return new NotFoundObjectResult(apiResponse);
-                        case "RIDE_NOT_AVAILABLE":
-                            return new BadRequestObjectResult(apiResponse);
                         case "NOT_IN_RIDE":
                             return new BadRequestObjectResult(apiResponse);
                         case "RIDE_NOT_STARTED":

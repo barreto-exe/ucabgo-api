@@ -107,11 +107,16 @@ namespace UcabGo.Application.Services
             {
                 throw new Exception("CANT_START_RIDE");
             }
-
-            //TODO - Autoignore all passengers that were not accepted.
-
+            
             rideDb.TimeStarted = DateTime.Now;
             rideDb.IsAvailable = Convert.ToUInt64(false);
+
+            //Autoignore all passengers that were not accepted when ride started.
+            var passengers = rideDb.Passengers.Where(x => x.TimeAccepted == null);
+            foreach (var passenger in passengers)
+            {
+                passenger.TimeIgnored = rideDb.TimeStarted;
+            }
 
             unitOfWork.RideRepository.Update(rideDb);
             await unitOfWork.SaveChangesAsync();
@@ -176,6 +181,14 @@ namespace UcabGo.Application.Services
             rideDb.IsAvailable = Convert.ToUInt64(false);
 
             unitOfWork.RideRepository.Update(rideDb);
+
+            //Autocancel all passengers if ride was canceled.
+            foreach (var passenger in rideDb.Passengers)
+            {
+                passenger.TimeCancelled = DateTime.Now;
+                unitOfWork.PassengerRepository.Update(passenger);
+            }
+
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);

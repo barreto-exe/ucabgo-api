@@ -143,12 +143,6 @@ namespace UcabGo.Application.Services
                 throw new Exception("RIDE_NOT_FOUND");
             }
 
-            //Validate if ride is available
-            if (!Convert.ToBoolean(ride.IsAvailable))
-            {
-                throw new Exception("RIDE_NOT_AVAILABLE");
-            }
-
             //Validate if user is in ride
             var passenger = unitOfWork
                 .PassengerRepository
@@ -195,12 +189,6 @@ namespace UcabGo.Application.Services
             if (ride.TimeStarted == null || passenger.TimeAccepted == null)
             {
                 throw new Exception("RIDE_NOT_STARTED");
-            }
-
-            //Validate if ride is available
-            if (ride.TimeEnded != null || ride.TimeCanceled != null)
-            {
-                throw new Exception("RIDE_NOT_AVAILABLE");
             }
 
 
