@@ -133,24 +133,24 @@ namespace UcabGo.Application.Services
                 .OrderByDescending(x => x.MatchingPercentage)
                 .ToList();
 
-            foreach (var r in result)
-            {
-                if (filter.GoingToCampus)
-                {
-                    r.MatchingPercentage = 1 - GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude);
-                }
-                else
-                {
-                    r.MatchingPercentage = 1 - GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude);
+            //foreach (var r in result)
+            //{
+            //    if (filter.GoingToCampus)
+            //    {
+            //        r.MatchingPercentage = 1 - GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude);
+            //    }
+            //    else
+            //    {
+            //        r.MatchingPercentage = 1 - GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude);
 
-                }
+            //    }
 
-                if (r.MatchingPercentage < 0)
-                {
-                    result.Remove(r);
-                }
-            }
-            result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
+            //    if (r.MatchingPercentage < 0)
+            //    {
+            //        //result.Remove(r);
+            //    }
+            //}
+            //result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
 
             return result;
         }
