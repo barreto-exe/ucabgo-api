@@ -82,14 +82,14 @@ namespace UcabGo.Application.Services
             return matchedRoutes;
         }*/
 
-        //Algoritmo de la fórmula de Haversine para obtener la distancia en metros entre dos puntos geográficos
+        //Haversine formula algorith to obtain the distance in meters between two geographical points
         public static double GeoDistance(double lat1, double lon1, double lat2, double lon2)
         {
 
-            // Radio de la Tierra en metros
+            // Earth radius
             double radio_tierra = 6371000;
 
-            // Convertir las latitudes y longitudes a radianes
+            // Convert latitudes and longitudes to radians
             double lat1_r = Math.PI * lat1 / 180.0;
             double lon1_r = Math.PI * lon1 / 180.0;
             double lat2_r = Math.PI * lat2 / 180.0;
@@ -137,25 +137,21 @@ namespace UcabGo.Application.Services
             {
                 if (filter.GoingToCampus)
                 {
-                    r.MatchingPercentage = GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude);
+                    r.MatchingPercentage = 1 - GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude);
                 }
                 else
                 {
-                    r.MatchingPercentage = GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude);
+                    r.MatchingPercentage = 1 - GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude);
+
                 }
 
-                if (filter.WalkingDistance > r.MatchingPercentage)
+                if (r.MatchingPercentage < 0)
                 {
                     result.Remove(r);
                 }
             }
+            result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
 
-            result = result.ToList();
-
-            if (!result.Any())
-            {
-                throw new Exception("NO_MATCHING_RIDES");
-            }
             return result;
         }
 
