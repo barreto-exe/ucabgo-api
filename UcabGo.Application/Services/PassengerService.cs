@@ -110,10 +110,16 @@ namespace UcabGo.Application.Services
                     "FinalLocationNavigation",
                     "DriverNavigation"); 
             
+            //Also exclude those where passenger was Ignored, Cancelled or Finished
             List<Ride> result = rides
                 .Where(r => 
                     ridesIds.Contains(r.Id) && 
-                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)))
+                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) &&
+                    r.Passengers.All(p => 
+                        p.User != idUser || 
+                        p.TimeIgnored == null && 
+                        p.TimeCancelled == null && 
+                        p.TimeFinished == null))
                 .ToList();
 
             var dtos = mapper.Map<List<RideDto>>(result);
