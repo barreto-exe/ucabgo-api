@@ -120,7 +120,7 @@ namespace UcabGo.Application.Services
                     (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) ||
 
                     //Or filter by those where passenger has not arrived and ride is not finished
-                    PassengerHasNotArrived(r, idUser) &&
+                    (r.Passengers.Any(p => p.User == idUser && p.TimeAccepted != null && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null)) &&
                     r.TimeCanceled == null &&
                     r.TimeEnded == null)
                 .ToList();
@@ -146,10 +146,6 @@ namespace UcabGo.Application.Services
             });
 
             return dtos;
-        }
-        private static bool PassengerHasNotArrived(Ride ride, int idUser)
-        {
-            return ride.Passengers.Any(p => p.User == idUser && p.TimeAccepted != null && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null);
         }
 
         public async Task<PassengerDto> CancelRide(CancelRideInput input)
