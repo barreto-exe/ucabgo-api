@@ -77,7 +77,11 @@ namespace UcabGo.Application.Services
             {
                 //Remove current home
                 var locations = unitOfWork.LocationRepository.GetAll();
-                var currentHome = locations.Where(x => Convert.ToBoolean(x.IsHome));
+                var currentHome = from l in locations
+                                  where l.User == item.User &&
+                                  l.IsHome == Convert.ToUInt64(true) &&
+                                  l.IsDeleted == Convert.ToUInt64(false)
+                                  select l;
                 if (currentHome != null)
                 {
                     foreach (var itemHome in currentHome)
