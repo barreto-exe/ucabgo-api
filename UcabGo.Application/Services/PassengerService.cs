@@ -122,11 +122,11 @@ namespace UcabGo.Application.Services
             {
                 result = result.Where(r =>
                 {
-                    var passenger = r.Passengers.FirstOrDefault(p => p.User == idUser);
-                    return passenger == null ||
-                        passenger.TimeIgnored == null &&
-                        passenger.TimeCancelled == null &&
-                        passenger.TimeFinished == null;
+                    var passengers = r.Passengers.Where(p => p.User == idUser);
+                    return passengers.Any(p =>
+                        p.TimeIgnored == null &&
+                        p.TimeCancelled == null &&
+                        p.TimeFinished == null);
                 }).ToList();
             }
 
