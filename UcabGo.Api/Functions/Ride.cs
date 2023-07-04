@@ -42,7 +42,7 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
-                    var dto = await rideService.GetMathchingAll(input);
+                    var dto = await rideService.GetMatchingAll(input);
                     apiResponse.Message = "RIDES_FOUND";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
