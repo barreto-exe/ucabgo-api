@@ -108,20 +108,14 @@ namespace UcabGo.Application.Services
                 .GetAllIncluding(
                     "VehicleNavigation",
                     "FinalLocationNavigation",
-                    "DriverNavigation");
-            List<Ride> result;
-            if (filter.OnlyAvailable)
-            {
-                result = rides
-                    .Where(r => ridesIds.Contains(r.Id) && Convert.ToBoolean(r.IsAvailable))
-                    .ToList();
-            }
-            else
-            {
-                result = rides
-                    .Where(r => ridesIds.Contains(r.Id))
-                    .ToList();
-            }
+                    "DriverNavigation"); 
+            
+            List<Ride> result = rides
+                .Where(r => 
+                    ridesIds.Contains(r.Id) && 
+                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)))
+                .ToList();
+
             var dtos = mapper.Map<List<RideDto>>(result);
 
             dtos.ForEach(async dto =>
