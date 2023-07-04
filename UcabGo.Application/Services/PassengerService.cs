@@ -109,6 +109,7 @@ namespace UcabGo.Application.Services
                     "VehicleNavigation",
                     "FinalLocationNavigation",
                     "DriverNavigation",
+                    "Passengers",
                     "Passengers.UserNavigation"); 
             
             var result = rides
