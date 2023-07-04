@@ -114,7 +114,8 @@ namespace UcabGo.Application.Services
             var result = rides
                 .Where(r => 
                     ridesIds.Contains(r.Id) && 
-                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)))
+                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) ||
+                    r.Passengers.Any(p => p.User == idUser && p.IsActive))
                 .ToList();
 
             //Exclude those where passenger was Ignored, Cancelled or Finished

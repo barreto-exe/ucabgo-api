@@ -13,6 +13,7 @@
         public DateTime? TimeIgnored { get; set; }
         public DateTime? TimeCancelled { get; set; }
         public DateTime? TimeFinished { get; set; }
+        public bool IsActive { get => TimeIgnored == null && TimeCancelled == null && TimeFinished == null; }
 
         public virtual Location FinalLocationNavigation { get; set; } = null!;
         public virtual Ride RideNavigation { get; set; } = null!;
