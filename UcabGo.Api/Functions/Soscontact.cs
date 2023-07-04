@@ -53,7 +53,7 @@ namespace UcabGo.Api.Functions
                     {
                         default:
                             {
-                                log.LogError(ex, "Error while creating SOS contact.", input);
+                                log.LogError(ex, "Error while creating SOS contact.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -125,7 +125,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while updating SOS contact.", input);
+                                log.LogError(ex, "Error while updating SOS contact.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -173,7 +173,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "An error occured while deleting SOS contact {ID}", id);
+                                log.LogError(ex, "An error occured while deleting SOS contact {ID}\n" + ex.Message + "\n" + ex.StackTrace, id);
                                 return new InternalServerErrorResult();
                             }
                     }

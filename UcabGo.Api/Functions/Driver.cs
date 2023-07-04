@@ -96,7 +96,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while creating a ride.", input);
+                                log.LogError(ex, "Error while creating a ride.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -144,7 +144,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while starting a ride.", input);
+                                log.LogError(ex, "Error while starting a ride.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -191,7 +191,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while completing a ride.", input);
+                                log.LogError(ex, "Error while completing a ride.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -238,7 +238,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while canceling a ride.", input);
+                                log.LogError(ex, "Error while canceling a ride.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -288,7 +288,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while getting passengers by ride. RideId: {ID}", rideId);
+                                log.LogError(ex, "Error while getting passengers by ride. RideId: {ID}\n" + ex.Message + "\n" + ex.StackTrace, rideId);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -345,7 +345,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while accepting passenger. RideId: {ID}", rideId);
+                                log.LogError(ex, "Error while accepting passenger. RideId: {ID}\n" + ex.Message + "\n" + ex.StackTrace, rideId);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -402,7 +402,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while ignoring passenger. RideId: {ID}", rideId);
+                                log.LogError(ex, "Error while ignoring passenger. RideId: {ID}\n" + ex.Message + "\n" + ex.StackTrace, rideId);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -459,7 +459,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while cancelling passenger. RideId: {ID}", rideId);
+                                log.LogError(ex, "Error while cancelling passenger. RideId: {ID}\n" + ex.Message + "\n" + ex.StackTrace, rideId);
                                 return new InternalServerErrorResult();
                             }
                     }

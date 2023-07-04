@@ -110,13 +110,13 @@ namespace UcabGo.Application.Services
                     "FinalLocationNavigation",
                     "DriverNavigation",
                     "Passengers",
-                    "Passengers.UserNavigation"); 
-            
+                    "Passengers.UserNavigation");
+
             var result = rides
                 .Where(r => 
                     ridesIds.Contains(r.Id) && 
                     (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) ||
-                    r.Passengers.Any(p => p.User == idUser && p.IsActive))
+                    r.Passengers.Any(p => p.User == idUser && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null))
                 .ToList();
 
             //Exclude those where passenger was Ignored, Cancelled or Finished

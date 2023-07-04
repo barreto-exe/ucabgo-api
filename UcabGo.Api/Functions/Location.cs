@@ -60,7 +60,7 @@ namespace UcabGo.Api.Functions
                     {
                         default:
                             {
-                                log.LogError(ex, "Error while creating location.", input);
+                                log.LogError(ex, "Error while creating location.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }

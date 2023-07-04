@@ -56,7 +56,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while getting messages.", input);
+                                log.LogError(ex, "Error while getting messages.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -111,7 +111,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while sending message.", input);
+                                log.LogError(ex, "Error while sending message.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }

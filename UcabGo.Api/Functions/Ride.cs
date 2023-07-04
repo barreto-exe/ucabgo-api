@@ -54,7 +54,7 @@ namespace UcabGo.Api.Functions
                     {
                         default:
                             {
-                                log.LogError(ex, "Error while looking for rides.", input);
+                                log.LogError(ex, "Error while looking for rides.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }

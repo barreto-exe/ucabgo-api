@@ -58,7 +58,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while creating destination.", input);
+                                log.LogError(ex, "Error while creating destination.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -134,7 +134,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while deleting destination with id {ID}.", id);
+                                log.LogError(ex, "Error while deleting destination with id {ID}.\n" +  ex.Message + "\n" + ex.StackTrace, id);
                                 return new InternalServerErrorResult();
                             }
                     }

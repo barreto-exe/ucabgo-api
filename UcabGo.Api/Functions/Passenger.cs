@@ -63,7 +63,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while asking ride.", input);
+                                log.LogError(ex, "Error while asking ride.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -108,7 +108,7 @@ namespace UcabGo.Api.Functions
                     {
                         default:
                             {
-                                log.LogError(ex, "Error while getting passenger's current ride. \n" + ex.StackTrace, input.Email);
+                                log.LogError(ex, "Error while getting passenger's current ride. \n" +  ex.Message + "\n" + ex.StackTrace, input.Email);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -156,7 +156,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while canceling ride.", input);
+                                log.LogError(ex, "Error while canceling ride.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -206,7 +206,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while finishing ride.", input);
+                                log.LogError(ex, "Error while finishing ride.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }

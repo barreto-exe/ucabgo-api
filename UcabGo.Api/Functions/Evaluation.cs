@@ -67,7 +67,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while creating an evalution.", input);
+                                log.LogError(ex, "Error while creating an evalution.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -114,7 +114,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while getting recieved evaluations.", input);
+                                log.LogError(ex, "Error while getting recieved evaluations.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -162,7 +162,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while getting recieved evaluations.", input);
+                                log.LogError(ex, "Error while getting recieved evaluations.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -210,7 +210,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while getting recieved evaluations average.", input);
+                                log.LogError(ex, "Error while getting recieved evaluations average.\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }

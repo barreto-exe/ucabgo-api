@@ -85,7 +85,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while creating vehicle", input);
+                                log.LogError(ex, "Error while creating vehicle\n" + ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -139,7 +139,7 @@ namespace UcabGo.Api.Functions
                             return new BadRequestObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while updating vehicle.", input);
+                                log.LogError(ex, "Error while updating vehicle.\n" +  ex.Message + "\n" + ex.StackTrace, input);
                                 return new InternalServerErrorResult();
                             }
                     }
@@ -187,7 +187,7 @@ namespace UcabGo.Api.Functions
                             return new NotFoundObjectResult(apiResponse);
                         default:
                             {
-                                log.LogError(ex, "Error while deleting vehicle with id {ID}", id);
+                                log.LogError(ex, "Error while deleting vehicle with id {ID}\n" + ex.Message + "\n" + ex.StackTrace, id);
                                 return new InternalServerErrorResult();
                             }
                     }
