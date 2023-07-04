@@ -226,7 +226,7 @@ namespace UcabGo.Application.Services
 
         public async Task<IEnumerable<RideDto>> CancelInactiveRides()
         {
-            var rides = unitOfWork.RideRepository.GetAll();
+            var rides = unitOfWork.RideRepository.GetAllIncluding("Passengers");
 
             //Get rides that were created, but not started, cancelled or ended and are older than 15 minutes
             var ridesToDelete = from r in rides
@@ -247,11 +247,23 @@ namespace UcabGo.Application.Services
                     ride.IsAvailable = Convert.ToUInt64(false);
                     unitOfWork.RideRepository.Update(ride);
 
+                    //For each passenger, set TimeCanceled 
+                    foreach (var passenger in ride.Passengers)
+                    {
+                        if(passenger.TimeCancelled != null || passenger.TimeIgnored != null || passenger.TimeFinished != null)
+                        {
+                            continue;
+                        }
+
+                        passenger.TimeCancelled = ride.TimeCanceled;
+                        unitOfWork.PassengerRepository.Update(passenger);
+                    }
+
                     ridesCancelled.Add(ride);
                 }
                 catch (Exception ex)
                 {
-                    logger.LogError(ex, $"Error deleting ride {ride.Id}", ride.Id);
+                    logger.LogError(ex, $"Error deleting ride {ride.Id}\n" + ex.Message + "\n" + ex.StackTrace, ride.Id);
                 }
             }
             await unitOfWork.SaveChangesAsync();

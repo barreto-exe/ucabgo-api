@@ -94,7 +94,7 @@ namespace UcabGo.Application.Services
             //Get user id
             int idUser = (await userService.GetByEmail(filter.Email)).Id;
 
-            //Get ride Ids from user
+            //Get ride Ids where user is passenger
             var ridesIds = unitOfWork
                 .PassengerRepository
                 .GetAll()
@@ -102,7 +102,7 @@ namespace UcabGo.Application.Services
                 .Select(p => p.Ride)
                 .ToList();
 
-            //Get available rides
+            //Get rides
             var rides = unitOfWork
                 .RideRepository
                 .GetAllIncluding(
@@ -113,10 +113,16 @@ namespace UcabGo.Application.Services
                     "Passengers.UserNavigation");
 
             var result = rides
-                .Where(r => 
-                    ridesIds.Contains(r.Id) && 
+                .Where(r => ridesIds.Contains(r.Id)) //Filter by rides where user is passenger
+                .Where(r =>
+
+                    //Filter by available
                     (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) ||
-                    r.Passengers.Any(p => p.User == idUser && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null))
+
+                    //Or filter by those where passenger has not arrived and ride is not finished
+                    PassengerHasNotArrived(r, idUser) &&
+                    r.TimeCanceled == null &&
+                    r.TimeEnded == null)
                 .ToList();
 
             //Exclude those where passenger was Ignored, Cancelled or Finished
@@ -141,6 +147,11 @@ namespace UcabGo.Application.Services
 
             return dtos;
         }
+        private static bool PassengerHasNotArrived(Ride ride, int idUser)
+        {
+            return ride.Passengers.Any(p => p.User == idUser && p.TimeAccepted != null && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null);
+        }
+
         public async Task<PassengerDto> CancelRide(CancelRideInput input)
         {
             //Get user id
