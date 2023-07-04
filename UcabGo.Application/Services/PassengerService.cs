@@ -108,7 +108,8 @@ namespace UcabGo.Application.Services
                 .GetAllIncluding(
                     "VehicleNavigation",
                     "FinalLocationNavigation",
-                    "DriverNavigation"); 
+                    "DriverNavigation",
+                    "Passengers.UserNavigation"); 
             
             var result = rides
                 .Where(r => 
