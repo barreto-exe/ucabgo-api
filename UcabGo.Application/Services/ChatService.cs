@@ -36,9 +36,18 @@ namespace UcabGo.Application.Services
             var messages = unitOfWork.ChatmessageRepository.GetAll();
             var filteredMessages = from m in messages
                                    where m.Ride == rideId
-                                   select m;
+                                   select new ChatmessageDto
+                                   {
+                                       Id = m.Id,
+                                       Ride = m.Ride,
+                                       User = m.User,
+                                       Content = m.Content,
+                                       TimeSent = m.TimeSent,
+                                       IsMine = m.User == user.Id,
+                                       UserName = $"{m.UserNavigation.Name} {m.UserNavigation.LastName}", 
+                                   };
 
-            return mapper.Map<IEnumerable<ChatmessageDto>>(filteredMessages.ToList());
+            return filteredMessages.ToList();
         }
 
         public async Task<ChatmessageDto> SendMessage(ChatmessageInput input)
@@ -55,7 +64,7 @@ namespace UcabGo.Application.Services
                 throw new Exception("CHAT_NOT_FOUND");
             }
 
-            var message = new Chatmessage
+            var m = new Chatmessage
             {
                 Ride = input.Ride,
                 User = user.Id,
@@ -63,10 +72,19 @@ namespace UcabGo.Application.Services
                 TimeSent = DateTime.Now
             };
 
-            await unitOfWork.ChatmessageRepository.Add(message);
+            await unitOfWork.ChatmessageRepository.Add(m);
             await unitOfWork.SaveChangesAsync();
 
-            return mapper.Map<ChatmessageDto>(message);
+            return new ChatmessageDto
+            {
+                Id = m.Id,
+                Ride = m.Ride,
+                User = m.User,
+                Content = m.Content,
+                TimeSent = m.TimeSent,
+                IsMine = m.User == user.Id,
+                UserName = $"{m.UserNavigation.Name} {m.UserNavigation.LastName}",
+            };
         }
     }
 }
