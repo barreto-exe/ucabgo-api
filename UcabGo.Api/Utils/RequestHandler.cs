@@ -64,14 +64,14 @@ namespace UcabGo.Api.Utils
             }
         }
 
-        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, IEnumerable<string> usersToMessage, object[] args)
+        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, string target, IEnumerable<string> usersToMessage, object[] args)
         {
             var tasks = new List<Task>();
             foreach (var user in usersToMessage)
             {
                 tasks.Add(signalRMessages.AddAsync(new SignalRMessage
                 {
-                    Target = "ReceiveMessage",
+                    Target = target,
                     UserId = user,
                     Arguments = args
                 }));
