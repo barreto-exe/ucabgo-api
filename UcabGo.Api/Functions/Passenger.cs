@@ -152,7 +152,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_CANCELED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
                 }
