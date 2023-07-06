@@ -54,7 +54,10 @@ namespace UcabGo.Application.Services
         {
             //Validate if user is passenger or driver of the ride
             var user = await userService.GetByEmail(input.Email);
-            var ride = unitOfWork.RideRepository.GetAllIncluding("Passengers").FirstOrDefault(x => x.Id == input.Ride);
+            var ride = unitOfWork
+                .RideRepository
+                .GetAllIncluding("DriverNavigation", "Passengers", "Passengers.UserNavigation")
+                .FirstOrDefault(x => x.Id == input.Ride);
 
             bool isDriver = ride?.Driver == user.Id;
             bool isPassenger = ride?.Passengers.FirstOrDefault(p => p.User == user.Id) != null;
@@ -75,6 +78,12 @@ namespace UcabGo.Application.Services
             await unitOfWork.ChatmessageRepository.Add(m);
             await unitOfWork.SaveChangesAsync();
 
+            //A list with the emails of all the passengers and of driver
+            var userEmails = ride.Passengers
+                .Select(p => p.UserNavigation.Email)
+                .Append(ride.DriverNavigation.Email)
+                .ToList();
+
             return new ChatmessageDto
             {
                 Id = m.Id,
@@ -84,6 +93,7 @@ namespace UcabGo.Application.Services
                 TimeSent = m.TimeSent,
                 IsMine = m.User == user.Id,
                 UserName = $"{m.UserNavigation.Name} {m.UserNavigation.LastName}",
+                UsersToMessage = userEmails.Where(e => e != input.Email).ToList()
             };
         }
     }

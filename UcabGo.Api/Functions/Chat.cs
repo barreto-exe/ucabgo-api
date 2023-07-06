@@ -1,3 +1,4 @@
+using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -90,7 +91,9 @@ namespace UcabGo.Api.Functions
             Description = "The message sent.")]
         #endregion
         public async Task<IActionResult> SendMessage(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "rides/{rideId:int}/chat")] HttpRequest req, int rideId, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "rides/{rideId:int}/chat")] HttpRequest req,
+            [SignalR(HubName = "chat")] IAsyncCollector<SignalRMessage> signalRMessages,
+            int rideId, ILogger log)
         {
             async Task<IActionResult> Action(ChatmessageInput input)
             {
@@ -100,6 +103,9 @@ namespace UcabGo.Api.Functions
                     var dto = await chatService.SendMessage(input);
                     apiResponse.Data = dto;
                     apiResponse.Message = "MESSAGE_SENT";
+
+                    await signalRMessages.Send(dto.UsersToMessage, new object[] { rideId });
+
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -120,6 +126,5 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<ChatmessageInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
-
     }
 }

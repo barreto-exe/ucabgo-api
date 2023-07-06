@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Azure.WebJobs.Extensions.SignalRService;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace UcabGo.Api.Utils
 {
     public static class RequestHandler
     {
-        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, ApiResponse response, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false)
+        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, ApiResponse responseWrapper, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false)
             where TInput : BaseRequest, new()
         {
             //Validating jwt
@@ -42,9 +43,11 @@ namespace UcabGo.Api.Utils
 
                 if (!input.IsValid(out List<ValidationResult> validationResults))
                 {
-                    response.Message = "INVALID_INPUT";
-                    response.Data = validationResults;
-                    return new BadRequestObjectResult(response);
+                    if (responseWrapper == null) return new BadRequestObjectResult(validationResults);
+
+                    responseWrapper.Message = "INVALID_INPUT";
+                    responseWrapper.Data = validationResults;
+                    return new BadRequestObjectResult(responseWrapper);
                 }
 
                 return await function.Invoke(input);
@@ -52,10 +55,29 @@ namespace UcabGo.Api.Utils
             catch (Exception ex)
             {
                 log.LogError(ex, ex.Message);
-                response.Message = "INTERNAL_SERVER_ERROR";
-                response.Data = "An error has ocurred internally: " + ex.Message;
-                return new BadRequestObjectResult(response);
+                
+                if (responseWrapper == null) return new BadRequestObjectResult(ex.Message);
+
+                responseWrapper.Message = "INTERNAL_SERVER_ERROR";
+                responseWrapper.Data = "An error has ocurred internally: " + ex.Message;
+                return new BadRequestObjectResult(responseWrapper);
             }
+        }
+
+        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, IEnumerable<string> usersToMessage, object[] args)
+        {
+            var tasks = new List<Task>();
+            foreach (var user in usersToMessage)
+            {
+                tasks.Add(signalRMessages.AddAsync(new SignalRMessage
+                {
+                    Target = "ReceiveMessage",
+                    UserId = user,
+                    Arguments = args
+                }));
+            }
+
+            await Task.WhenAll(tasks);
         }
     }
 }
