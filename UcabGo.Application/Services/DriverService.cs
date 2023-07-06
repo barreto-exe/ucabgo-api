@@ -122,6 +122,7 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
+            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
             return dto;
         }
         public async Task<RideDto> CompleteRide(RideAvailableInput input)

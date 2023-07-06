@@ -83,7 +83,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_CREATED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE);
+                    await signalRMessages.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -130,6 +130,7 @@ namespace UcabGo.Api.Functions
         public async Task<IActionResult> StartRide(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "driver/rides/start")] HttpRequest req, 
             [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             ILogger log)
         {
             async Task<IActionResult> Action(RideAvailableInput input)
@@ -141,6 +142,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
 
                     await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id } );
+                    await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -182,6 +184,7 @@ namespace UcabGo.Api.Functions
         public async Task<IActionResult> CompleteRide(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "driver/rides/complete")] HttpRequest req, 
             [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             ILogger log)
         {
             async Task<IActionResult> Action(RideAvailableInput input)
@@ -193,6 +196,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
 
                     await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -234,6 +238,7 @@ namespace UcabGo.Api.Functions
         public async Task<IActionResult> CancelRide(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "driver/rides/cancel")] HttpRequest req, 
             [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             ILogger log)
         {
             async Task<IActionResult> Action(RideAvailableInput input)
@@ -245,6 +250,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
 
                     await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -344,6 +350,7 @@ namespace UcabGo.Api.Functions
         public async Task<IActionResult> AcceptPassengerRequest(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "driver/{rideId:int}/passengers/{passengerId:int}/accept")] HttpRequest req, 
             [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             int rideId, int passengerId, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
@@ -354,7 +361,8 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_ACCEPTED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -416,7 +424,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_IGNORED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -468,6 +476,7 @@ namespace UcabGo.Api.Functions
         public async Task<IActionResult> CancelPassengerRequest(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "driver/{rideId:int}/passengers/{passengerId:int}/cancel")] HttpRequest req,
             [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             int rideId, int passengerId, ILogger log)
         {
             async Task<IActionResult> Action(BaseRequest input)
@@ -478,7 +487,8 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_CANCELLED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
                 }

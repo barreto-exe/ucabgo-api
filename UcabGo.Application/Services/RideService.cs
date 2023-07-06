@@ -121,7 +121,6 @@ namespace UcabGo.Application.Services
                         select new RideMatchDto
                         {
                             Ride = mapper.Map<RideDto>(r),
-                            MatchingPercentage = new Random().NextDouble(),
                         };
 
             var result =
@@ -152,7 +151,11 @@ namespace UcabGo.Application.Services
             //}
             //result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
 
-            return result;
+            foreach (var r in result)
+            {
+                r.MatchingPercentage = new Random().NextDouble();
+            }
+            return result.OrderByDescending(x => x.MatchingPercentage);
         }
 
         public async Task<IEnumerable<RideDto>> GetAll(string driverEmail, bool onlyAvailable = false)

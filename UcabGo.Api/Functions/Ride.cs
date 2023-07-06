@@ -68,7 +68,8 @@ namespace UcabGo.Api.Functions
 
         [FunctionName("CancelInactiveRides")]
         public async Task CancelInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, 
-            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> activeRideHub,
+            [SignalR(HubName = "ridesmatching")] IAsyncCollector<SignalRMessage> ridesMatchingHub,
             ILogger log)
         {
             log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
@@ -85,8 +86,10 @@ namespace UcabGo.Api.Functions
 
                 foreach(var canceledRide in canceledRides)
                 {
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, userToNotify, new object[] { canceledRide.Id });
+                    await activeRideHub.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, userToNotify, new object[] { canceledRide.Id });
                 }
+                
+                await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { 0 });
             }
             else
             {
