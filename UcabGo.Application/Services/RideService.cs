@@ -233,7 +233,7 @@ namespace UcabGo.Application.Services
                 ride = await GetById(ride.Id);
             }
                 
-            users = ride!.Passengers.Select(x => x.UserNavigation).ToList();
+            users = ride!.Passengers.DistinctBy(x => x.User).Select(x => x.UserNavigation).ToList();
             return users.Append(ride.DriverNavigation);
         }
         public async Task<IEnumerable<UserDto>> GetUsers(RideDto ride)
@@ -242,7 +242,7 @@ namespace UcabGo.Application.Services
 
             var rideEntity = await GetById(ride.Id);
 
-            var users = rideEntity.Passengers.Select(x => x.UserNavigation).Append(rideEntity.DriverNavigation);
+            var users = rideEntity.Passengers.DistinctBy(x => x.User).Select(x => x.UserNavigation).Append(rideEntity.DriverNavigation);
             var dtos = mapper.Map<IEnumerable<UserDto>>(users);
             return dtos;
         }

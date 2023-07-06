@@ -39,7 +39,7 @@ namespace UcabGo.Api.Functions
         #endregion
         public async Task<IActionResult> AskForRide(
             [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "passenger/rides/ask")] HttpRequest req, 
-            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
             async Task<IActionResult> Action(PassengerInput input)
@@ -141,7 +141,7 @@ namespace UcabGo.Api.Functions
         #endregion
         public async Task<IActionResult> CancelRideByPassenger(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/cancel")] HttpRequest req, 
-            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
             async Task<IActionResult> Action(CancelRideInput input)
@@ -194,7 +194,7 @@ namespace UcabGo.Api.Functions
         #endregion
         public async Task<IActionResult> FinishRideByPassenger(
             [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/finish")] HttpRequest req, 
-            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
             async Task<IActionResult> Action(FinishRideInput input)

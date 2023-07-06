@@ -68,7 +68,7 @@ namespace UcabGo.Api.Functions
 
         [FunctionName("CancelInactiveRides")]
         public async Task CancelInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, 
-            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            [SignalR(HubName = "activeride")] IAsyncCollector<SignalRMessage> signalRMessages,
             ILogger log)
         {
             log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
