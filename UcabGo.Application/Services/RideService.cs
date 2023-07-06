@@ -223,8 +223,31 @@ namespace UcabGo.Application.Services
             var dtos = mapper.Map<IEnumerable<PassengerDto>>(passengers);
             return dtos;
         }
+        public async Task<IEnumerable<User>> GetUsers(Ride ride)
+        {
+            if(ride == null) return null;
 
-        public async Task<IEnumerable<RideDto>> CancelInactiveRides()
+            List<User> users = new();
+            if(ride?.Passengers?.Any() == false)
+            {
+                ride = await GetById(ride.Id);
+            }
+                
+            users = ride!.Passengers.Select(x => x.UserNavigation).ToList();
+            return users.Append(ride.DriverNavigation);
+        }
+        public async Task<IEnumerable<UserDto>> GetUsers(RideDto ride)
+        {
+            if(ride == null) return null;
+
+            var rideEntity = await GetById(ride.Id);
+
+            var users = rideEntity.Passengers.Select(x => x.UserNavigation).Append(rideEntity.DriverNavigation);
+            var dtos = mapper.Map<IEnumerable<UserDto>>(users);
+            return dtos;
+        }
+
+        public async Task<(IEnumerable<RideDto>, IEnumerable<string>)> CancelInactiveRides()
         {
             var rides = unitOfWork.RideRepository.GetAllIncluding("Passengers");
 
@@ -239,6 +262,7 @@ namespace UcabGo.Application.Services
 
             //Cancelling rides 
             List<Ride> ridesCancelled = new();
+            List<string> usersToNotify = new();
             foreach (var ride in ridesToDelete)
             {
                 try
@@ -260,6 +284,9 @@ namespace UcabGo.Application.Services
                     }
 
                     ridesCancelled.Add(ride);
+
+                    var usersFromRide = await GetUsers(ride);
+                    usersToNotify.AddRange(usersFromRide.Select(x => x.Email));
                 }
                 catch (Exception ex)
                 {
@@ -268,7 +295,7 @@ namespace UcabGo.Application.Services
             }
             await unitOfWork.SaveChangesAsync();
 
-            return mapper.Map<IEnumerable<RideDto>>(ridesCancelled);
+            return (mapper.Map<IEnumerable<RideDto>>(ridesCancelled), usersToNotify);
         }
     }
 }

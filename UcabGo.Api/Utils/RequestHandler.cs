@@ -79,5 +79,23 @@ namespace UcabGo.Api.Utils
 
             await Task.WhenAll(tasks);
         }
+
+        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, string target, object[] args)
+        {
+            await signalRMessages.AddAsync(new SignalRMessage
+            {
+                Target = target,
+                Arguments = args
+            });
+        }
+
+        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, string target)
+        {
+            await signalRMessages.AddAsync(new SignalRMessage
+            {
+                Target = target,
+            });
+        }
+
     }
 }

@@ -1,11 +1,12 @@
-﻿using UcabGo.Core.Data.Location.Dtos;
+﻿using Newtonsoft.Json;
+using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.Vehicle.Dtos;
 
 namespace UcabGo.Core.Data.Ride.Dtos
 {
-    public class RideDto
+    public class RideDto : ISignalRDto
     {
         public int Id { get; set; }
         public UserDto Driver { get; set; }
@@ -32,5 +33,8 @@ namespace UcabGo.Core.Data.Ride.Dtos
         public DateTime? TimeEnded { get; set; }
         public DateTime? TimeCanceled { get; set; }
         public virtual IEnumerable<PassengerDto> Passengers { get; set; }
+
+        [JsonIgnore]
+        public IEnumerable<string> UsersToMessage { get; set; }
     }
 }

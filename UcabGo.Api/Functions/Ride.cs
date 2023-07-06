@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Azure.WebJobs.Extensions.SignalRService;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -66,19 +67,26 @@ namespace UcabGo.Api.Functions
 
 
         [FunctionName("CancelInactiveRides")]
-        public async Task CancelInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, ILogger log)
+        public async Task CancelInactiveRides([TimerTrigger("*/10 * * * *")] TimerInfo myTimer, 
+            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            ILogger log)
         {
             log.LogInformation($"DeleteInactiveRides executed at: {DateTime.Now}");
 
             bool isAutomaticRideDeletionEnabled = Convert.ToBoolean(Environment.GetEnvironmentVariable("IsAutomaticRideDeletionEnabled"));
 
-            if (isAutomaticRideDeletionEnabled )
+            if (isAutomaticRideDeletionEnabled)
             {
-                var canceledRides = await rideService.CancelInactiveRides();
+                (var canceledRides, var userToNotify) = await rideService.CancelInactiveRides();
 
                 string deletedRidesIds = string.Join(", ", canceledRides.Select(r => r.Id));
 
-                log.LogInformation($"Deleted rides: {deletedRidesIds}");
+                log.LogInformation($"Deleted rides (ID's): {deletedRidesIds}");
+
+                foreach(var canceledRide in canceledRides)
+                {
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, userToNotify, new object[] { canceledRide.Id });
+                }
             }
             else
             {

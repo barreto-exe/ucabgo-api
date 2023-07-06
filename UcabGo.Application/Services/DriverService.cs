@@ -153,6 +153,7 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
+            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
             return dto;
         }
         public async Task<RideDto> CancelRide(RideAvailableInput input)
@@ -192,6 +193,7 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
+            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
             return dto;
         }
 
@@ -228,6 +230,7 @@ namespace UcabGo.Application.Services
             //TODO - Fix mapping for PassengerDto
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
             return dto;
         }
         public async Task<PassengerDto> IgnorePassenger(string driverEmail, int rideId, int passengerId)
@@ -266,6 +269,7 @@ namespace UcabGo.Application.Services
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
             return dto;
         }
         public async Task<PassengerDto> CancelPassenger(string driverEmail, int rideId, int passengerId)
@@ -308,6 +312,7 @@ namespace UcabGo.Application.Services
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
             return dto;
         }
     }

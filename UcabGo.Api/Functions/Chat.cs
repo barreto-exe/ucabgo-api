@@ -104,7 +104,7 @@ namespace UcabGo.Api.Functions
                     apiResponse.Data = dto;
                     apiResponse.Message = "MESSAGE_SENT";
 
-                    await signalRMessages.Send("ReceiveMessage", dto.UsersToMessage, new object[] { rideId });
+                    await signalRMessages.Send(HubRoutes.CHAT_RECEIVE_MESSAGE, dto.UsersToMessage, new object[] { rideId });
 
                     return new OkObjectResult(apiResponse);
                 }

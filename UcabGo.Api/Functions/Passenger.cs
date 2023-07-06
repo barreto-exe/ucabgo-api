@@ -1,3 +1,4 @@
+using Microsoft.Azure.WebJobs.Extensions.SignalRService;
 using System;
 using System.Collections.Generic;
 using System.Web.Http;
@@ -37,7 +38,9 @@ namespace UcabGo.Api.Functions
             Description = "The data from the passenger that asked for a ride.")]
         #endregion
         public async Task<IActionResult> AskForRide(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "passenger/rides/ask")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "passenger/rides/ask")] HttpRequest req, 
+            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            ILogger log)
         {
             async Task<IActionResult> Action(PassengerInput input)
             {
@@ -46,6 +49,9 @@ namespace UcabGo.Api.Functions
                     var dto = await passengerService.AskForRide(input);
                     apiResponse.Message = "ASKED_FOR_RIDE";
                     apiResponse.Data = dto;
+
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -134,7 +140,9 @@ namespace UcabGo.Api.Functions
             Description = "The information of the passenger that canceled the ride.")]
         #endregion
         public async Task<IActionResult> CancelRideByPassenger(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/cancel")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/cancel")] HttpRequest req, 
+            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            ILogger log)
         {
             async Task<IActionResult> Action(CancelRideInput input)
             {
@@ -143,6 +151,9 @@ namespace UcabGo.Api.Functions
                     var dto = await passengerService.CancelRide(input);
                     apiResponse.Message = "RIDE_CANCELED";
                     apiResponse.Data = dto;
+
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -182,7 +193,9 @@ namespace UcabGo.Api.Functions
             Description = "The information of the user that have succesfully exited a ride.")]
         #endregion
         public async Task<IActionResult> FinishRideByPassenger(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/finish")] HttpRequest req, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "passenger/finish")] HttpRequest req, 
+            [SignalR(HubName = "active-ride")] IAsyncCollector<SignalRMessage> signalRMessages,
+            ILogger log)
         {
             async Task<IActionResult> Action(FinishRideInput input)
             {
@@ -191,6 +204,9 @@ namespace UcabGo.Api.Functions
                     var dto = await passengerService.FinishRide(input);
                     apiResponse.Message = "RIDE_FINISHED";
                     apiResponse.Data = dto;
+
+                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
