@@ -32,7 +32,7 @@ Create an empty MariaDB database and save the connection string and use it when 
 
 ### 4. **Add the required keys to `local.settings.json`**
 
-Add the following keys to the `local.settings.json` file: `SqlConnectionString`, `JWT_SECRET`, `JWT_ISS`, `JWT_AUD`. These keys are required for the API to function properly.
+Add the following keys to the `local.settings.json` file: `SqlConnectionString`, `JWT_SECRET`, `JWT_ISS`, `JWT_AUD`, `AzureSignalRConnectionString`. These keys are required for the API to function properly.
 
 ### 5. **Open the project in Visual Studio**
 
