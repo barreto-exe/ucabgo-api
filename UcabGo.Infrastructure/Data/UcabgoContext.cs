@@ -280,6 +280,8 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Phone).HasMaxLength(20);
 
+                entity.Property(e => e.ProfilePicture).HasMaxLength(255);
+
                 entity.Property(e => e.SecondLastName).HasMaxLength(255);
 
                 entity.Property(e => e.SecondName).HasMaxLength(255);

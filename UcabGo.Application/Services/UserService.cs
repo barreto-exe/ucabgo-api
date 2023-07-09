@@ -99,6 +99,16 @@ namespace UcabGo.Application.Services
             var userDto = mapper.Map<UserDto>(user);
             return userDto;
         }
+        public async Task<UserDto> UpdateProfilePicture(string userEmail, string url)
+        {
+            var user = await GetByEmail(userEmail);
+            user.ProfilePicture = url;
+            unitOfWork.UserRepository.Update(user);
+            await unitOfWork.SaveChangesAsync();
+
+            var userDto = mapper.Map<UserDto>(user);
+            return userDto;
+        }
 
         private static string EncodePassword(string password)
         {

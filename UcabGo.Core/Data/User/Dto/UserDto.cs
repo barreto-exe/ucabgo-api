@@ -10,5 +10,6 @@
         public string? SecondLastName { get; set; }
         public string? Phone { get; set; }
         public float WalkingDistance { get; set; }
+        public string? ProfilePicture { get; set; }
     }
 }

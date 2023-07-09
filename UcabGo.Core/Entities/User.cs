@@ -23,6 +23,7 @@
         public string? SecondLastName { get; set; }
         public string? Phone { get; set; }
         public double? WalkingDistance { get; set; }
+        public string? ProfilePicture { get; set; }
 
         public virtual ICollection<Chatmessage> Chatmessages { get; set; }
         public virtual ICollection<Evaluation> EvaluationEvaluatedNavigations { get; set; }

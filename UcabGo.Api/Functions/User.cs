@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Azure.Storage.Blobs;
+using System;
+using System.IO;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.User.Inputs;
+using static UcabGo.Api.Utils.RequestHandler;
 
 namespace UcabGo.Api.Functions
 {
@@ -89,6 +92,77 @@ namespace UcabGo.Api.Functions
             }
 
             return await RequestHandler.Handle<WalkingInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
+
+        #region ChangeProfilePicture
+        [FunctionName("ChangeProfilePicture")]
+        [OpenApiOperation(tags: new[] { "User" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiRequestBody(
+            contentType: "multipart/form-data",
+            bodyType: typeof(ProfilePictureInput),
+            Required = true,
+            Description = "The file for the profile picture. Must be an jpg or png.")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(UserDto),
+            Description = "The data of the updated user.")]
+        #endregion
+        public async Task<IActionResult> ChangeProfilePicture(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/picture")] HttpRequest req, 
+            IBinder binder,
+            ILogger log)
+        {
+            async Task<IActionResult> Action(ProfilePictureInput input)
+            {
+                try
+                {
+                    //Validate if the file is an image
+                    var file = input.Picture.FileName;
+                    var extension = file[(file.LastIndexOf('.') + 1)..];
+                    if (extension != "jpg" && extension != "png")
+                    {
+                        apiResponse.Message = "INVALID_FILE";
+                        return new BadRequestObjectResult(apiResponse);
+                    }
+
+                    //File path must be the user of the email with a timestamp
+                    string filePath = 
+                        "pictures/" +
+                        string.Concat(input.Email.AsSpan(0, input.Email.IndexOf('@')), DateTime.Now.ToString("yyyyMMddHHmmss"), ".jpg");
+
+                    //Upload the file to the blob storage
+                    var url = "";
+                    using (var streamReader = new StreamReader(input.Picture.OpenReadStream()))
+                    {
+                        var outputBlob = await binder.BindAsync<BlobClient>(new BlobAttribute(filePath, FileAccess.Write));
+                        await outputBlob.UploadAsync(streamReader.BaseStream);
+                        url = outputBlob.Uri.ToString();
+                    }
+
+                    //Update the user with the new profile picture
+                    var dto = await userService.UpdateProfilePicture(input.Email, url);
+                    apiResponse.Message = "PROFILE_PICTURE_UPDATED";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while changing profile picture.\n" + ex.Message + "\n" + ex.StackTrace, input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<ProfilePictureInput>(req, log, apiResponse, Action, isAnonymous: false, BodyTypeEnum.Formdata);
         }
 
     }

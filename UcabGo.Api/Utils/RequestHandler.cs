@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using UcabGo.Api.Utils.JWT;
 using UcabGo.Application.Utils;
 using UcabGo.Core.Data;
@@ -11,7 +12,7 @@ namespace UcabGo.Api.Utils
 {
     public static class RequestHandler
     {
-        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, ApiResponse responseWrapper, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false)
+        public static async Task<IActionResult> Handle<TInput>(HttpRequest req, ILogger log, ApiResponse responseWrapper, Func<TInput, Task<IActionResult>> function, bool isAnonymous = false, BodyTypeEnum bodyType = BodyTypeEnum.Json)
             where TInput : BaseRequest, new()
         {
             //Validating jwt
@@ -35,8 +36,52 @@ namespace UcabGo.Api.Utils
                 }
                 else
                 {
-                    input = await req.Body.ToObjectAsync<TInput>();
-                    if (input == null) throw new Exception("Request body is empty");
+                    switch (bodyType)
+                    {
+                        case BodyTypeEnum.Json:
+                            {
+                                input = await req.Body.ToObjectAsync<TInput>();
+
+                                if (input == null)
+                                {
+                                    if (req.Method.Equals("delete", StringComparison.InvariantCultureIgnoreCase))
+                                    {
+                                        input = new();
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Request body is empty.");
+                                    }
+                                }
+                                break;
+                            }
+                        case BodyTypeEnum.Formdata:
+                            {
+                                input = req.Form.ToObject<TInput>();
+
+                                //We obtain the files uploaded via Form, then we need to manually set the file property
+                                var files = req.Form.Files.ToList();
+                                foreach (var file in files)
+                                {
+                                    var settings =
+                                        BindingFlags.Instance |
+                                        BindingFlags.Public |
+                                        BindingFlags.SetProperty |
+                                        BindingFlags.IgnoreCase;
+
+                                    //Try to match the file name to a property in the input object
+                                    var prop = input.GetType().GetProperty(file.Name, settings);
+                                    if (prop != null && prop.CanWrite)
+                                    {
+                                        prop.SetValue(input, file);
+                                    }
+                                }
+
+                                break;
+                            }
+                        default:
+                            throw new Exception("Body type not supported.");
+                    }
                 }
 
                 input.Email = jwt.Claims?.FirstOrDefault(x => x.Type == "email")?.Value;
@@ -97,5 +142,10 @@ namespace UcabGo.Api.Utils
             });
         }
 
+        public enum BodyTypeEnum
+        {
+            Json,
+            Formdata,
+        }
     }
 }

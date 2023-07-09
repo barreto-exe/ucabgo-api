@@ -16,5 +16,6 @@ namespace UcabGo.Application.Interfaces
 
         Task<UserDto> UpdatePhone(PhoneInput input);
         Task<UserDto> UpdateWalkingDistance(WalkingInput input);
+        Task<UserDto> UpdateProfilePicture(string userId, string url);
     }
 }
