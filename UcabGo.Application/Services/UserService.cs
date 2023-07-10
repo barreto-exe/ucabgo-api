@@ -58,13 +58,14 @@ namespace UcabGo.Application.Services
         }
         public async Task<UserDto> Update(User user)
         {
-            user.Password = EncodePassword(user.Password);
-            user.Phone = user?.Phone?.FormatPhone();
+            var userDb = await GetByEmail(user.Email);
 
-            unitOfWork.UserRepository.Update(user);
+            userDb.Password = EncodePassword(user.Password);
+            userDb.Phone = user?.Phone?.FormatPhone();
+
+            unitOfWork.UserRepository.Update(userDb);
             await unitOfWork.SaveChangesAsync();
 
-            var userDb = await GetByEmail(user.Email);
 
             var userDto = mapper.Map<UserDto>(userDb);
             return userDto;
