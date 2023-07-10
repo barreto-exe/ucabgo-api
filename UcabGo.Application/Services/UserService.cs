@@ -60,7 +60,7 @@ namespace UcabGo.Application.Services
         {
             var userDb = await GetByEmail(user.Email);
 
-            userDb.Password = EncodePassword(user.Password);
+            userDb.Password = user?.Password == null ? userDb.Password : EncodePassword(user.Password);
             userDb.Phone = user?.Phone?.FormatPhone();
 
             unitOfWork.UserRepository.Update(userDb);
