@@ -99,11 +99,11 @@ namespace UcabGo.Api.Functions
         [FunctionName("ChangeProfilePicture")]
         [OpenApiOperation(tags: new[] { "User" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
-        [OpenApiRequestBody(
-            contentType: "multipart/form-data",
-            bodyType: typeof(ProfilePictureInput),
-            Required = true,
-            Description = "The file for the profile picture. Must be an jpg or png.")]
+        //[OpenApiRequestBody(
+        //    contentType: "multipart/form-data",
+        //    bodyType: typeof(ProfilePictureInput),
+        //    Required = true,
+        //    Description = "The file for the profile picture. Must be an jpg or png.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
