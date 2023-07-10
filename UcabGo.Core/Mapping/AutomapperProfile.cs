@@ -13,6 +13,7 @@ using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Data.Soscontact.Dto;
 using UcabGo.Core.Data.Soscontact.Inputs;
 using UcabGo.Core.Data.User.Dto;
+using UcabGo.Core.Data.User.Inputs;
 using UcabGo.Core.Data.Vehicle.Dtos;
 using UcabGo.Core.Data.Vehicle.Inputs;
 using UcabGo.Core.Entities;
@@ -26,6 +27,7 @@ namespace UcabGo.Core.Mapping
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
             CreateMap<RegisterInput, User>();
+            CreateMap<UserUpdateInput, User>();
 
             CreateMap<Vehicle, VehicleDto>()
                 .ForMember(dest => dest.Owner, opt => opt.MapFrom(x => x.UserNavigation));

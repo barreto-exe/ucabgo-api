@@ -77,15 +77,8 @@ namespace UcabGo.Application.Services
 
         public async Task<UserDto> UpdatePersonalInfo(UserUpdateInput input)
         {
-            var user = await GetByEmail(input.Email);
-
-            user.Phone = input.Phone;
-            user.Name = input.Name;
-            user.LastName = input.LastName;
-            unitOfWork.UserRepository.Update(user);
-            await unitOfWork.SaveChangesAsync();
-
-            var userDto = mapper.Map<UserDto>(user);
+            var user = mapper.Map<User>(input);
+            var userDto = await Update(user);
             return userDto;
         }
         public async Task<UserDto> UpdateWalkingDistance(WalkingInput input)
