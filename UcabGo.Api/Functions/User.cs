@@ -122,7 +122,7 @@ namespace UcabGo.Api.Functions
                     //Validate if the file is an image
                     var file = input.Picture.FileName;
                     var extension = file[(file.LastIndexOf('.') + 1)..];
-                    if (extension != "jpg" && extension != "png")
+                    if (extension != "jpg" && extension != "jpeg" && extension != "png")
                     {
                         apiResponse.Message = "INVALID_FILE";
                         return new BadRequestObjectResult(apiResponse);
