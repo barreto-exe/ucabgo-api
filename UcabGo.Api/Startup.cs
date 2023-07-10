@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Services;
@@ -22,7 +23,13 @@ namespace UcabGo.Api
         {
             //Database Connection
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-            builder.Services.AddDbContext<UcabgoContext>(options => options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<UcabgoContext>(options => options.UseSqlServer(connectionString, options =>
+            {
+                options.EnableRetryOnFailure(
+                    maxRetryCount: 3,
+                    maxRetryDelay: TimeSpan.FromSeconds(10),
+                    errorNumbersToAdd: new List<int> { 4060 }); //additional error codes to treat as transient
+            }));
 
             //Register DTOs mappings and services
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
