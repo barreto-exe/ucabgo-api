@@ -15,8 +15,8 @@
         public string? Detail { get; set; }
         public float Latitude { get; set; }
         public float Longitude { get; set; }
-        public ulong IsHome { get; set; }
-        public ulong IsDeleted { get; set; }
+        public bool IsHome { get; set; }
+        public bool IsDeleted { get; set; }
 
         public virtual User UserNavigation { get; set; } = null!;
         public virtual ICollection<Passenger> Passengers { get; set; }

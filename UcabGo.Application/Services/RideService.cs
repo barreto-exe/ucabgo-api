@@ -116,7 +116,7 @@ namespace UcabGo.Application.Services
                     "Passengers.FinalLocationNavigation");
 
             var rides = from r in items
-                        where r.IsAvailable == Convert.ToUInt64(true) &&
+                        where r.IsAvailable &&
                               r.DriverNavigation.Email != filter.Email 
                         select new RideMatchDto
                         {
@@ -174,7 +174,7 @@ namespace UcabGo.Application.Services
                 ridesFromDriver = from r in items
                                   where
                                     r.DriverNavigation.Email == driverEmail &&
-                                    (r.IsAvailable == Convert.ToUInt64(true) ||
+                                    (r.IsAvailable ||
                                     (r.TimeStarted != null && r.TimeEnded == null && r.TimeCanceled == null))
                                   select r;
             }
@@ -259,7 +259,7 @@ namespace UcabGo.Application.Services
                                 where r.TimeStarted == null &&
                                       r.TimeEnded == null &&
                                       r.TimeCanceled == null &&
-                                      r.IsAvailable == Convert.ToUInt64(true) &&
+                                      r.IsAvailable &&
                                       r.TimeCreated.AddMinutes(15) <= DateTime.Now
                                 select r;
 
@@ -271,7 +271,7 @@ namespace UcabGo.Application.Services
                 try
                 {
                     ride.TimeCanceled = DateTime.Now;
-                    ride.IsAvailable = Convert.ToUInt64(false);
+                    ride.IsAvailable = false;
                     unitOfWork.RideRepository.Update(ride);
 
                     //For each passenger, set TimeCanceled 

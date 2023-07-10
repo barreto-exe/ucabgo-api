@@ -119,7 +119,7 @@ namespace UcabGo.Application.Services
                 .Where(r =>
 
                     //Filter by available
-                    (!filter.OnlyAvailable || r.IsAvailable == Convert.ToUInt32(filter.OnlyAvailable)) ||
+                    (!filter.OnlyAvailable || r.IsAvailable == filter.OnlyAvailable) ||
 
                     //Or filter by those where passenger has not arrived and ride is not finished
                     (r.Passengers.Any(p => p.User == idUser && p.TimeAccepted != null && p.TimeIgnored == null && p.TimeCancelled == null && p.TimeFinished == null)) &&

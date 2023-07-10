@@ -23,21 +23,21 @@ namespace UcabGo.Application.Services
         public async Task<LocationDto> GetHome(string userEmail)
         {
             var items = await GetAll(userEmail);
-            var item = items.FirstOrDefault(x => Convert.ToBoolean(x.IsHome));
+            var item = items.FirstOrDefault(x => x.IsHome);
             var itemDto = mapper.Map<LocationDto>(item);
             return itemDto;
         }
         public async Task<IEnumerable<LocationDto>> GetDefaultLocations(string userEmail)
         {
             var items = await GetAll(userEmail);
-            var ucabAndHome = items.Where(x => x.Alias == "UCAB Guayana" || Convert.ToBoolean(x.IsHome));
+            var ucabAndHome = items.Where(x => x.Alias == "UCAB Guayana" || x.IsHome);
             var itemsDtos = mapper.Map<IEnumerable<LocationDto>>(ucabAndHome);
             return itemsDtos;
         }
         public async Task<IEnumerable<LocationDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
-            items = items.Where(x => x.IsDeleted == Convert.ToUInt64(false));
+            items = items.Where(x => x.IsDeleted);
             var itemsDtos = mapper.Map<IEnumerable<LocationDto>>(items);
             return itemsDtos;
         }
@@ -50,7 +50,7 @@ namespace UcabGo.Application.Services
                 from item in list
                 join u in users on item.User equals u.Id
                 where item.UserNavigation.Email == userEmail &&
-                item.IsDeleted == Convert.ToUInt64(false)
+                item.IsDeleted
                 select item;
 
             return result.ToList();
@@ -79,15 +79,14 @@ namespace UcabGo.Application.Services
                 var locations = unitOfWork.LocationRepository.GetAll();
                 var currentHome = from l in locations
                                   where l.User == item.User &&
-                                  l.IsHome == Convert.ToUInt64(true) &&
-                                  l.IsDeleted == Convert.ToUInt64(false)
+                                  l.IsHome && !l.IsDeleted
                                   select l;
                 if (currentHome != null)
                 {
                     foreach (var itemHome in currentHome)
                     {
-                        itemHome.IsHome = Convert.ToUInt64(false);
-                        itemHome.IsDeleted = Convert.ToUInt64(true);
+                        itemHome.IsHome = false;
+                        itemHome.IsDeleted = true;
                         unitOfWork.LocationRepository.Update(itemHome);
                     }
                 }
@@ -130,12 +129,12 @@ namespace UcabGo.Application.Services
             {
                 throw new Exception("UCAB_LOCATION_IS_READONLY");
             }
-            if (Convert.ToBoolean(itemDb.IsHome))
+            if (itemDb.IsHome)
             {
                 throw new Exception("HOME_LOCATION_IS_READONLY");
             }
 
-            itemDb.IsDeleted = Convert.ToUInt64(true);
+            itemDb.IsDeleted = true;
             unitOfWork.LocationRepository.Update(itemDb);
             await unitOfWork.SaveChangesAsync();
 

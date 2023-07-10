@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UcabGo.Infrastructure.Data;
@@ -11,37 +12,39 @@ using UcabGo.Infrastructure.Data;
 namespace UcabGo.Infrastructure.Migrations
 {
     [DbContext(typeof(UcabgoContext))]
-    [Migration("20230601040430_AddEvaluations")]
-    partial class AddEvaluations
+    [Migration("20230710161355_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseCollation("latin1_swedish_ci")
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS")
                 .HasAnnotation("ProductVersion", "6.0.16")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            MySqlModelBuilderExtensions.HasCharSet(modelBuilder, "latin1");
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("UcabGo.Core.Entities.Chatmessage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Ride")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("TimeSent")
                         .HasColumnType("datetime");
 
                     b.Property<int>("User")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -52,63 +55,35 @@ namespace UcabGo.Infrastructure.Migrations
                     b.ToTable("chatmessage", (string)null);
                 });
 
-            modelBuilder.Entity("UcabGo.Core.Entities.Destination", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)")
-                        .HasComment(" ");
-
-                    b.Property<string>("Alias")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Detail")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<float>("Latitude")
-                        .HasColumnType("float");
-
-                    b.Property<float>("Longitude")
-                        .HasColumnType("float");
-
-                    b.Property<int>("User")
-                        .HasColumnType("int(11)");
-
-                    b.Property<string>("Zone")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "User" }, "User");
-
-                    b.ToTable("destinations", (string)null);
-                });
-
             modelBuilder.Entity("UcabGo.Core.Entities.Evaluation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("Evaluated")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EvaluationDate")
                         .HasColumnType("datetime");
 
                     b.Property<int>("Evaluator")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<int>("Ride")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<int>("Stars")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)")
+                        .HasDefaultValueSql("''");
 
                     b.HasKey("Id");
 
@@ -125,35 +100,42 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Alias")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Detail")
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
-                    b.Property<ulong>("IsHome")
+                    b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit(1)")
-                        .HasDefaultValueSql("b'0'");
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("'0'");
+
+                    b.Property<bool>("IsHome")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("'0'");
 
                     b.Property<float>("Latitude")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<float>("Longitude")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<int>("User")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Zone")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
@@ -166,13 +148,21 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
-                    b.Property<int>("InitialLocation")
-                        .HasColumnType("int(11)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("FinalLocation")
+                        .HasColumnType("int");
+
+                    b.Property<float>("LatitudeOrigin")
+                        .HasColumnType("real");
+
+                    b.Property<float>("LongitudeOrigin")
+                        .HasColumnType("real");
 
                     b.Property<int>("Ride")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("TimeAccepted")
                         .HasColumnType("datetime");
@@ -190,11 +180,11 @@ namespace UcabGo.Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<int>("User")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "InitialLocation" }, "InitialLocation");
+                    b.HasIndex(new[] { "FinalLocation" }, "InitialLocation");
 
                     b.HasIndex(new[] { "User" }, "Passenger");
 
@@ -207,27 +197,29 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
-                    b.Property<int>("Destination")
-                        .HasColumnType("int(11)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("Driver")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
-                    b.Property<ulong>("IsAvailable")
+                    b.Property<int>("FinalLocation")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsAvailable")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bit(1)")
-                        .HasDefaultValueSql("b'0'");
+                        .HasColumnType("bit")
+                        .HasDefaultValueSql("'0'");
 
                     b.Property<float>("LatitudeOrigin")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<float>("LongitudeOrigin")
-                        .HasColumnType("float");
+                        .HasColumnType("real");
 
                     b.Property<int>("SeatQuantity")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("TimeCanceled")
                         .HasColumnType("datetime");
@@ -244,11 +236,11 @@ namespace UcabGo.Infrastructure.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<int>("Vehicle")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex(new[] { "Destination" }, "Destination");
+                    b.HasIndex(new[] { "FinalLocation" }, "Destination");
 
                     b.HasIndex(new[] { "Driver" }, "Driver");
 
@@ -261,20 +253,22 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("User")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -287,43 +281,49 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("SecondLastName")
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("SecondName")
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<double?>("WalkingDistance")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("double")
+                        .HasColumnType("float")
                         .HasDefaultValueSql("'0'");
 
                     b.HasKey("Id");
@@ -335,30 +335,32 @@ namespace UcabGo.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Brand")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Color")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Plate")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("User")
-                        .HasColumnType("int(11)");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -382,17 +384,6 @@ namespace UcabGo.Infrastructure.Migrations
                         .HasConstraintName("chatmessage_ibfk_2");
 
                     b.Navigation("RideNavigation");
-
-                    b.Navigation("UserNavigation");
-                });
-
-            modelBuilder.Entity("UcabGo.Core.Entities.Destination", b =>
-                {
-                    b.HasOne("UcabGo.Core.Entities.User", "UserNavigation")
-                        .WithMany("Destinations")
-                        .HasForeignKey("User")
-                        .IsRequired()
-                        .HasConstraintName("destinations_ibfk_1");
 
                     b.Navigation("UserNavigation");
                 });
@@ -437,9 +428,9 @@ namespace UcabGo.Infrastructure.Migrations
 
             modelBuilder.Entity("UcabGo.Core.Entities.Passenger", b =>
                 {
-                    b.HasOne("UcabGo.Core.Entities.Location", "InitialLocationNavigation")
+                    b.HasOne("UcabGo.Core.Entities.Location", "FinalLocationNavigation")
                         .WithMany("Passengers")
-                        .HasForeignKey("InitialLocation")
+                        .HasForeignKey("FinalLocation")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("passenger_ibfk_3");
@@ -456,7 +447,7 @@ namespace UcabGo.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("passenger_ibfk_2");
 
-                    b.Navigation("InitialLocationNavigation");
+                    b.Navigation("FinalLocationNavigation");
 
                     b.Navigation("RideNavigation");
 
@@ -465,17 +456,17 @@ namespace UcabGo.Infrastructure.Migrations
 
             modelBuilder.Entity("UcabGo.Core.Entities.Ride", b =>
                 {
-                    b.HasOne("UcabGo.Core.Entities.Destination", "DestinationNavigation")
-                        .WithMany("Rides")
-                        .HasForeignKey("Destination")
-                        .IsRequired()
-                        .HasConstraintName("ride_ibfk_3");
-
                     b.HasOne("UcabGo.Core.Entities.User", "DriverNavigation")
                         .WithMany("Rides")
                         .HasForeignKey("Driver")
                         .IsRequired()
                         .HasConstraintName("ride_ibfk_1");
+
+                    b.HasOne("UcabGo.Core.Entities.Location", "FinalLocationNavigation")
+                        .WithMany("Rides")
+                        .HasForeignKey("FinalLocation")
+                        .IsRequired()
+                        .HasConstraintName("ride_ibfk_3");
 
                     b.HasOne("UcabGo.Core.Entities.Vehicle", "VehicleNavigation")
                         .WithMany("Rides")
@@ -483,9 +474,9 @@ namespace UcabGo.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("ride_ibfk_2");
 
-                    b.Navigation("DestinationNavigation");
-
                     b.Navigation("DriverNavigation");
+
+                    b.Navigation("FinalLocationNavigation");
 
                     b.Navigation("VehicleNavigation");
                 });
@@ -512,14 +503,11 @@ namespace UcabGo.Infrastructure.Migrations
                     b.Navigation("UserNavigation");
                 });
 
-            modelBuilder.Entity("UcabGo.Core.Entities.Destination", b =>
-                {
-                    b.Navigation("Rides");
-                });
-
             modelBuilder.Entity("UcabGo.Core.Entities.Location", b =>
                 {
                     b.Navigation("Passengers");
+
+                    b.Navigation("Rides");
                 });
 
             modelBuilder.Entity("UcabGo.Core.Entities.Ride", b =>
@@ -534,8 +522,6 @@ namespace UcabGo.Infrastructure.Migrations
             modelBuilder.Entity("UcabGo.Core.Entities.User", b =>
                 {
                     b.Navigation("Chatmessages");
-
-                    b.Navigation("Destinations");
 
                     b.Navigation("EvaluationEvaluatedNavigations");
 

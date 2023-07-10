@@ -28,14 +28,13 @@ namespace UcabGo.Infrastructure.Data
             if (!optionsBuilder.IsConfigured)
             {
                 string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.UseCollation("latin1_swedish_ci")
-                .HasCharSet("latin1");
+            modelBuilder.UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             modelBuilder.Entity<Chatmessage>(entity =>
             {
@@ -45,15 +44,15 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.User, "ChatUser");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
                 entity.Property(e => e.Content).HasColumnType("text");
 
-                entity.Property(e => e.Ride).HasColumnType("int(11)");
+                entity.Property(e => e.Ride).HasColumnType("int");
 
                 entity.Property(e => e.TimeSent).HasColumnType("datetime");
 
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.User).HasColumnType("int");
 
                 entity.HasOne(d => d.RideNavigation)
                     .WithMany(p => p.Chatmessages)
@@ -78,17 +77,17 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.Evaluator, "Evaluator");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
-                entity.Property(e => e.Evaluated).HasColumnType("int(11)");
+                entity.Property(e => e.Evaluated).HasColumnType("int");
 
                 entity.Property(e => e.EvaluationDate).HasColumnType("datetime");
 
-                entity.Property(e => e.Evaluator).HasColumnType("int(11)");
+                entity.Property(e => e.Evaluator).HasColumnType("int");
 
-                entity.Property(e => e.Ride).HasColumnType("int(11)");
+                entity.Property(e => e.Ride).HasColumnType("int");
 
-                entity.Property(e => e.Stars).HasColumnType("int(11)");
+                entity.Property(e => e.Stars).HasColumnType("int");
 
                 entity.Property(e => e.Type)
                     .HasMaxLength(5)
@@ -119,21 +118,21 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.User, "User1");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
                 entity.Property(e => e.Alias).HasMaxLength(255);
 
                 entity.Property(e => e.Detail).HasMaxLength(255);
 
                 entity.Property(e => e.IsDeleted)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
+                    .HasColumnType("bit")
+                    .HasDefaultValueSql("'0'");
 
                 entity.Property(e => e.IsHome)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
+                    .HasColumnType("bit")
+                    .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.User).HasColumnType("int");
 
                 entity.Property(e => e.Zone).HasMaxLength(255);
 
@@ -154,11 +153,11 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.Ride, "Ride");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
-                entity.Property(e => e.FinalLocation).HasColumnType("int(11)");
+                entity.Property(e => e.FinalLocation).HasColumnType("int");
 
-                entity.Property(e => e.Ride).HasColumnType("int(11)");
+                entity.Property(e => e.Ride).HasColumnType("int");
 
                 entity.Property(e => e.TimeAccepted).HasColumnType("datetime");
 
@@ -170,7 +169,7 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.TimeSolicited).HasColumnType("datetime");
 
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.User).HasColumnType("int");
 
                 entity.HasOne(d => d.FinalLocationNavigation)
                     .WithMany(p => p.Passengers)
@@ -200,17 +199,17 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.Vehicle, "Vehicle");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
-                entity.Property(e => e.Driver).HasColumnType("int(11)");
+                entity.Property(e => e.Driver).HasColumnType("int");
 
-                entity.Property(e => e.FinalLocation).HasColumnType("int(11)");
+                entity.Property(e => e.FinalLocation).HasColumnType("int");
 
                 entity.Property(e => e.IsAvailable)
-                    .HasColumnType("bit(1)")
-                    .HasDefaultValueSql("b'0'");
+                    .HasColumnType("bit")
+                    .HasDefaultValueSql("'0'");
 
-                entity.Property(e => e.SeatQuantity).HasColumnType("int(11)");
+                entity.Property(e => e.SeatQuantity).HasColumnType("int");
 
                 entity.Property(e => e.TimeCanceled).HasColumnType("datetime");
 
@@ -222,7 +221,7 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.TimeStarted).HasColumnType("datetime");
 
-                entity.Property(e => e.Vehicle).HasColumnType("int(11)");
+                entity.Property(e => e.Vehicle).HasColumnType("int");
 
                 entity.HasOne(d => d.DriverNavigation)
                     .WithMany(p => p.Rides)
@@ -249,13 +248,13 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.User, "IdUser");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
                 entity.Property(e => e.Name).HasMaxLength(255);
 
                 entity.Property(e => e.Phone).HasMaxLength(20);
 
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.User).HasColumnType("int");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Soscontacts)
@@ -268,7 +267,7 @@ namespace UcabGo.Infrastructure.Data
             {
                 entity.ToTable("user");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
                 entity.Property(e => e.Email).HasMaxLength(255);
 
@@ -295,7 +294,7 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.HasIndex(e => e.User, "IdUser1");
 
-                entity.Property(e => e.Id).HasColumnType("int(11)");
+                entity.Property(e => e.Id).HasColumnType("int");
 
                 entity.Property(e => e.Brand).HasMaxLength(100);
 
@@ -305,7 +304,7 @@ namespace UcabGo.Infrastructure.Data
 
                 entity.Property(e => e.Plate).HasMaxLength(20);
 
-                entity.Property(e => e.User).HasColumnType("int(11)");
+                entity.Property(e => e.User).HasColumnType("int");
 
                 entity.HasOne(d => d.UserNavigation)
                     .WithMany(p => p.Vehicles)

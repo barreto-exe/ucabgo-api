@@ -16,7 +16,7 @@
         public float LatitudeOrigin { get; set; }
         public float LongitudeOrigin { get; set; }
         public int SeatQuantity { get; set; }
-        public ulong IsAvailable { get; set; }
+        public bool IsAvailable { get; set; }
         public DateTime TimeCreated { get; set; }
         public DateTime? TimeEnded { get; set; }
         public DateTime? TimeStarted { get; set; }

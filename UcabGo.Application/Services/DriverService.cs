@@ -70,7 +70,7 @@ namespace UcabGo.Application.Services
             //Assign user id and available true
             int idUser = (await userService.GetByEmail(input.Email)).Id;
             item.Driver = idUser;
-            item.IsAvailable = Convert.ToUInt64(true);
+            item.IsAvailable = true;
             item.TimeCreated = DateTime.Now;
 
             //Save changes
@@ -109,7 +109,7 @@ namespace UcabGo.Application.Services
             }
             
             rideDb.TimeStarted = DateTime.Now;
-            rideDb.IsAvailable = Convert.ToUInt64(false);
+            rideDb.IsAvailable = false;
 
             //Autoignore all passengers that were not accepted when ride started.
             var passengers = rideDb.Passengers.Where(x => x.TimeAccepted == null);
@@ -141,14 +141,14 @@ namespace UcabGo.Application.Services
                 rideDb.TimeStarted == null || //Can't complete if not started
                 rideDb.TimeEnded != null || //Can't complete if already ended
                 rideDb.TimeCanceled != null || //Can't complete if already canceled
-                Convert.ToBoolean(rideDb.IsAvailable); //Can't complete if available
+                rideDb.IsAvailable; //Can't complete if available
             if (cantCompleteRide)
             {
                 throw new Exception("CANT_COMPLETE_RIDE");
             }
 
             rideDb.TimeEnded = DateTime.Now;
-            rideDb.IsAvailable = Convert.ToUInt64(false);
+            rideDb.IsAvailable = false;
 
             unitOfWork.RideRepository.Update(rideDb);
             await unitOfWork.SaveChangesAsync();
@@ -180,7 +180,7 @@ namespace UcabGo.Application.Services
             }
 
             rideDb.TimeCanceled = DateTime.Now;
-            rideDb.IsAvailable = Convert.ToUInt64(false);
+            rideDb.IsAvailable = false;
 
             unitOfWork.RideRepository.Update(rideDb);
 
