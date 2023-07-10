@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UcabGo.Application.Interfaces;
+using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.User.Inputs;
@@ -43,6 +46,7 @@ namespace UcabGo.Application.Services
         public async Task<UserDto> Create(User user)
         {
             user.Password = EncodePassword(user.Password);
+            user.Phone = user?.Phone?.FormatPhone();
 
             await unitOfWork.UserRepository.Add(user);
             await unitOfWork.SaveChangesAsync();
@@ -55,6 +59,7 @@ namespace UcabGo.Application.Services
         public async Task<UserDto> Update(User user)
         {
             user.Password = EncodePassword(user.Password);
+            user.Phone = user?.Phone?.FormatPhone();
 
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
@@ -70,10 +75,13 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<UserDto> UpdatePhone(PhoneInput input)
+        public async Task<UserDto> UpdatePersonalInfo(UserUpdateInput input)
         {
             var user = await GetByEmail(input.Email);
+
             user.Phone = input.Phone;
+            user.Name = input.Name;
+            user.LastName = input.LastName;
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
 

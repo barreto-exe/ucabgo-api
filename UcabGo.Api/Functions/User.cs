@@ -18,33 +18,33 @@ namespace UcabGo.Api.Functions
             this.apiResponse = apiResponse;
             this.userService = userService;
         }
-        #region ChangePhone
-        [FunctionName("ChangePhone")]
+        #region ChangePersonalInfo
+        [FunctionName("ChangePersonalInfo")]
         [OpenApiOperation(tags: new[] { "User" })]
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         [OpenApiRequestBody(
             contentType: "application/json",
-            bodyType: typeof(PhoneInput),
+            bodyType: typeof(UserUpdateInput),
             Required = true,
-            Description = "Change users phone.")]
+            Description = "Change users personal information.")]
         [OpenApiResponseWithBody(
             statusCode: HttpStatusCode.OK,
             contentType: "application/json",
             bodyType: typeof(UserDto),
             Description = "The data of the user updated.")]
         #endregion
-        public async Task<IActionResult> ChangePhone(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/phone")] HttpRequest req, ILogger log)
+        public async Task<IActionResult> ChangePersonalInfo(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user")] HttpRequest req, ILogger log)
         {
-            async Task<IActionResult> Action(PhoneInput input)
+            async Task<IActionResult> Action(UserUpdateInput input)
             {
-                var dto = await userService.UpdatePhone(input);
-                apiResponse.Message = "PHONE_UPDATED";
+                var dto = await userService.UpdatePersonalInfo(input);
+                apiResponse.Message = "USER_UPDATED";
                 apiResponse.Data = dto;
                 return new OkObjectResult(apiResponse);
             }
 
-            return await RequestHandler.Handle<PhoneInput>(req, log, apiResponse, Action, isAnonymous: false);
+            return await RequestHandler.Handle<UserUpdateInput>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
 

@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.User.Dto;
 
@@ -77,6 +78,17 @@ namespace UcabGo.Application.Utils
                     as DescriptionAttribute;
 
             return attribute?.Description ?? e.ToString();
+        }
+
+        public static string FormatPhone(this string phone)
+        {
+            //Delete non numeric characters
+            phone = Regex.Replace(phone.Trim(), "[^0-9]", "");
+
+            //Add a 0 at the beginning if it doesn't have it
+            if (phone[0] != '0') phone = string.Concat("0", phone);
+
+            return phone;
         }
 
         #region Bearer Token Methods

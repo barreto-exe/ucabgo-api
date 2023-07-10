@@ -19,12 +19,10 @@ namespace UcabGo.Core.Data.Auth.Inputs
         [Required]
         public string Name { get; set; }
 
-        public string? SecondName { get; set; }
-
         [Required]
         public string LastName { get; set; }
 
-        public string? SecondLastName { get; set; }
+        [Required]
         public string? Phone { get; set; }
     }
 }
