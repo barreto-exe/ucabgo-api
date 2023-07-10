@@ -22,7 +22,7 @@ namespace UcabGo.Api
         {
             //Database Connection
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-            builder.Services.AddDbContext<UcabgoContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+            builder.Services.AddDbContext<UcabgoContext>(options => options.UseSqlServer(connectionString));
 
             //Register DTOs mappings and services
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
