@@ -50,7 +50,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "ASKED_FOR_RIDE";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(AskForRide),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -152,7 +158,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_CANCELED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(CancelRideByPassenger),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -205,7 +217,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_FINISHED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(FinishRideByPassenger),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
 
                     return new OkObjectResult(apiResponse);
                 }

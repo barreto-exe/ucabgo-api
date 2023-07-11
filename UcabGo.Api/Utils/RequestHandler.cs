@@ -109,16 +109,27 @@ namespace UcabGo.Api.Utils
             }
         }
 
-        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, string target, IEnumerable<string> usersToMessage, object[] args)
+        public static async Task Send(this IAsyncCollector<SignalRMessage> signalRMessages, 
+            string originFunction,
+            string originUser,
+            string target, 
+            IEnumerable<string> usersToMessage,
+            IEnumerable<object> args,
+            ILogger log = null)
         {
             var tasks = new List<Task>();
+
+            string sender = $"{originFunction} - {originUser} - {Guid.NewGuid()}";
+
             foreach (var user in usersToMessage.Distinct())
             {
+                log.LogError($"Sending message to {user} from {sender}");
+
                 tasks.Add(signalRMessages.AddAsync(new SignalRMessage
                 {
                     Target = target,
                     UserId = user,
-                    Arguments = args
+                    Arguments = args.Append(sender).ToArray(),
                 }));
             }
 

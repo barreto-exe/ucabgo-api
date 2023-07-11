@@ -102,7 +102,7 @@ namespace UcabGo.Application.Services
                 rideDb.TimeEnded != null || //Can't start if already ended
                 rideDb.TimeCanceled != null || //Can't start if already canceled
                 !rideDb.Passengers.Any() || //Can't start if 0 passengers
-                !Convert.ToBoolean(rideDb.IsAvailable);
+                !rideDb.IsAvailable;
             if (cantStartRide)
             {
                 throw new Exception("CANT_START_RIDE");
@@ -122,7 +122,9 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
-            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(dto))
+                .Where(x => x.Email != input.Email)
+                .Select(x => x.Email).ToList();
             return dto;
         }
         public async Task<RideDto> CompleteRide(RideAvailableInput input)
@@ -154,7 +156,10 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
-            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(dto))
+                .Where(x => x.Email != input.Email)
+                .Select(x => x.Email)
+                .ToList();
             return dto;
         }
         public async Task<RideDto> CancelRide(RideAvailableInput input)
@@ -173,7 +178,7 @@ namespace UcabGo.Application.Services
                 rideDb.TimeStarted != null || //Can't cancel if already started
                 rideDb.TimeEnded != null || //Can't cancel if already ended
                 rideDb.TimeCanceled != null || //Can't cancel if already canceled
-                !Convert.ToBoolean(rideDb.IsAvailable);
+                !rideDb.IsAvailable;
             if (cantCancelRide)
             {
                 throw new Exception("CANT_CANCEL_RIDE");
@@ -194,7 +199,10 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<RideDto>(rideDb);
-            dto.UsersToMessage = (await rideService.GetUsers(dto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(dto))
+                .Where(x => x.Email != input.Email)
+                .Select(x => x.Email)
+                .ToList();
             return dto;
         }
 
@@ -231,7 +239,10 @@ namespace UcabGo.Application.Services
             //TODO - Fix mapping for PassengerDto
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
-            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto))
+                .Where(x => x.Email != driverEmail)
+                .Select(x => x.Email)
+                .ToList();
             return dto;
         }
         public async Task<PassengerDto> IgnorePassenger(string driverEmail, int rideId, int passengerId)
@@ -270,7 +281,10 @@ namespace UcabGo.Application.Services
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
-            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto))
+                .Where(x => x.Email != driverEmail)
+                .Select(x => x.Email)
+                .ToList();
             return dto;
         }
         public async Task<PassengerDto> CancelPassenger(string driverEmail, int rideId, int passengerId)
@@ -313,7 +327,10 @@ namespace UcabGo.Application.Services
             //PassengerDto mapping not working correctly. User and Location assigned manually
             dto.User = mapper.Map<UserDto>(await userService.GetById(userId));
             dto.FinalLocation = mapper.Map<LocationDto>(await locationService.GetById(locationId));
-            dto.UsersToMessage = (await rideService.GetUsers(rideDto)).Select(x => x.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(rideDto))
+                .Where(x => x.Email != driverEmail)
+                .Select(x => x.Email)
+                .ToList();
             return dto;
         }
     }

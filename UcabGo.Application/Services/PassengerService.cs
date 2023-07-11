@@ -88,7 +88,10 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<PassengerDto>(item);
-            dto.UsersToMessage = (await rideService.GetUsers(ride)).Select(u => u.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(ride))
+                .Where(u => u.Email != input.Email)
+                .Select(u => u.Email)
+                .ToList();
             return dto;
         }
         public async Task<IEnumerable<RideDto>> GetRides(RideFilter filter)
@@ -179,7 +182,10 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
             
             var dto = mapper.Map<PassengerDto>(passenger);
-            dto.UsersToMessage = (await rideService.GetUsers(ride)).Select(u => u.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(ride))
+                .Where(u => u.Email != input.Email)
+                .Select(u => u.Email)
+                .ToList();
             return dto;
         }
         public async Task<PassengerDto> FinishRide(FinishRideInput input)
@@ -218,7 +224,10 @@ namespace UcabGo.Application.Services
             await unitOfWork.SaveChangesAsync();
 
             var dto = mapper.Map<PassengerDto>(passenger);
-            dto.UsersToMessage = (await rideService.GetUsers(ride)).Select(u => u.Email).ToList();
+            dto.UsersToMessage = (await rideService.GetUsers(ride))
+                .Where(u => u.Email != input.Email)
+                .Select(u => u.Email)
+                .ToList();
             return dto;
         }
     }

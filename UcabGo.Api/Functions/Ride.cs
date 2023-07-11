@@ -86,7 +86,13 @@ namespace UcabGo.Api.Functions
 
                 foreach(var canceledRide in canceledRides)
                 {
-                    await activeRideHub.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, userToNotify, new object[] { canceledRide.Id });
+                    await activeRideHub.Send(
+                        nameof(CancelInactiveRides),
+                        nameof(CancelInactiveRides),
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        userToNotify, 
+                        new object[] { canceledRide.Id },
+                        log);
                 }
                 
                 await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { 0 });

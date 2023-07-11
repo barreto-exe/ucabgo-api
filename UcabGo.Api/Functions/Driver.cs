@@ -141,7 +141,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_STARTED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id } );
+                    await signalRMessages.Send(
+                        nameof(StartRide),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Id },
+                        log);
                     await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
@@ -195,7 +201,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_COMPLETED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(
+                        nameof(CompleteRide),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Id },
+                        log);
                     await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
@@ -249,7 +261,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "RIDE_CANCELED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Id });
+                    await signalRMessages.Send(
+                        nameof(CancelRide),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Id }, 
+                        log);
                     await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Id });
 
                     return new OkObjectResult(apiResponse);
@@ -361,7 +379,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_ACCEPTED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(AcceptPassengerRequest),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
                     await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
@@ -424,7 +448,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_IGNORED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(IgnorePassengerRequest),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
 
                     return new OkObjectResult(apiResponse);
                 }
@@ -487,7 +517,13 @@ namespace UcabGo.Api.Functions
                     apiResponse.Message = "PASSENGER_CANCELLED";
                     apiResponse.Data = dto;
 
-                    await signalRMessages.Send(HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, dto.UsersToMessage, new object[] { dto.Ride });
+                    await signalRMessages.Send(
+                        nameof(CancelPassengerRequest),
+                        input.Email,
+                        HubRoutes.ACTIVE_RIDE_RECEIVE_UPDATE, 
+                        dto.UsersToMessage, 
+                        new object[] { dto.Ride },
+                        log);
                     await ridesMatchingHub.Send(HubRoutes.RIDES_MATCHING_RECEIVE_UPDATE, new object[] { dto.Ride });
 
                     return new OkObjectResult(apiResponse);
