@@ -37,7 +37,7 @@ namespace UcabGo.Application.Services
         public async Task<IEnumerable<LocationDto>> GetAllDtos(string userEmail)
         {
             var items = await GetAll(userEmail);
-            items = items.Where(x => x.IsDeleted);
+            items = items.Where(x => !x.IsDeleted);
             var itemsDtos = mapper.Map<IEnumerable<LocationDto>>(items);
             return itemsDtos;
         }
@@ -50,7 +50,7 @@ namespace UcabGo.Application.Services
                 from item in list
                 join u in users on item.User equals u.Id
                 where item.UserNavigation.Email == userEmail &&
-                item.IsDeleted
+                !item.IsDeleted
                 select item;
 
             return result.ToList();
