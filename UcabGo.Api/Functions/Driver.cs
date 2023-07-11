@@ -6,6 +6,7 @@ using System.Web.Http;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
+using UcabGo.Core.Data.Passenger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
 using UcabGo.Core.Data.Ride.Inputs;
@@ -550,5 +551,48 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
+
+
+        #region GetDriverCooldownTime
+        [FunctionName("GetDriverCooldownTime")]
+        [OpenApiOperation(tags: new[] { "Driver" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(CooldownDto),
+            Description = "The time left of waiting for the next ride and a boolean with true if the driver has to wait.")]
+        #endregion
+        public async Task<IActionResult> GetDriverCooldownTime(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "driver/cooldown")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(BaseRequest input)
+            {
+                try
+                {
+                    var cooldown = await driverService.GetDriverCooldownTime(input.Email);
+                    apiResponse.Message = "COOLDOWN_TIME";
+                    apiResponse.Data = cooldown;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "DRIVER_NOT_FOUND":
+                            return new NotFoundObjectResult(apiResponse);
+                        default:
+                            {
+                                log.LogError(ex, "Error while getting driver cooldown time. Email: {Email}\n" + ex.Message + "\n" + ex.StackTrace, input.Email);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
     }
 }

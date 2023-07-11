@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
+using UcabGo.Core.Data;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Passenger.Dtos;
 using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
@@ -248,6 +250,47 @@ namespace UcabGo.Api.Functions
             }
 
             return await RequestHandler.Handle<FinishRideInput>(req, log, apiResponse, Action, isAnonymous: false);
+        }
+
+
+
+        #region GetPassengerCooldown
+        [FunctionName("GetPassengerCooldown")]
+        [OpenApiOperation(tags: new[] { "Passenger" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiResponseWithBody(
+            statusCode: HttpStatusCode.OK,
+            contentType: "application/json",
+            bodyType: typeof(CooldownDto),
+            Description = "ResponseBodyDescription")]
+        #endregion
+        public async Task<IActionResult> GetPassengerCooldown(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "passenger/cooldown")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(BaseRequest input)
+            {
+                try
+                {
+                    var dto = await passengerService.GetPassengerCooldownTime(input.Email);
+                    apiResponse.Message = "COOLDOWN_TIME";
+                    apiResponse.Data = dto;
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while getting passenger's cooldown.\n" + ex.Message + "\n" + ex.StackTrace, input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<BaseRequest>(req, log, apiResponse, Action, isAnonymous: false);
         }
 
     }

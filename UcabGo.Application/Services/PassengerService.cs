@@ -2,6 +2,7 @@ using AutoMapper;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Passenger.Dtos;
 using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
@@ -229,6 +230,67 @@ namespace UcabGo.Application.Services
                 .Select(u => u.Email)
                 .ToList();
             return dto;
+        }
+
+        public async Task<CooldownDto> GetPassengerCooldownTime(string passengerEmail)
+        {
+            //Get last ride of passenger
+            var rides = await GetRides(new RideFilter
+            {
+                Email = passengerEmail,
+                OnlyAvailable = false,
+            });
+            var lastRide = rides
+                .OrderByDescending(x => x.TimeCreated)
+                .ToList()
+                .FirstOrDefault();
+
+            //If no rides, return 0
+            if (lastRide == null)
+            {
+                return new CooldownDto
+                {
+                    IsInCooldown = false,
+                    Cooldown = TimeSpan.FromSeconds(0),
+                };
+            }
+
+            //Get TimeFinished of the passanger with same email
+            var timeFinished = lastRide
+                .Passengers
+                .Where(p => p.User.Email == passengerEmail)
+                .OrderByDescending(p => p.TimeAccepted)
+                .FirstOrDefault()?
+                .TimeFinished;
+
+            if(timeFinished == null)
+            {
+                return new CooldownDto
+                {
+                    IsInCooldown = false,
+                    Cooldown = TimeSpan.FromSeconds(0),
+                };
+            }
+
+            //Calculate time passed since last finished ride
+#if DEBUG
+            var timePassed = DateTime.Now.ToUniversalTime() - timeFinished.Value.ToUniversalTime();
+#else
+            var timePassed = DateTime.Now.ToUniversalTime() - timeFinished.Value;
+#endif
+            var minutesLeft = TimeSpan.FromMinutes(15) - timePassed;
+
+            //If cooldown is completed, then set to 0 to avoid negative values
+            if (minutesLeft.TotalSeconds <= 0)
+            {
+                minutesLeft = TimeSpan.FromSeconds(0);
+            }
+
+            return new CooldownDto
+            {
+                IsInCooldown = minutesLeft.TotalSeconds > 0,
+                Cooldown = minutesLeft,
+            };
         }
     }
 }

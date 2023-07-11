@@ -2,6 +2,7 @@ using AutoMapper;
 using UcabGo.Application.Interfaces;
 using UcabGo.Core.Data.Location.Dtos;
 using UcabGo.Core.Data.Passanger.Dtos;
+using UcabGo.Core.Data.Passenger.Dtos;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Inputs;
 using UcabGo.Core.Data.User.Dto;
@@ -332,6 +333,47 @@ namespace UcabGo.Application.Services
                 .Select(x => x.Email)
                 .ToList();
             return dto;
+        }
+
+        public async Task<CooldownDto> GetDriverCooldownTime(string driverEmail)
+        {
+            //Get last ride of driver
+            var rides = await rideService.GetAll(driverEmail);
+            var lastRide = rides
+                .Where(x => x.TimeEnded != null)
+                .OrderByDescending(x => x.TimeEnded)
+                .ToList()
+                .FirstOrDefault();
+
+            //If no rides, return 0
+            if (lastRide == null)
+            {
+                return new CooldownDto
+                {
+                    IsInCooldown = false,
+                    Cooldown = TimeSpan.FromSeconds(0),
+                };
+            }
+
+            //Calculate time passed since last finished ride
+#if DEBUG
+            var timePassed = DateTime.Now.ToUniversalTime() - lastRide.TimeEnded.Value.ToUniversalTime();
+#else
+            var timePassed = DateTime.Now.ToUniversalTime() - lastRide.TimeEnded.Value;
+#endif
+            var minutesLeft = TimeSpan.FromMinutes(15) - timePassed;
+
+            //If cooldown is completed, then set to 0 to avoid negative values
+            if(minutesLeft.TotalSeconds <= 0)
+            {
+                minutesLeft = TimeSpan.FromSeconds(0);
+            }
+                
+            return new CooldownDto
+            {
+                IsInCooldown = minutesLeft.TotalSeconds > 0,
+                Cooldown = minutesLeft,
+            };
         }
     }
 }

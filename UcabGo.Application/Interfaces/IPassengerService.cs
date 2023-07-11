@@ -1,5 +1,6 @@
 ﻿using UcabGo.Core.Data.Passanger.Dtos;
 using UcabGo.Core.Data.Passanger.Inputs;
+using UcabGo.Core.Data.Passenger.Dtos;
 using UcabGo.Core.Data.Passenger.Inputs;
 using UcabGo.Core.Data.Ride.Dtos;
 using UcabGo.Core.Data.Ride.Filters;
@@ -14,5 +15,6 @@ namespace UcabGo.Application.Interfaces
         Task<PassengerDto> AskForRide(PassengerInput input);
         Task<PassengerDto> CancelRide(CancelRideInput input);
         Task<PassengerDto> FinishRide(FinishRideInput input);
+        Task<CooldownDto> GetPassengerCooldownTime(string email);
     }
 }
