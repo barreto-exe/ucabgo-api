@@ -1,49 +1,61 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace UcabGo.Infrastructure.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "user",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    SecondName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    SecondLastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
-                    WalkingDistance = table.Column<double>(type: "float", nullable: true, defaultValueSql: "'0'"),
-                    ProfilePicture = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Email = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LastName = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Phone = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    WalkingDistance = table.Column<double>(type: "double", nullable: true, defaultValueSql: "('0')"),
+                    ProfilePicture = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_user", x => x.Id);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "locations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     User = table.Column<int>(type: "int", nullable: false),
-                    Alias = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Zone = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Detail = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Latitude = table.Column<float>(type: "real", nullable: false),
-                    Longitude = table.Column<float>(type: "real", nullable: false),
-                    IsHome = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "'0'"),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "'0'")
+                    Alias = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Zone = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Detail = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Latitude = table.Column<float>(type: "float", nullable: false),
+                    Longitude = table.Column<float>(type: "float", nullable: false),
+                    IsHome = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValueSql: "('0')"),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValueSql: "('0')")
                 },
                 constraints: table =>
                 {
@@ -53,17 +65,20 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.User,
                         principalTable: "user",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "soscontact",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     User = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    Name = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Phone = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -73,19 +88,24 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.User,
                         principalTable: "user",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "vehicle",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     User = table.Column<int>(type: "int", nullable: false),
-                    Brand = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Model = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Plate = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                    Brand = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Model = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Plate = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Color = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -95,22 +115,23 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.User,
                         principalTable: "user",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ride",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Driver = table.Column<int>(type: "int", nullable: false),
                     Vehicle = table.Column<int>(type: "int", nullable: false),
                     FinalLocation = table.Column<int>(type: "int", nullable: false),
-                    LatitudeOrigin = table.Column<float>(type: "real", nullable: false),
-                    LongitudeOrigin = table.Column<float>(type: "real", nullable: false),
+                    LatitudeOrigin = table.Column<float>(type: "float", nullable: false),
+                    LongitudeOrigin = table.Column<float>(type: "float", nullable: false),
                     SeatQuantity = table.Column<int>(type: "int", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false, defaultValueSql: "'0'"),
-                    TimeCreated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "'0001-01-01 00:00:00'"),
+                    IsAvailable = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValueSql: "('0')"),
+                    TimeCreated = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "('0001-01-01 00:00:00')"),
                     TimeEnded = table.Column<DateTime>(type: "datetime", nullable: true),
                     TimeStarted = table.Column<DateTime>(type: "datetime", nullable: true),
                     TimeCanceled = table.Column<DateTime>(type: "datetime", nullable: true)
@@ -133,17 +154,19 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.FinalLocation,
                         principalTable: "locations",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "chatmessage",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Ride = table.Column<int>(type: "int", nullable: false),
                     User = table.Column<int>(type: "int", nullable: false),
-                    Content = table.Column<string>(type: "text", nullable: false),
+                    Content = table.Column<string>(type: "text", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     TimeSent = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
@@ -159,20 +182,22 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.User,
                         principalTable: "user",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "evaluation",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Ride = table.Column<int>(type: "int", nullable: false),
                     Evaluator = table.Column<int>(type: "int", nullable: false),
                     Evaluated = table.Column<int>(type: "int", nullable: false),
                     Stars = table.Column<int>(type: "int", nullable: false),
                     EvaluationDate = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false, defaultValueSql: "''")
+                    Type = table.Column<string>(type: "varchar(5)", maxLength: 5, nullable: false, defaultValueSql: "('')")
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -192,19 +217,20 @@ namespace UcabGo.Infrastructure.Migrations
                         column: x => x.Evaluated,
                         principalTable: "user",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "passenger",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Ride = table.Column<int>(type: "int", nullable: false),
                     User = table.Column<int>(type: "int", nullable: false),
                     FinalLocation = table.Column<int>(type: "int", nullable: false),
-                    LatitudeOrigin = table.Column<float>(type: "real", nullable: false),
-                    LongitudeOrigin = table.Column<float>(type: "real", nullable: false),
+                    LatitudeOrigin = table.Column<float>(type: "float", nullable: false),
+                    LongitudeOrigin = table.Column<float>(type: "float", nullable: false),
                     TimeSolicited = table.Column<DateTime>(type: "datetime", nullable: false),
                     TimeAccepted = table.Column<DateTime>(type: "datetime", nullable: true),
                     TimeIgnored = table.Column<DateTime>(type: "datetime", nullable: true),
@@ -230,7 +256,8 @@ namespace UcabGo.Infrastructure.Migrations
                         principalTable: "locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "ChatRide",

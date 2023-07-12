@@ -23,13 +23,7 @@ namespace UcabGo.Api
         {
             //Database Connection
             string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-            builder.Services.AddDbContext<UcabgoContext>(options => options.UseSqlServer(connectionString, options =>
-            {
-                options.EnableRetryOnFailure(
-                    maxRetryCount: 3,
-                    maxRetryDelay: TimeSpan.FromSeconds(10),
-                    errorNumbersToAdd: new List<int> { 4060 }); //additional error codes to treat as transient
-            }));
+            builder.Services.AddDbContext<UcabgoContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             //Register DTOs mappings and services
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();

@@ -28,7 +28,7 @@ namespace UcabGo.Infrastructure.Data
             if (!optionsBuilder.IsConfigured)
             {
                 string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
             }
         }
 
