@@ -52,7 +52,8 @@ namespace UcabGo.Application.Services
                 throw new Exception("VEHICLE_NOT_FOUND");
             }
 
-            bool reachLimit = input.SeatQuantity < 1 || input.SeatQuantity > 5;
+            int limitFromSettings = Convert.ToInt32(Environment.GetEnvironmentVariable("SeatLimit"));
+            bool reachLimit = input.SeatQuantity < 1 || input.SeatQuantity > limitFromSettings;
             if (reachLimit)
             {
                 throw new Exception("SEAT_LIMIT_REACHED");
