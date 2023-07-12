@@ -278,7 +278,9 @@ namespace UcabGo.Application.Services
 #else
             var timePassed = DateTime.Now.ToUniversalTime() - timeFinished.Value;
 #endif
-            var minutesLeft = TimeSpan.FromMinutes(15) - timePassed;
+
+            int coolDownTime = Convert.ToInt32(Environment.GetEnvironmentVariable("CoolDownTime"));
+            var minutesLeft = TimeSpan.FromMinutes(coolDownTime) - timePassed;
 
             //If cooldown is completed, then set to 0 to avoid negative values
             if (minutesLeft.TotalSeconds <= 0)
