@@ -1,4 +1,5 @@
-﻿using UcabGo.Core.Data.Auth.Inputs;
+﻿using Microsoft.Extensions.Logging;
+using UcabGo.Core.Data.Auth.Inputs;
 using UcabGo.Core.Data.User.Dto;
 using UcabGo.Core.Data.User.Inputs;
 using UcabGo.Core.Entities;
@@ -16,6 +17,6 @@ namespace UcabGo.Application.Interfaces
 
         Task<UserDto> UpdatePersonalInfo(UserUpdateInput input);
         Task<UserDto> UpdateWalkingDistance(WalkingInput input);
-        Task<UserDto> UpdateProfilePicture(string userId, string url);
+        Task<UserDto> UpdateProfilePicture(string userId, string url, ILogger logger = null);
     }
 }

@@ -105,14 +105,14 @@ namespace UcabGo.Application.Services
             var userDto = mapper.Map<UserDto>(user);
             return userDto;
         }
-        public async Task<UserDto> UpdateProfilePicture(string userEmail, string url)
+        public async Task<UserDto> UpdateProfilePicture(string userEmail, string url, ILogger logger = null)
         {
             var user = await GetByEmail(userEmail);
             user.ProfilePicture = url;
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
 
-            logger.LogError($"Profile picture updated for user {userEmail}. URL: {url}");
+            if (logger != null) logger.LogError($"Profile picture updated for user {userEmail}. URL: {url}");
 
             var userDto = mapper.Map<UserDto>(user);
             return userDto;

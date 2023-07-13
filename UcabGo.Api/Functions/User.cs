@@ -145,7 +145,7 @@ namespace UcabGo.Api.Functions
                     log.LogError("Uploaded image URL: " + url);
 
                     //Update the user with the new profile picture
-                    var dto = await userService.UpdateProfilePicture(input.Email, url);
+                    var dto = await userService.UpdateProfilePicture(input.Email, url, log);
                     apiResponse.Message = "PROFILE_PICTURE_UPDATED";
                     apiResponse.Data = dto;
                     return new OkObjectResult(apiResponse);
