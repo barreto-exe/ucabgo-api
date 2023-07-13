@@ -131,7 +131,7 @@ namespace UcabGo.Api.Functions
                     //File path must be the user of the email with a timestamp
                     string filePath = 
                         "pictures/" +
-                        string.Concat(input.Email.AsSpan(0, input.Email.IndexOf('@')), DateTime.Now.ToString("yyyyMMddHHmmss"), ".jpg");
+                        string.Concat(input.Email.AsSpan(0, input.Email.IndexOf('@')), DateTime.Now.ToString("yyyyMMddHHmmss"), ".", extension);
 
                     //Upload the file to the blob storage
                     var url = "";
@@ -141,6 +141,8 @@ namespace UcabGo.Api.Functions
                         await outputBlob.UploadAsync(streamReader.BaseStream);
                         url = outputBlob.Uri.ToString();
                     }
+
+                    log.LogError("Uploaded image URL: " + url);
 
                     //Update the user with the new profile picture
                     var dto = await userService.UpdateProfilePicture(input.Email, url);

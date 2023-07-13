@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Logging;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -17,10 +18,13 @@ namespace UcabGo.Application.Services
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ILogger logger;
+
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+            this.logger = logger;
         }
 
         public async Task<User> GetById(int id)
@@ -107,6 +111,8 @@ namespace UcabGo.Application.Services
             user.ProfilePicture = url;
             unitOfWork.UserRepository.Update(user);
             await unitOfWork.SaveChangesAsync();
+
+            logger.LogError($"Profile picture updated for user {userEmail}. URL: {url}");
 
             var userDto = mapper.Map<UserDto>(user);
             return userDto;
