@@ -153,7 +153,8 @@ namespace UcabGo.Application.Services
 
             foreach (var r in result)
             {
-                r.MatchingPercentage = new Random().NextDouble();
+                //Random between 0.7 and 1
+                r.MatchingPercentage = 0.7 + (new Random().NextDouble() * 0.3);
             }
             return result.OrderByDescending(x => x.MatchingPercentage);
         }
