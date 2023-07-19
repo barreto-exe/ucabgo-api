@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
+using UcabGo.Application.Utils;
 using UcabGo.Core.Data.Auth.Dto;
 using UcabGo.Core.Data.Auth.Inputs;
 
@@ -10,10 +11,12 @@ namespace UcabGo.Api.Functions
     {
         private readonly ApiResponse apiResponse;
         private readonly IAuthService authService;
-        public Auth(ApiResponse apiResponse, IAuthService authService)
+        private readonly IMailService mailService;
+        public Auth(ApiResponse apiResponse, IAuthService authService, IMailService mailService)
         {
             this.apiResponse = apiResponse;
             this.authService = authService;
+            this.mailService = mailService;
         }
 
         #region ChangePassword

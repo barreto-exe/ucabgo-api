@@ -22,6 +22,8 @@
         public string? Phone { get; set; }
         public double? WalkingDistance { get; set; }
         public string? ProfilePicture { get; set; }
+        public bool IsValidated { get; set; }
+        public string? ValidationGuid { get; set; }
 
         public virtual ICollection<Chatmessage> Chatmessages { get; set; }
         public virtual ICollection<Evaluation> EvaluationEvaluatedNavigations { get; set; }

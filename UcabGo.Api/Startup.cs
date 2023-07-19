@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Services;
+using UcabGo.Application.Utils;
 using UcabGo.Core.Interfaces;
 using UcabGo.Infrastructure.Data;
 using UcabGo.Infrastructure.Repositories;
@@ -45,6 +46,20 @@ namespace UcabGo.Api
             builder.Services.AddTransient<IDriverService, DriverService>();
             builder.Services.AddTransient<IChatService, ChatService>();
             builder.Services.AddTransient<IEvaluationService, EvaluationService>();
+            builder.Services.AddTransient<IMailService, MailService>();
+
+            builder.Services.AddTransient<MailSettings>((provider) =>
+            {
+                return new MailSettings
+                {
+                    Server = Environment.GetEnvironmentVariable("EmailServer"),
+                    Port = Convert.ToInt32(Environment.GetEnvironmentVariable("EmailPort")),
+                    SenderName = Environment.GetEnvironmentVariable("SenderName"),
+                    SenderEmail = Environment.GetEnvironmentVariable("SenderEmail"),
+                    UserName = Environment.GetEnvironmentVariable("SenderEmail"),
+                    Password = Environment.GetEnvironmentVariable("Password"),
+                };
+            });
 
             //Swagger
             builder.AddSwashBuckle(Assembly.GetExecutingAssembly(), opts =>
