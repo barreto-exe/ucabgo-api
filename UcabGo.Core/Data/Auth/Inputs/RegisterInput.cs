@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace UcabGo.Core.Data.Auth.Inputs
 {
@@ -24,5 +25,8 @@ namespace UcabGo.Core.Data.Auth.Inputs
 
         [Required]
         public string? Phone { get; set; }
+        
+        [JsonIgnore]
+        public string ValidationUrl { get; set; }
     }
 }

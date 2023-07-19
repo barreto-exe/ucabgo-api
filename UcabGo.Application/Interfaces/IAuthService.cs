@@ -11,7 +11,7 @@ namespace UcabGo.Application.Interfaces
         /// <param name="input"></param>
         /// <returns></returns>
         /// <exception cref="UserExistsException"></exception>
-        Task<LoginDto> Register(RegisterInput input);
+        Task Register(RegisterInput input);
         /// <summary>
         /// Login a user and returns a LoginDto with the user and a token.
         /// </summary>
@@ -26,5 +26,8 @@ namespace UcabGo.Application.Interfaces
         /// <returns></returns>
         /// <exception cref="UserNotFoundException"></exception>
         Task ChangePassword(ChangePasswordInput input);
+
+        Task<string> ValidateUser(string email, string guid);
+        Task RequestNewValidationGuid(string email, string validationUrl);
     }
 }

@@ -1,11 +1,14 @@
-﻿<html>
+﻿<!DOCTYPE html>
+<html>
 <head>
     <title>Ucabery</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-          crossorigin="anonymous" />
     <style>
+
+        html {
+            font-family: sans-serif;
+            font-size: 87.5%;
+        }
+
         .btn {
             background-color: #006225;
             border-color: #006225;
@@ -19,6 +22,8 @@
             border: 1px solid transparent;
             border-radius: 0.25rem;
             cursor: pointer;
+            text-decoration: none !important;
+            color: white !important;
         }
 
             .btn:hover {
@@ -26,26 +31,40 @@
                 border-color: #000000;
                 color: #ffffff;
             }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+            transition: 0.3s;
+            width: 40%;
+        }
+
+            .card:hover {
+                box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            }
+
+        .container {
+            padding: 2px 16px;
+        }
     </style>
+    <meta charset="utf-8" />
 </head>
 <body>
-        <div class="row justify-content-center">
-            <img src="https://raw.githubusercontent.com/barreto-exe/ucabgo-app/0642f366081aeff01bfbbe6e9466830e2b13d6c8/UcabGo.App/Resources/Images/logo.svg" width="200" height="200" />
-        </div>
+    <div class="card" style="margin: 1rem">
+        <div class="container">
+            <div class="row justify-content-center">
+                <h3>¡Bienvenido/a, @User!</h3>
+            </div>
 
-        <div class="card shadow p-3 mb-5 bg-light rounded" style="margin: 1rem">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <h3>¡Bienvenido/a, @User!</h3>
-                </div>
+            <div class="row justify-content-center">
+                <p>Para continuar con tu registro en Ucabery, por favor haz click en el siguiente botón:</p>
+            </div>
 
-                <div class="row justify-content-center">
-                    <p>Para continuar con el registro, por favor haga click en el siguiente botón:</p>
-                </div>
-                <div class="row justify-content-center">
-                    <a href="@Url" class="btn">Click aquí</a>
-                </div>
+            <br />
+
+            <div class="row justify-content-center">
+                <a href="@Url" class="btn">Click aquí</a>
             </div>
         </div>
+    </div>
 </body>
 </html>

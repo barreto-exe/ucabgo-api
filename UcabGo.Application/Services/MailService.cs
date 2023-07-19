@@ -8,9 +8,11 @@ namespace UcabGo.Application.Services
     public class MailService : IMailService
     {
         private readonly MailSettings mailSettings;
-        public MailService(MailSettings mailSettings)
+        private readonly IUserService userService;
+        public MailService(MailSettings mailSettings, IUserService userService)
         {
             this.mailSettings = mailSettings;
+            this.userService = userService;
         }
 
         public bool SendMail(MailData mailData)
@@ -28,7 +30,7 @@ namespace UcabGo.Application.Services
 
                 BodyBuilder emailBodyBuilder = new()
                 {
-                    TextBody = mailData.EmailBody
+                    HtmlBody = mailData.EmailBody
                 };
 
                 emailMessage.Body = emailBodyBuilder.ToMessageBody();
@@ -47,6 +49,30 @@ namespace UcabGo.Application.Services
                 // Exception Details
                 return false;
             }
+        }
+
+        public async Task<bool> SendNewValidationMail(string email, string validationUrl)
+        {
+            var userDb = await userService.GetByEmail(email);
+            
+            userDb.ValidationGuid = Guid.NewGuid().ToString();
+            
+            await userService.Update(userDb);
+
+            //Get html format from file in Utils/MailTemplate.html
+            string html = File
+                .ReadAllText("Utils/MailTemplate.html")
+                .Replace("@User", $"{userDb.Name}")
+                .Replace("@Url", $"{validationUrl}/?ValidationEmail={email}&ValidationGuid={userDb.ValidationGuid}");
+
+            //Send email
+            return SendMail(new MailData()
+            {
+                EmailToId = email,
+                EmailToName = userDb.Name,
+                EmailSubject = "Registro de usuario",
+                EmailBody = html
+            });
         }
     }
 }

@@ -14,14 +14,16 @@ namespace UcabGo.Application.Services
         private readonly IMapper mapper;
         private readonly IUserService userService;
         private readonly ILocationService locationService;
-        public AuthService(IMapper mapper, IUserService userService, ILocationService locationService)
+        private readonly IMailService mailService;
+        public AuthService(IMapper mapper, IUserService userService, ILocationService locationService, IMailService mailService)
         {
             this.mapper = mapper;
             this.userService = userService;
             this.locationService = locationService;
+            this.mailService = mailService;
         }
 
-        public async Task<LoginDto> Register(RegisterInput input)
+        public async Task Register(RegisterInput input)
         {
             var userInput = mapper.Map<User>(input);
 
@@ -35,7 +37,14 @@ namespace UcabGo.Application.Services
                 throw new Exception("REGISTER_FIELD_LENGTH");
             }
 
+            //Create validation guid and send email
+            var validationGuid = Guid.NewGuid().ToString();
+            userInput.ValidationGuid = validationGuid;
+
             var newUser = await userService.Create(userInput);
+
+            //Send validation email
+            await mailService.SendNewValidationMail(newUser.Email, input.ValidationUrl);
 
             //Create default UCAB location
             await locationService.Create(new LocationInput()
@@ -49,11 +58,11 @@ namespace UcabGo.Application.Services
                 IsHome = false,
             }, isRegistering: true);
 
-            return await Login(new LoginInput()
-            {
-                Email = input.Email,
-                Password = input.Password
-            });
+            //return await Login(new LoginInput()
+            //{
+            //    Email = input.Email,
+            //    Password = input.Password
+            //});
         }
 
         public async Task<LoginDto> Login(LoginInput input)
@@ -62,6 +71,10 @@ namespace UcabGo.Application.Services
             if (user == null)
             {
                 throw new Exception("WRONG_CREDENTIALS");
+            }
+            if(!user.IsValidated)
+            {
+                throw new Exception("USER_NOT_VALIDATED");
             }
 
             var userDto = mapper.Map<UserDto>(user);
@@ -88,6 +101,42 @@ namespace UcabGo.Application.Services
 
             user.Password = input.NewPassword;
             await userService.Update(user);
+        }
+
+        public async Task<string> ValidateUser(string email, string guid)
+        {
+            var user = await userService.GetByEmail(email);
+            if(user == null || guid == null || user.ValidationGuid != guid || user.IsValidated)
+            {
+                throw new Exception("NOT_FOUND");
+            }
+
+            user.IsValidated = true;
+            await userService.Update(user);
+
+            string html = File
+                .ReadAllText("Utils/MailSuccess.html")
+                .Replace("@User", $"{user.Name}");
+
+            return html;
+        }
+
+        public async Task RequestNewValidationGuid(string email, string validationUrl)
+        {
+            var user = await userService.GetByEmail(email);
+            if (user == null || user.IsValidated)
+            {
+                throw new Exception("NOT_FOUND");
+            }
+
+            //Create validation guid and send email
+            var validationGuid = Guid.NewGuid().ToString();
+            user.ValidationGuid = validationGuid;
+
+            await userService.Update(user);
+
+            //Send validation email
+            await mailService.SendNewValidationMail(user.Email, validationUrl);
         }
     }
 }

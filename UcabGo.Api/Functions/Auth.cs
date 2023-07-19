@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Web.Http;
 using UcabGo.Application.Interfaces;
+using UcabGo.Application.Services;
 using UcabGo.Application.Utils;
+using UcabGo.Core.Data;
 using UcabGo.Core.Data.Auth.Dto;
+using UcabGo.Core.Data.Auth.Filters;
 using UcabGo.Core.Data.Auth.Inputs;
+using UcabGo.Core.Data.Ride.Filters;
 
 namespace UcabGo.Api.Functions
 {
@@ -11,12 +15,10 @@ namespace UcabGo.Api.Functions
     {
         private readonly ApiResponse apiResponse;
         private readonly IAuthService authService;
-        private readonly IMailService mailService;
-        public Auth(ApiResponse apiResponse, IAuthService authService, IMailService mailService)
+        public Auth(ApiResponse apiResponse, IAuthService authService)
         {
             this.apiResponse = apiResponse;
             this.authService = authService;
-            this.mailService = mailService;
         }
 
         #region ChangePassword
@@ -95,6 +97,8 @@ namespace UcabGo.Api.Functions
                     {
                         case "WRONG_CREDENTIALS":
                             return new BadRequestObjectResult(apiResponse);
+                        case "USER_NOT_VALIDATED":
+                            return new BadRequestObjectResult(apiResponse);
                         default:
                             {
                                 log.LogError(ex, "Error while logging in.\n" +  ex.Message + "\n" + ex.StackTrace, input);
@@ -126,10 +130,12 @@ namespace UcabGo.Api.Functions
         {
             async Task<IActionResult> Action(RegisterInput input)
             {
+                input.ValidationUrl = Environment.GetEnvironmentVariable("ApiValidationUrl");
+
                 try
                 {
+                    await authService.Register(input);
                     apiResponse.Message = "USER_REGISTERED";
-                    apiResponse.Data = await authService.Register(input);
                     return new OkObjectResult(apiResponse);
                 }
                 catch (Exception ex)
@@ -152,5 +158,99 @@ namespace UcabGo.Api.Functions
 
             return await RequestHandler.Handle<RegisterInput>(req, log, apiResponse, Action, isAnonymous: true);
         }
+
+
+        #region ValidateEmail
+        [FunctionName("ValidateEmail")]
+        [OpenApiOperation(tags: new[] { "User" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiParameter(
+            name: nameof(ValidationFilter.ValidationEmail),
+            In = ParameterLocation.Query,
+            Required = true,
+            Type = typeof(string),
+            Description = "The email of the user")]
+        [OpenApiParameter(
+            name: nameof(ValidationFilter.ValidationGuid),
+            In = ParameterLocation.Query,
+            Required = true,
+            Type = typeof(string),
+            Description = "The guid that was sent to the user's email")]
+        #endregion
+        public async Task<IActionResult> ValidateEmail(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "auth/validate")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(ValidationFilter input)
+            {
+                try
+                {
+                    var html = await authService.ValidateUser(input.ValidationEmail, input.ValidationGuid);
+                    return new ContentResult
+                    {
+                        Content = html,
+                        ContentType = "text/html",
+                        StatusCode = (int)HttpStatusCode.OK
+                    };
+                }
+                catch(Exception ex)
+                {
+                    return new NotFoundResult();
+                }
+            }
+
+            return await RequestHandler.Handle<ValidationFilter>(req, log, apiResponse, Action, isAnonymous: true);
+        }
+
+
+        #region RequestNewGuid
+        [FunctionName("RequestNewGuid")]
+        [OpenApiOperation(tags: new[] { "User" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        [OpenApiParameter(
+            name: nameof(ValidationFilter.ValidationEmail),
+            In = ParameterLocation.Query,
+            Required = true,
+            Type = typeof(string),
+            Description = "The email of the user.")]
+        [OpenApiRequestBody(
+            contentType: "application/json",
+            bodyType: typeof(BaseRequest),
+            Required = true,
+            Description = "RequestBodyDescription")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.OK, Description = "The new verification sent successfully.")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "User not found.")]
+        #endregion
+        public async Task<IActionResult> RequestNewGuid(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "auth/validate/new")] HttpRequest req, ILogger log)
+        {
+            async Task<IActionResult> Action(ValidationFilter input)
+            {
+                input.ValidationUrl = Environment.GetEnvironmentVariable("ApiValidationUrl");
+
+                try
+                {
+                    await authService.RequestNewValidationGuid(input.ValidationEmail, input.ValidationUrl);
+                    apiResponse.Message = "NEW_GUID_SENT";
+                    return new OkObjectResult(apiResponse);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        case "NOT_FOUND":
+                            return new NotFoundResult();
+                        default:
+                            {
+                                log.LogError(ex, "Error while requesting new validation guid.\n" +  ex.Message + "\n" + ex.StackTrace, input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<ValidationFilter>(req, log, apiResponse, Action, isAnonymous: true);
+        }
+
     }
 }
