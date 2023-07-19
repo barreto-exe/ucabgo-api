@@ -114,8 +114,8 @@ namespace UcabGo.Application.Services
             user.IsValidated = true;
             await userService.Update(user);
 
-            string html = File
-                .ReadAllText("Utils/MailSuccess.html")
+            string html = (await new HttpClient()
+                .GetStringAsync("https://raw.githubusercontent.com/barreto-exe/ucabgo-api/main/UcabGo.Application/Utils/MailTemplate.html"))
                 .Replace("@User", $"{user.Name}");
 
             return html;

@@ -1,5 +1,6 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
+using System;
 using UcabGo.Application.Interfaces;
 using UcabGo.Application.Utils;
 
@@ -60,8 +61,8 @@ namespace UcabGo.Application.Services
             await userService.Update(userDb);
 
             //Get html format from file in Utils/MailTemplate.html
-            string html = File
-                .ReadAllText("Utils/MailTemplate.html")
+            string html = (await new HttpClient()
+                .GetStringAsync("https://raw.githubusercontent.com/barreto-exe/ucabgo-api/main/UcabGo.Application/Utils/MailTemplate.html"))
                 .Replace("@User", $"{userDb.Name}")
                 .Replace("@Url", $"{validationUrl}/?ValidationEmail={email}&ValidationGuid={userDb.ValidationGuid}");
 
