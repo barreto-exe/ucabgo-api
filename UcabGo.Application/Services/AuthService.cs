@@ -115,7 +115,7 @@ namespace UcabGo.Application.Services
             await userService.Update(user);
 
             string html = (await new HttpClient()
-                .GetStringAsync("https://raw.githubusercontent.com/barreto-exe/ucabgo-api/main/UcabGo.Application/Utils/MailTemplate.html"))
+                .GetStringAsync("https://raw.githubusercontent.com/barreto-exe/ucabgo-api/main/UcabGo.Application/Utils/MailSuccess.html"))
                 .Replace("@User", $"{user.Name}");
 
             return html;
