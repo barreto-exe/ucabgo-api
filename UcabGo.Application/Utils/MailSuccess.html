@@ -5,6 +5,7 @@
           rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
           crossorigin="anonymous" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
     <meta charset="utf-8" />
     <style>
         .btn {
@@ -22,26 +23,64 @@
             cursor: pointer;
         }
 
-            .btn:hover {
-                background-color: #000000;
-                border-color: #000000;
-                color: #ffffff;
+        .btn:hover {
+            background-color: #000000;
+            border-color: #000000;
+            color: #ffffff;
+        }
+
+        @media screen and (min-width: 200px) {
+            h3 {
+                font-size: 8vw;
             }
+
+            p {
+                font-size: 6vw;
+            }
+        }
+
+        @media screen and (min-width: 400px) {
+            h3 {
+                font-size: 6vw;
+            }
+
+            p {
+                font-size: 4vw;
+            }
+        }
+
+        @media screen and (min-width: 1000px) {
+            h3 {
+                font-size: 3vw;
+            }
+
+            p {
+                font-size: 2vw;
+            }
+        }
     </style>
 </head>
 <body>
-        <div class="row justify-content-center">
+        <div class="row" >
             <img src="https://raw.githubusercontent.com/barreto-exe/ucabgo-app/0642f366081aeff01bfbbe6e9466830e2b13d6c8/UcabGo.App/Resources/Images/logo.svg" width="200" height="200" />
         </div>
 
-        <div class="card shadow p-3 mb-5 bg-light rounded" style="margin: 1rem">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <h3>¡Bienvenido/a, @User!</h3>
-                </div>
-
-                <div class="row justify-content-center">
-                    <p>Te has registrado exitosamente en Ucabery.</p>
+        <div class="card shadow" style="margin: 2rem">
+            <div style="margin: 1rem">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <h3>¡Bienvenido/a, @User!</h3>
+                    </div>
+                    </br>
+                    <div class="row justify-content-center">
+                        <p>Te has registrado exitosamente en Ucabery. Ya puedes iniciar sesión dentro de la aplicación haciendo uso de tu correo institucional.</p>
+                        </br>
+                        </br>
+                        </br>
+                        <i>
+                            <p>Disfruta tu viaje hacia el futuro.</p>
+                        </i>
+                    </div>
                 </div>
             </div>
         </div>
