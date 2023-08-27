@@ -174,7 +174,7 @@ namespace UcabGo.Api.Functions
         [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
         #endregion
         public async Task<IActionResult> UploadImage(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "upload")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "upload")] HttpRequest req,
             IBinder binder,
             ILogger log)
         {
@@ -182,8 +182,11 @@ namespace UcabGo.Api.Functions
             {
                 try
                 {
+                    var file = input.Picture.FileName;
+                    var extension = file[(file.LastIndexOf('.') + 1)..];
+                    
                     //File path must be the user of the email with a timestamp
-                    string filePath = "pictures/" + Guid.NewGuid().ToString();
+                    string filePath = "pictures/" + file.Replace(extension, "") + "_" + Guid.NewGuid().ToString() + extension;
 
                     //Upload the file to the blob storage
                     var url = "";
