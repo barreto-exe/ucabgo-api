@@ -186,7 +186,7 @@ namespace UcabGo.Api.Functions
                     var extension = file[(file.LastIndexOf('.') + 1)..];
                     
                     //File path must be the user of the email with a timestamp
-                    string filePath = "pictures/" + file.Replace(extension, "") + "_" + Guid.NewGuid().ToString() + extension;
+                    string filePath = "pictures/" + Guid.NewGuid().ToString() + "." + extension;
 
                     //Upload the file to the blob storage
                     var url = "";
