@@ -167,5 +167,54 @@ namespace UcabGo.Api.Functions
             return await RequestHandler.Handle<ProfilePictureInput>(req, log, apiResponse, Action, isAnonymous: false, BodyTypeEnum.Formdata);
         }
 
+
+        #region UploadImage
+        [FunctionName("UploadImage")]
+        [OpenApiOperation(tags: new[] { "User" })]
+        [OpenApiSecurity("bearerAuth", SecuritySchemeType.Http, Scheme = OpenApiSecuritySchemeType.Bearer, BearerFormat = "JWT")]
+        #endregion
+        public async Task<IActionResult> UploadImage(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "upload")] HttpRequest req,
+            IBinder binder,
+            ILogger log)
+        {
+            async Task<IActionResult> Action(ProfilePictureInput input)
+            {
+                try
+                {
+                    //File path must be the user of the email with a timestamp
+                    string filePath = "pictures/" + Guid.NewGuid().ToString();
+
+                    //Upload the file to the blob storage
+                    var url = "";
+                    using (var streamReader = new StreamReader(input.Picture.OpenReadStream()))
+                    {
+                        var outputBlob = await binder.BindAsync<BlobClient>(new BlobAttribute(filePath, FileAccess.Write));
+                        await outputBlob.UploadAsync(streamReader.BaseStream);
+                        url = outputBlob.Uri.ToString();
+                    }
+
+                    log.LogError("Uploaded image URL: " + url);
+
+                    //Update the user with the new profile picture
+                    return new OkObjectResult(url);
+                }
+                catch (Exception ex)
+                {
+                    apiResponse.Message = ex.Message;
+                    switch (ex.Message)
+                    {
+                        default:
+                            {
+                                log.LogError(ex, "Error while changing profile picture.\n" + ex.Message + "\n" + ex.StackTrace, input);
+                                return new InternalServerErrorResult();
+                            }
+                    }
+                }
+            }
+
+            return await RequestHandler.Handle<ProfilePictureInput>(req, log, apiResponse, Action, isAnonymous: true, BodyTypeEnum.Formdata);
+        }
+
     }
 }
