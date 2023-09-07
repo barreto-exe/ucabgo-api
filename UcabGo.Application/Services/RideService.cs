@@ -20,13 +20,10 @@ namespace UcabGo.Application.Services
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
         private readonly ILogger logger;
-        private readonly IUserService userService;
-        private readonly ILocationService locationService;
-        public RideService(IUnitOfWork unitOfWork, IMapper mapper, IUserService userService, ILocationService locationService, ILogger logger)
+
+        public RideService(IUnitOfWork unitOfWork, IMapper mapper, ILogger logger)
         {
             this.unitOfWork = unitOfWork;
-            this.userService = userService;
-            this.locationService = locationService;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -123,7 +120,7 @@ namespace UcabGo.Application.Services
                             Ride = mapper.Map<RideDto>(r),
                         };
 
-            var result =
+            var toCheck =
                 rides
                 .ToList()
                 .Where(r => filter.GoingToCampus ? 
@@ -132,24 +129,28 @@ namespace UcabGo.Application.Services
                 .OrderByDescending(x => x.MatchingPercentage)
                 .ToList();
 
-            //foreach (var r in result)
-            //{
-            //    if (filter.GoingToCampus)
-            //    {
-            //        r.MatchingPercentage = 1 - GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude);
-            //    }
-            //    else
-            //    {
-            //        r.MatchingPercentage = 1 - GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude);
+            var result = new List<RideMatchDto>();
 
-            //    }
+            foreach (var r in toCheck)
+            {
+                if (filter.GoingToCampus)
+                {
+                    double geo = GeoDistance(r.Ride.LatitudeOrigin, filter.InitialLatitude, r.Ride.LongitudeOrigin, filter.InitialLongitude)/filter.WalkingDistance;
+                    r.MatchingPercentage = 1 - geo;
+                }
+                else
+                {
+                    double geo = GeoDistance(r.Ride.Destination.Latitude, filter.FinalLatitude, r.Ride.Destination.Longitude, filter.FinalLongitude)/filter.WalkingDistance;
+                    r.MatchingPercentage = 1 - geo;
 
-            //    if (r.MatchingPercentage < 0)
-            //    {
-            //        //result.Remove(r);
-            //    }
-            //}
-            //result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
+                }
+
+                if (r.MatchingPercentage < 0)
+                {
+                    result.Add(r);
+                }
+            }
+            result = result.OrderByDescending(x => x.MatchingPercentage).ToList();
 
             foreach (var r in result)
             {
